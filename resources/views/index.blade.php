@@ -1,5 +1,9 @@
 @extends('forms_template')
 
+@section('heading')
+	All Forms
+@endsection
+
 @section("header")
   <link media="all" type="text/css" rel="stylesheet" href="//redstone.roanoke.edu/shared/template/public/assets/stylesheets/bootstrap.css">
   <link media="all" type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
@@ -8,7 +12,37 @@
 @endsection
 
 @section('javascript')
-	
+	<script>
+		$('.accordian-button').on('click', function(){
+			var target = $('#' + this.target);
+			if(target.hasClass('active')){
+				var closed = true;
+			}
+			//$('.accordian-circle').removeClass('active');
+			if(!closed){
+				target.addClass('active');
+			}else{
+				target.removeClass('active');
+			}
+		})
+	</script>
+@endsection
+
+@section("stylesheets")
+	@parent
+		<style>
+			.accordian-circle.active {
+				transform:          rotate(90deg);
+				-ms-transform:      rotate(90deg);
+				-moz-transform:     rotate(90deg);
+				-webkit-transform:  rotate(90deg);
+				-o-transform:       rotate(90deg);
+			}
+
+			.panel-title{
+				width:100%;
+			}
+		</style>
 @endsection
 
 @section("content")
@@ -22,29 +56,69 @@
 				</div>
 			</div>
 
-	<div class="panel panel-default">
-	    <div class="list-group">
-	    	@foreach($sections as $section_name => $section)
-	        	<a href="{{$section['link']}}" class="list-group-item"> {{$section_name}}        
-		        	@if($section['status'] == "Complete")
-		        		<span style="background-color:#70A204" class="badge">  
-		        			Completed
-						</span>
-		        	@elseif($section['status'] == "Pending")
-		        		<span style="background-color:#FCBF06; color:black" class="badge">  
-		        			Pending
-						</span>
-		        	@elseif($section['status'] == "WIP")
-		        		<span style="background-color:#grey; color:black" class="badge">  
-		        			Work In Progress
-						</span>		        		
-		        	@else
-		        		<span style="background-color:#CB0D0B" class="badge">  
-		        			Incomplete
-						</span>
-		        	@endif
-	        	</a>
-	        @endforeach
-	    </div>
-	</div>
+	
+
+	<div id="accordion" class="panel panel-default">
+ 		<div class="panel-heading" role="tab" id="headingForms">
+    		<h4 class="panel-title">
+			    <a role="button" target="Forms" class="accordian-button" style="color:black;" data-toggle="collapse" data-parent="#accordion" href="#collapseForms" aria-expanded="false" aria-controls="collapseForms">
+			    	<div>
+				        Student Forms 
+				    	<span id="Forms" class="accordian-circle fas fa-chevron-circle-right fa-lg pull-right circle" style="color: grey"></span>
+			        </div>
+			    </a>
+  			</h4>
+  		</div>
+
+		<div id="collapseForms" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingForms">
+	    	<div class="panel-body">
+	    		<div class="panel panel-default">
+				    <div class="list-group">
+				    	@foreach($sections as $section_name => $section)
+				        	<a href="{{$section['link']}}" class="list-group-item"> {{$section_name}}        
+					        	@if($section['status'] == "Complete")
+					        		<span style="background-color:#70A204" class="badge">  
+					        			Completed
+									</span>
+					        	@elseif($section['status'] == "Pending")
+					        		<span style="background-color:#FCBF06; color:black" class="badge">  
+					        			Pending
+									</span>
+					        	@elseif($section['status'] == "WIP")
+					        		<span style="background-color:#grey; color:black" class="badge">  
+					        			Work In Progress
+									</span>		        		
+					        	@else
+					        		<span style="background-color:#CB0D0B" class="badge">  
+					        			Incomplete
+									</span>
+					        	@endif
+				        	</a>
+				        @endforeach
+				    </div>
+				</div>
+	    	</div>
+	   	</div>
+
+ 		<div class="panel-heading" role="tab" id="headingOthers">
+    		<h4 class="panel-title">
+			    <a role="button" class="accordian-button" target="OtherStuff" style="color:black" data-toggle="collapse" data-parent="#accordion" href="#collapseOthers" aria-expanded="false" aria-controls="collapseOthers">
+			    	<div>
+			    		<span id="OtherStuff" class="accordian-circle fas fa-chevron-circle-right fa-lg pull-right check" style="color: grey"></span>
+					        Other Forms
+				    </div>
+			    </a>
+  			</h4>
+  		</div>
+
+		<div id="collapseOthers" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOthers">
+	    	<div class="panel-body">
+	    		Other Forms can go here!
+	    	</div>
+	   	</div>
+    </div>
+
+
+
+
 @endsection
