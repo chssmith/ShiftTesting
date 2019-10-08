@@ -40,8 +40,3 @@
 	</div>
 </div>
 
-<div class = "row">
-	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Submit </button>
-	</div>
-</div>

@@ -3,6 +3,10 @@
 @section('javascript')
 @endsection
 
+@section('heading')
+	Independent Student
+@endsection
+
 @section("stylesheets")
 	@parent
 
@@ -42,7 +46,7 @@
 							</li>
 
 							<li>	
-								You have children who recieve more than half of their support from you or you have dependents (other than your children or spouse) that live with you and recieve more than half of their support from you.
+								You have children who recieve more than half of their support from you OR you have dependents (other than your children or spouse) that live with you and recieve more than half of their support from you.
 							</li>	
 
 							<li>
@@ -55,6 +59,10 @@
 
 							<li>
 								You are currently serving on active duty in the Armed Forces for other than training purposes.
+							</li>
+
+							<li>
+								You are currently homeless
 							</li>
 						</ul>
 					</div>
@@ -74,8 +82,11 @@
 
    	    <div class = "row">
         	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Submit </button>
+        		<div class="btn-toolbar">
+	    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Save and Continue </button>
+	        		<a href="{{action('StudentInformationController@index')}}" class="btn btn-lg btn-danger pull-right"> Cancel </a>
+        		</div>
         	</div>
         </div>
     </form>
-@endsection
+	

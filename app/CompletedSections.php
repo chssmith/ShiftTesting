@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class GuardianInfo extends model
+class CompletedSections extends model
 {
     /**
      * The Database table used by the model.
@@ -13,12 +13,8 @@ class GuardianInfo extends model
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.guardian_info';
-    protected $primaryKey = 'id';
+    protected $table      = 'student_forms.completed_sections';
+    protected $primaryKey = 'fkey_rcid';
     protected $connection = 'SAO';
-
-     public function employment(){
-    	return $this->hasOne('App\EmploymentInfo', 'fkey_guardian_id', 'id');
-    }
 
 }

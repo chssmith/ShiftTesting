@@ -1,5 +1,9 @@
 @extends('forms_template')
 
+@section('heading')
+	Citizenship Information
+@endsection
+
 @section('javascript')
 	<script>
 
@@ -46,6 +50,7 @@
 	        	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 			      	State of Residence
 				    <select name = "state" form = "CitizenForm" class ="form-control" id = 'states'>
+	   					<option></option>
 				    	@foreach($states as $state)
 	  						<option @if(!empty($us_resident) && $us_resident->fkey_StateCode == $state->StateCode) selected @endif 
 	  						value="{{$state->StateCode}}"> {{ $state->StateName }} </option>
@@ -59,12 +64,13 @@
 		        <div class="row">
 		        	<div class="col-xs-12 col-md-6">
 			        	City/County of Residence
-					    <select name = "county" form = "CitizenForm" class ="form-control" id = 'counties'>					    	
+					    <select name = "county" form = "CitizenForm" class ="form-control" id = 'counties'>							    
+		   					<option></option>			    	
 					    	@foreach($updated_counties as $id => $county)					    	
 		  						<option @if(!empty($us_resident) && $us_resident->fkey_CityCode == $id) selected @endif 
 		  						value="{{ $id }}"> {{ $county }} </option>
 		  					@endforeach
-					    </select>
+					    </select> 
 		        	</div>
 		        </div>
 		    </div>
@@ -129,7 +135,10 @@
 
         <div class = "row">
         	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Submit </button>
+        		<div class="btn-toolbar">
+	    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Save and Continue </button>
+	        		<a href="{{action('StudentInformationController@index')}}" class="btn btn-lg btn-danger pull-right"> Cancel </a>
+        		</div>
         	</div>
         </div>
     </form>

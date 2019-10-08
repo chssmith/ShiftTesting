@@ -64,6 +64,19 @@
 			    <a role="button" target="Forms" class="accordian-button" style="color:black;" data-toggle="collapse" data-parent="#accordion" href="#collapseForms" aria-expanded="false" aria-controls="collapseForms">
 			    	<div>
 				        Student Forms 
+				        @if(false)
+			        		<span style="background-color:#70A204" class="badge">  
+			        			Completed
+							</span>
+			        	@elseif(false)
+			        		<span style="background-color:#FCBF06; color:black" class="badge">  
+			        			Pending
+							</span>		        		
+			        	@else
+			        		<span style="background-color:#CB0D0B" class="badge">  
+			        			Incomplete
+							</span>
+			        	@endif
 				    	<span id="Forms" class="accordian-circle fas fa-chevron-circle-right fa-lg pull-right circle" style="color: grey"></span>
 			        </div>
 			    </a>
@@ -74,27 +87,11 @@
 	    	<div class="panel-body">
 	    		<div class="panel panel-default">
 				    <div class="list-group">
-				    	@foreach($sections as $section_name => $section)
-				        	<a href="{{$section['link']}}" class="list-group-item"> {{$section_name}}        
-					        	@if($section['status'] == "Complete")
-					        		<span style="background-color:#70A204" class="badge">  
-					        			Completed
-									</span>
-					        	@elseif($section['status'] == "Pending")
-					        		<span style="background-color:#FCBF06; color:black" class="badge">  
-					        			Pending
-									</span>
-					        	@elseif($section['status'] == "WIP")
-					        		<span style="background-color:#grey; color:black" class="badge">  
-					        			Work In Progress
-									</span>		        		
-					        	@else
-					        		<span style="background-color:#CB0D0B" class="badge">  
-					        			Incomplete
-									</span>
-					        	@endif
-				        	</a>
+				    	@foreach($sections as $section_name => $section_completion)
+				        	<a href="{{$section_completion['link']}}" class="list-group-item"> {{$section_name}}      
+				        	</a>  
 				        @endforeach
+				        	<a href="{{action('StudentInformationController@confirmation')}}" class="list-group-item"> Submit</a>
 				    </div>
 				</div>
 	    	</div>
@@ -114,11 +111,7 @@
 		<div id="collapseOthers" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOthers">
 	    	<div class="panel-body">
 	    		Other Forms can go here!
-	    	</div>
+	    	</div>	
 	   	</div>
     </div>
-
-
-
-
 @endsection

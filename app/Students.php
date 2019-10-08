@@ -14,7 +14,36 @@ class Students extends model
      */
     use SoftDeletes;
     protected $table      = 'student_forms.students';
-    protected $primaryKey = 'RCID';
     protected $connection = 'SAO';
+    protected $appends    = ['address'];
+
+
+    public function parents(){
+    	return $this->hasMany('App\GuardianInfo', 'student_rcid', 'RCID');
+    }
+
+    public function home_address(){
+    	return $this->hasOne('App\Address','RCID', 'RCID')->where('fkey_AddressTypeId', 1)->first();
+    }
+
+    public function billing_address(){
+    	return $this->hasOne('App\Address','RCID', 'RCID')->where('fkey_AddressTypeId', 3)->first();
+    }
+
+    public function local_address(){
+    	return $this->hasOne('App\Address','RCID', 'RCID')->where('fkey_AddressTypeId', 4)->first();
+    }
+
+    public function visa(){
+    	return $this->hasOne('App\VisaTypeMap', 'RCID', 'RCID');
+    }
+
+    public function getAddressAttribute($value){
+    	$home_address    = $this->home_address();
+    	$billing_address = $this->billing_address();
+    	$local_address   = $this->local_address();
+
+    	return (['Home'=>$home_address, 'Billing'=>$billing_address, 'Local'=>$local_address]); 
+    }
 
 }

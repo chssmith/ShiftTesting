@@ -14,7 +14,6 @@ class USResidence extends model
      */
     use SoftDeletes;
     protected $table      = 'student_forms.us_residence';
-    protected $primaryKey = 'RCID';
     protected $connection = 'SAO';
 
     

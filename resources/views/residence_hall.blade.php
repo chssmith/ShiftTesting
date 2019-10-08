@@ -1,5 +1,9 @@
 @extends('forms_template')
 
+@section('heading')
+	Residence Information
+@endsection
+
 @section('javascript')
 	<script>
 		function hideShowLocal(show){
@@ -108,19 +112,17 @@
 		   		</div>
 
 		   		<div class="row">
-			   		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			   		<div class="col-xs-12 col-md-4">
 			        	<div class = "form-group">
 			   				City <input type="text" class="form-control" name="local_city" id="local_city"
 			   						@if(!empty($local_address)) value="{{$local_address->City}}" @endif>
 			   			</div>
 			   		</div>
-		   		</div>
-
-		   		<div class="row">
-			   		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			   		<div class="col-xs-12 col-md-4">
 			        	<div class = "form-group address">
 			   				State   <br>
 			   				<select id="local_state" name="local_state" class="form-control">
+			   					<option></option>
 				   				@foreach($states as $state)
 				   					<option value='{{$state->StateCode}}' @if(!empty($local_address) && ($local_address->fkey_StateId == $state->StateCode)) selected @endif>{{$state->StateName}}
 				   					</option>
@@ -128,10 +130,7 @@
 			   				</select>
 			   			</div>
 			   		</div>
-		   		</div>
-
-		   		<div class="row">
-			   		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			   		<div class="col-xs-12 col-md-4">
 			        	<div class = "form-group">
 			   				Zip Code <input type="text" class="form-control" name="local_zip" id="local_zip"
 			   						@if(!empty($local_address)) value="{{$local_address->PostalCode}}" @endif>
@@ -143,7 +142,10 @@
 
         <div class = "row">
         	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Submit </button>
+        		<div class="btn-toolbar">
+	    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Save and Continue </button>
+	        		<a href="{{action('StudentInformationController@index')}}" class="btn btn-lg btn-danger pull-right"> Cancel </a>
+        		</div>
         	</div>
         </div>
     </form>

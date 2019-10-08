@@ -1,8 +1,14 @@
 @extends('forms_template')
 
+@section('heading')
+	Personal Information
+@endsection
+
 @section('javascript')
 	
 @endsection
+
+
 
 @section("content")
 	<form 	id = "PersonalInfoForm" method = "POST"
@@ -13,14 +19,18 @@
    	     	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 	        	<div class = "form-group">
 			        First Name: <input type= "text" class = "form-control" name = "first_name" id = "first_name"  
-			        				@if(!empty($student)) value="{{$student->first_name}}" @endif>
+			        				@if(!empty($datamart_student)) value="{{$datamart_student->FirstName}}" 
+			        				@elseif(!empty($student)) 	   value="{{$student->first_name}}" 
+			        				@endif>
 				</div>
         	</div>
 
         	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 	        	<div class = "form-group">
-			        Middle Name: <input type= "text" class = "form-control" name = "middle_name" id = "middle_name"  
-			        				@if(!empty($student)) value="{{$student->middle_name}}" @endif>
+			        Middle Name: <input type= "text" class = "form-control" name = "middle_name" id = "middle_name"   
+			        				@if(!empty($datamart_student)) value="{{$datamart_student->MiddleName}}" 
+			        				@elseif(!empty($student)) 	   value="{{$student->middle_name}}"
+			        				@endif>
 				</div>
         	</div>
 
@@ -29,15 +39,19 @@
 
         	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 	        	<div class = "form-group">
-			        Last Name: <input type= "text" class = "form-control" name = "last_name" id = "last_name"  
-			        				@if(!empty($student)) value="{{$student->last_name}}" @endif>
+			        Last Name: <input type= "text" class = "form-control" name = "last_name" id = "last_name"   
+			        				@if(!empty($datamart_student)) value="{{$datamart_student->LastName}}" 
+			        				@elseif(!empty($student)) 	   value="{{$student->last_name}}" 
+			        				@endif>
 				</div>
         	</div>
 
         	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 	        	<div class = "form-group">
-			        Maiden Name: <input type= "text" class = "form-control" name = "maiden_name" id = "maiden_name"  
-			        				@if(!empty($student)) value="{{$student->maiden_name}}" @endif>
+			        Maiden Name: <input type= "text" class = "form-control" name = "maiden_name" id = "maiden_name"   
+			        				@if(!empty($datamart_student)) value="{{$datamart_student->MaidenName}}" 
+			        				@elseif(!empty($student)) 	   value="{{$student->maiden_name}}" 
+			        				@endif>
 				</div>
         	</div>
    		</div>
@@ -134,7 +148,10 @@
 
         <div class = "row">
         	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Submit </button>
+        		<div class="btn-toolbar">
+	    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Save and Continue </button>
+	        		<a href="{{action('StudentInformationController@index')}}" class="btn btn-lg btn-danger pull-right"> Cancel </a>
+        		</div>
         	</div>
         </div>
     </form>

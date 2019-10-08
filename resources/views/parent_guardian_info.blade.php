@@ -3,6 +3,10 @@
 @section('javascript')
 @endsection
 
+@section('heading')
+	Parent / Guardian Information
+@endsection
+
 @section("stylesheets")
 	@parent
 
@@ -87,8 +91,9 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="btn-toolbar">
-				<a class="btn btn-success pull-right" href="#"> Submit </a>
-				<a class="btn btn-info pull-right" href="{{action('StudentInformationController@individualGuardian') }} "> New parent/guardian</a>
+				<a class="btn btn-success pull-right" href="{{action('StudentInformationController@index')}}"> Continue </a>
+				<a class="btn btn-info pull-right"    href="{{action('StudentInformationController@individualGuardian') }} "> New parent/guardian</a>
+        		<a class="btn btn-danger pull-right"  href="{{action('StudentInformationController@index')}}" > Cancel </a>
 			</div>
 		</div>
 	</div>

@@ -42,7 +42,7 @@
 								<td>{{$contact->evening_phone}}</td>
 								<td>{{$contact->cell_phone}}</td>
 								<td> <a href="{{action('StudentInformationController@individualEmergencyContact', ['id'=>$contact->id])}}" class="btn btn-primary"><i class="fas fa-wrench"></i> Edit</a> </td>
-								<td> <a href="{{action('StudentInformationController@deleteGuardian', ['id'=>$contact->id])}}" class="btn btn-danger"> <i class="fa fa-trash" aria-hidden="true"></i> Delete</a></td>
+								<td> <a href="{{action('StudentInformationController@deleteContact', ['id'=>$contact->id])}}" class="btn btn-danger"> <i class="fa fa-trash" aria-hidden="true"></i> Delete</a></td>
 							</tr>
 						@endforeach
 					@else
@@ -58,8 +58,9 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="btn-toolbar">
-				<a href="{{action('StudentInformationController@missingPersonContact')}}" class="btn btn-lg btn-info pull-right"> Submit </a>
-				<a href="{{action('StudentInformationController@individualEmergencyContact')}}" class="btn btn-lg btn-success pull-right"> New Contact </a>
+				<a href="{{action('StudentInformationController@nonEmergency')}}" class="btn btn-lg btn-success pull-right"> Continue </a>
+				<a href="{{action('StudentInformationController@individualEmergencyContact')}}" class="btn btn-lg btn-info pull-right"> New Contact </a>
+        		<a href="{{action('StudentInformationController@index')}}" class="btn btn-lg btn-danger pull-right"> Cancel </a>
 			</div>
 		</div>
 	</div>

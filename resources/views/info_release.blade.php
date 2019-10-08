@@ -3,6 +3,10 @@
 @section('javascript')
 @endsection
 
+@section("heading")
+	Infomation Release
+@endsection
+
 @section("stylesheets")
 	@parent
 
@@ -50,11 +54,11 @@
    	     		<div>
    	     			<div>
 	     				<div class="pretty p-default p-round">
-		            		<input type = "radio" name = "info_release" value = "info_release" id = "info_release" @if($student->info_release) checked @endif />
+		            		<input type = "radio" name = "info_release" value = "info_release" id = "info_release" @if($guardian->info_release) checked @endif />
 		            		<div class="state p-primary">
 		            			<label>I authorize Roanoke College, including the office of the Registrar and other appriopriate Academic Affairs faculty and staff,
 		            			permission to release information from my education record, including grades,
-		            			and to discuss my academic proogress and matters related to my enrollment with my parent/guardian listed above.
+		            			and to discuss my academic progress and matters related to my enrollment with my parent/guardian listed above.
 		            			Further, I authorize Roanoke College to provide on-line access to the parent/guardian named above.
 		            			Access will include billing and finacial aid, as well as academic information (grades and scheduling).
 		            			This will NOT include access to my Roanoke College e-mail account.</label>
@@ -63,7 +67,7 @@
 	            	</div>
 	            	<div>
 		            	<div class="pretty p-default p-round">
-		            		<input type = "radio" name = "info_release" value = "" id = "disagree" @if(!$student->info_release) checked @endif />
+		            		<input type = "radio" name = "info_release" value = "" id = "disagree" @if(!$guardian->info_release) checked @endif />
 		            		<div class="state p-primary">
 		            			<label>I DO NOT authorize Roanoke College to release information from my education record to my parent/guardian listed above.
 		            			</label>
@@ -77,7 +81,10 @@
 
    	    <div class = "row">
         	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Submit </button>
+        		<div class="btn-toolbar">
+	    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Save and Continue </button>
+	        		<a href="{{action('StudentInformationController@index')}}" class="btn btn-lg btn-danger pull-right"> Cancel </a>
+        		</div>
         	</div>
         </div>
     </form>

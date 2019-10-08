@@ -1,5 +1,9 @@
 @extends('forms_template')
 
+@section('heading')
+	Allergy Information
+@endsection
+
 @section('javascript')
 	<script>
 		function hideShow(show, target_id){
@@ -92,7 +96,10 @@
 
    	    <div class = "row">
         	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Submit </button>
+        		<div class="btn-toolbar">
+	    		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Save and Continue </button>
+	        		<a href="{{action('StudentInformationController@index')}}" class="btn btn-lg btn-danger pull-right"> Cancel </a>
+        		</div>
         	</div>
         </div>
     </form>

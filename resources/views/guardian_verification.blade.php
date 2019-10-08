@@ -3,16 +3,20 @@
 @section('javascript')
 @endsection
 
+@section('heading')
+	Parent / Guardian Information
+@endsection
+
 @section("stylesheets")
 	@parent
 @endsection
 
 @section("content")
 	<form 	id = "guardian_verification" method = "POST"
-     	  	action = "{{ action("StudentInformationController@parentAndGuardianInfoUpdate" ,['id'=>$guardian->id]) }}">
+     	  	action = "{{ action('StudentInformationController@parentAndGuardianInfoUpdate', ['id'=>$id]) }}">
 		{{ csrf_field() }}
 
-		<h3> New Parent / Guardian </h3>
+		<h3> Parent / Guardian Information </h3>
 		<div class = "row">
    	     	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 	        	<div class = "form-group">
@@ -114,17 +118,18 @@
    		</div>
 
    		<div class="row">
-	   		<div class="col-xs-12 col-md-4">
+	   		<div class="col-xs-12 col-md-6">
 	        	<div class = "form-group">
 	   				City <input type="text" class="form-control" name="city" id="city"
 	   						@if(!empty($guardian)) value="{{$guardian->City}}" @endif>
 	   			</div>
 	   		</div>
 
-	   		<div class="col-xs-12 col-md-4">
+	   		<div class="col-xs-12 col-md-6">
 	        	<div class = "form-group address">
 	   				State   <br>
 	   				<select id="state" name="state" class="form-control">
+	   					<option></option>
 		   				@foreach($states as $state)
 		   					<option value='{{$state->StateCode}}' @if(!empty($guardian) && ($guardian->fkey_StateId == $state->StateCode)) selected @endif>{{$state->StateName}}
 		   					</option>
@@ -132,12 +137,25 @@
 	   				</select>
 	   			</div>
 	   		</div>
+	   	</div>
 
-	   		<div class="col-xs-12 col-md-4">
+	   	<div class="row">
+	   		<div class="col-xs-12 col-md-6">
 	        	<div class = "form-group">
 	   				Zip Code <input type="text" class="form-control" name="zip" id="zip"
 	   						@if(!empty($guardian)) value="{{$guardian->PostalCode}}" @endif>
 	   			</div>
+	   		</div>
+
+	   		<div class="col-xs-12 col-md-6">
+	   			Country
+			    <select name = "Country" class ="form-control" id = 'Country'>
+					<option></option>
+			    	@foreach($countries as $country)
+						<option @if(!empty($guardian) && $guardian->fkey_CountryId == $country->key_CountryId) selected @endif 
+						value="{{$country->key_CountryId}}"> {{ $country->CountryName }} </option>
+					@endforeach
+			    </select>
 	   		</div>
    		</div>
 
@@ -158,22 +176,43 @@
         	</div>	   					
 		</div>
 
-		<div>
-			<div class="pretty p-default">
-        		<input type = "checkbox" name = "reside_with" value = "reside_with" id = "reside_with" @if(!empty($guardian) && $guardian->reside_with) checked @endif />
-        		<div class="state p-primary">
-        			<label>I reside with this parent/guardian</label>
-        		</div>
-        	</div>
-        </div>
 
-        <div>
-			<div class="pretty p-default">
-        		<input type = "checkbox" name = "dependent" value="dependent" id = "independent_student" @if(!empty($guardian) && $guardian->claimed_dependent) checked @endif />
-        		<div class="state p-primary">
-        			<label>This Parent/Guardian Claims me as a tax dependent</label>
-        		</div>
-        	</div>
+
+		<h3> Additional Information </h3>
+		<div class="row">
+			<div class="col-xs-12 col-md-6">
+	        	<div class = "form-group address">
+	   				Highest Education   <br>
+	   				<select id="education" name="education" class="form-control">
+	   					<option></option>
+		   				@foreach($education as $education_level)
+		   					<option value='{{$education_level->id}}' @if(!empty($guardian) && ($guardian->fkey_education_id == $education_level->id)) selected @endif>{{$education_level->education}}
+		   					</option>
+		   				@endforeach	
+	   				</select>
+	   			</div>
+	   		</div>
+
+
+			<div classs="col-xs-12 col-md-6">
+				<p></p>
+				<div>
+					<div class="pretty p-default">
+		        		<input type = "checkbox" name = "reside_with" value = "reside_with" id = "reside_with" @if(!empty($guardian) && $guardian->reside_with) checked @endif />
+		        		<div class="state p-primary">
+		        			<label>I reside with this parent/guardian</label>
+		        		</div>
+		        	</div>
+	        	</div>
+	        	<div>
+					<div class="pretty p-default">
+		        		<input type = "checkbox" name = "dependent" value="dependent" id = "independent_student" @if(!empty($guardian) && $guardian->claimed_dependent) checked @endif />
+		        		<div class="state p-primary">
+		        			<label>This Parent/Guardian Claims me as a tax dependent</label>
+		        		</div>
+		        	</div>
+	        	</div>
+	        </div>
         </div>
 
    	    <div class = "row">
