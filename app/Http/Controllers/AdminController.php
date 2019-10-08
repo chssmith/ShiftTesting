@@ -21,7 +21,7 @@ use App\Countries;
 use App\CitizenshipInformation;
 use App\Counties;
 use App\USResidence;
-use App\VisaTypes;;
+use App\VisaTypes;
 use App\VisaTypeMap;
 use App\GuardianInfo;
 use App\EmergencyContact;
@@ -45,12 +45,17 @@ class AdminController extends Controller
 	}
 
 	public function changedStudents(){
+		ini_set('max_execution_time', 300);
 		$user = RCAuth::user();
 		$all_changed = Students::with('visa')->get();
 
-		$pdf = \PDF::loadView("reports.student_report", compact("all_changed"));
+		$report_string = '';
+		foreach($all_changed as $student){
+			$report_string .= view()->make("reports.student_report", ['student'=>$student])->render();
+		}
+		$pdf = \PDF::loadHtml($report_string);
 
-		return $pdf->stream('test');
+		return $pdf->stream('testing');
 		 //return view('reports.student_report', compact('all_changed'));
 	}
 
