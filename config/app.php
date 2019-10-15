@@ -165,6 +165,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         rcwebdevelopers\Auth\AuthServiceProvider::class,
         rcwebdevelopers\mustangbuilder\MustangBuilderProvider::class,
+        GrofGraf\LaravelPDFMerger\Providers\PDFMergerServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -231,6 +232,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'PDFMerger' => GrofGraf\LaravelPDFMerger\Facades\PDFMergerFacade::class
 
     ],
 

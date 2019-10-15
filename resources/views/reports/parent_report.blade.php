@@ -20,7 +20,7 @@
 	    border-style: solid;
 	    border-color: #666666 ;
 	    background-color: #ffffff ;
-	}	
+	}
 
 	.grayed {
 		background-color: gray !important;
@@ -28,8 +28,7 @@
 
 	#header { position: fixed; left: 0px; top: -180px; right: 0px; height: 150px; background-color: orange; text-align: center; }
 </style>
-@foreach($all_changed as $student)
-	
+
 	<?php $color = "white"; ?>
 	<div id="header">
 		<p  style="text-align:right; margin-bottom:0px; margin-top:0px;"> Student ID: {{$student->RCID}} </p>
@@ -61,7 +60,7 @@
 			</tr>
 		</thead>
 
-		<tbody>	
+		<tbody>
 			<tr>
 				<td> First Name </td>
 				<td>  </td>
@@ -87,7 +86,7 @@
 			<tr>
 				<td> Last Name </td>
 				<td>  </td>
-				<td> {{ $student->last_name }} </td>	
+				<td> {{ $student->last_name }} </td>
 				<td>
 					@if(null != $student->last_name)
 						Y
@@ -109,10 +108,10 @@
 			<tr>
 				<td> Green Card </td>
 				<td>  </td>
-				<td> 
+				<td>
 					@if( $student->green_card )
 						True
-					@endif	
+					@endif
 				 </td>
 				<td>
 					@if(null != $student->green_card)
@@ -135,21 +134,21 @@
 			<tr>
 				<td> Independence </td>
 				<td>  </td>
-				<td> @if($student->independent_student) 
-						Y 
-					 @elseif(!$student->independent_student)  
+				<td> @if($student->independent_student)
+						Y
+					 @elseif(!$student->independent_student)
 					 	N
 					 @endif </td>
 				<td>
 					@if(null != $student->independent_student)
 						Y
-					@endif	
+					@endif
 				</td>
 			</tr>
 		</tbody>
 	</table>
 
-	<h3> Addresses </h3> 	
+	<h3> Addresses </h3>
 	{{-- Colorless Infobox --}}
 	<table width="100%" class="gridtable" border="1" style="page-break-after:always;">
 		<thead>
@@ -169,10 +168,10 @@
 				<th width="25%">
 					Field Changed?
 				</th>
-			</tr> 	
+			</tr>
 		</thead>
 
-		<tbody>		
+		<tbody>
 			@foreach($student->address as $type => $address)
 				<tr>
 					<td> <strong> {{$type}} </strong> </td>
@@ -184,7 +183,7 @@
 				<tr>
 					<td> Street 1 </td>
 					<td>  </td>
-					<td> 
+					<td>
 						@if(!empty($address))
 							{{ $address->Address1 }}
 						@endif
@@ -198,10 +197,10 @@
 
 				<tr>
 					<td> Street 2 </td>
-					<td>  </td>	
-					<td> 
+					<td>  </td>
+					<td>
 						@if(!empty($address))
-							{{ $address->Address2 }} 
+							{{ $address->Address2 }}
 						@endif
 					</td>
 					<td>
@@ -214,7 +213,7 @@
 				<tr>
 					<td> City </td>
 					<td>  </td>
-					<td> 
+					<td>
 						@if(!empty($address))
 							{{ $address->City }} </td>
 						@endif
@@ -228,7 +227,7 @@
 				<tr>
 					<td> State </td>
 					<td>  </td>
-					<td> 
+					<td>
 						@if(!empty($address))
 							{{ $address->fkey_StateId }} </td>
 						@endif
@@ -242,9 +241,9 @@
 				<tr>
 					<td> Zip Code </td>
 					<td>  </td>
-					<td> 
+					<td>
 						@if(!empty($address))
-							{{ $address->PostalCode }} 
+							{{ $address->PostalCode }}
 						@endif
 					</td>
 					<td>
@@ -257,13 +256,13 @@
 				<tr>
 					<td> Country </td>
 					<td>  </td>
-					<td> 
+					<td>
 						@if(!empty($address))
 							{{ $address->fkey_CountryId }}
 						@endif
 					</td>
 					<td>
-						
+
 						@if(!empty($address) && null != $address->fkey_CountryId)
 							Y
 						@endif
@@ -272,5 +271,4 @@
 			@endforeach
 		</tbody>
 	</table>
-
-@endforeach 		
+	

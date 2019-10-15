@@ -49,13 +49,30 @@ class AdminController extends Controller
 		$user = RCAuth::user();
 		$all_changed = Students::with('visa')->get();
 
-		$report_string = '';
-		foreach($all_changed as $student){
-			$report_string .= view()->make("reports.student_report", ['student'=>$student])->render();
-		}
-		$pdf = \PDF::loadHtml($report_string);
+		$storage_path = Storage_path();
 
-		return $pdf->stream('testing');
+		$count = 1;
+		foreach($all_changed as $student){
+			$report_string = view()->make("reports.student_report", ['student'=>$student])->render();
+			$pdf = \PDF::loadHtml($report_string);
+			$new_page = $pdf->output();
+			file_put_contents($storage_path.'/pdfs/page'.$count, $new_page);
+			$count++;
+		}
+
+		$merger = \PDFMerger::init();
+
+		for($index = 1; $index < $count; $index++){
+			$merger->addPathToPDF($storage_path.'/pdfs/page'.$index, 'all', 'P');
+		}
+
+		$merger->setFileName('ReportFileName.pdf');
+		$merger->merge();
+		$merger->inline();
+
+
+		//Switch to PDF MERGER
+
 		 //return view('reports.student_report', compact('all_changed'));
 	}
 
@@ -63,6 +80,14 @@ class AdminController extends Controller
 		$user = RCAuth::user();
 		$all_changed = Students::with('parents.employment')->get();
 
+		$count = 1;
+		foreach($all_changed as $student){
+			$report_string = view()->make("reports.parent_report", ['student'=>$student])->render();
+			$pdf = \PDF::loadHtml($report_string);
+			$new_page = $pdf->output();
+			file_put_contents($storage_path.'/pdfs/page'.$count, $new_page);
+			$count++;
+		}
 		$pdf = \PDF::loadView('reports.parent_report', compact('all_changed'));
 		return $pdf;
 	}

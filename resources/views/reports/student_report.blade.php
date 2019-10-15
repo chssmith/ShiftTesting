@@ -33,23 +33,23 @@
         margin: 100px 25px;
     }
 
-		header{{$student->RCID}} {
-		        position: fixed;
-		        top: -90px;
-		        left: 0px;
-		        right: 0px;
-		        height: 50px;
-		        line-height: 35px;
-		    }
+		header {
+        position: fixed;
+        top: -90px;
+        left: 0px;
+        right: 0px;
+        height: 50px;
+        line-height: 35px;
+    }
 
 </style>
 
 
-<div id="body{{$student->rcid}}">
-	<div id="header{{$student->rcid}}">
+<body id="body{{$student->RCID}}" class="body">
+	<header id="header{{$student->RCID}}" class="header">
 		<p style="text-align:right; margin-bottom:0px; margin-top:0px;"> Student ID: {{$student->RCID}} </p>
 		<p style="text-align:right; margin-bottom:0px; margin-top:0px;"> Date Changed: {{ date('m/j/y', strtotime($student->updated_at)) }} </p>
-	</div>
+	</header>
 
 	<main>
 		<?php $color = "white";
