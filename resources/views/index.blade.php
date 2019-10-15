@@ -32,20 +32,25 @@
 	@parent
 		<style>
 			.accordian-circle.active {
-				transform:          rotate(90deg);
-				-ms-transform:      rotate(90deg);
-				-moz-transform:     rotate(90deg);
-				-webkit-transform:  rotate(90deg);
-				-o-transform:       rotate(90deg);
+				transform:          rotate(180deg);
+				-ms-transform:      rotate(180deg);
+				-moz-transform:     rotate(180deg);
+				-webkit-transform:  rotate(180deg);
+				-o-transform:       rotate(180deg);
 			}
 
 			.panel-title{
 				width:100%;
 			}
+			.panel-heading {
+				border-bottom: 10px solid;
+			}
 		</style>
 @endsection
 
 @section("content")
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2 col-xs-12">
 			<div class="panel">
 				<div class="panel-body">
 					Welcome	to the RC Community!
@@ -56,7 +61,7 @@
 				</div>
 			</div>
 
-	
+
 
 	<div id="accordion" class="panel panel-default">
  		<div class="panel-heading" role="tab" id="headingForms">
@@ -101,7 +106,7 @@
     		<h4 class="panel-title">
 			    <a role="button" class="accordian-button" target="OtherStuff" style="color:black" data-toggle="collapse" data-parent="#accordion" href="#collapseOthers" aria-expanded="false" aria-controls="collapseOthers">
 			    	<div>
-			    		<span id="OtherStuff" class="accordian-circle fas fa-chevron-circle-right fa-lg pull-right check" style="color: grey"></span>
+			    		<span id="OtherStuff" class="accordian-circle fas fa-chevron-circle-down fa-lg pull-right check" style="color: grey"></span>
 					        Other Forms
 				    </div>
 			    </a>
