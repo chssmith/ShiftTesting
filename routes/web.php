@@ -48,7 +48,7 @@ Route::get('admin/parents', 'AdminController@changedParentInfo');
 Route::get('admin/create_student_snap', 'AdminController@createStudentSnap');
 Route::get('admin/create_parent_snap', 'AdminController@createParentSnap');
 
-Route::get('index', 'StudentInformationController@index');
+Route::get('/', 'StudentInformationController@index');
 Route::get('personal_info', 'StudentInformationController@personalInfo');
 Route::get('address_info', 'StudentInformationController@addressInfo');
 Route::get('residence_info', 'StudentInformationController@residenceInfo');

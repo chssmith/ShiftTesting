@@ -16,7 +16,7 @@ class ForceLogin
      * @param \Closure $next
      * @return mixed
      */
-    
+
     public function handle($request, Closure $next){
     	$returnRoute = Redirect::to('login')->with('returnURL', $request->fullUrl());
 
@@ -24,6 +24,7 @@ class ForceLogin
 
     		$rcid = RCAuth::user()->rcid;
     		$user = User::where('RCID', $rcid)->first();
+        app()->instance(User::class, $user);
 
     		if(!empty($user)){
     			$returnRoute = $next($request);

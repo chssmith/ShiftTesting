@@ -38,6 +38,9 @@ class AdminController extends Controller
 
 	public function __construct(){
       $this->middleware("force_login");
+			if (!\Storage::exists("pdfs")) {
+				\Storage::makeDirectory("pdfs");
+			}
 	}
 
 	public function index(){
@@ -49,21 +52,22 @@ class AdminController extends Controller
 		$user = RCAuth::user();
 		$all_changed = Students::with('visa')->get();
 
-		$storage_path = Storage_path();
+		$storage_path = storage_path();
 
 		$count = 1;
 		foreach($all_changed as $student){
 			$report_string = view()->make("reports.student_report", ['student'=>$student])->render();
 			$pdf = \PDF::loadHtml($report_string);
 			$new_page = $pdf->output();
-			file_put_contents($storage_path.'/pdfs/page'.$count, $new_page);
+			\Storage::put("pdfs/page" . $count . ".pdf", $new_page);
+			// file_put_contents($storage_path.'/pdfs/page'.$count, $new_page);
 			$count++;
 		}
 
 		$merger = \PDFMerger::init();
 
 		for($index = 1; $index < $count; $index++){
-			$merger->addPathToPDF($storage_path.'/pdfs/page'.$index, 'all', 'P');
+			$merger->addPathToPDF(\Storage::path('/pdfs/page'.$index.".pdf"), 'all', 'P');
 		}
 
 		$merger->setFileName('ReportFileName.pdf');
@@ -85,7 +89,7 @@ class AdminController extends Controller
 			$report_string = view()->make("reports.parent_report", ['student'=>$student])->render();
 			$pdf = \PDF::loadHtml($report_string);
 			$new_page = $pdf->output();
-			file_put_contents($storage_path.'/pdfs/page'.$count, $new_page);
+			file_put_contents(storage_path() . '/pdfs/page' . $count, $new_page);
 			$count++;
 		}
 		$pdf = \PDF::loadView('reports.parent_report', compact('all_changed'));
