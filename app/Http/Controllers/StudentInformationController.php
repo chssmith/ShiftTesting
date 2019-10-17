@@ -253,6 +253,129 @@ class StudentInformationController extends Controller
 		return redirect()->action('StudentInformationController@citizenInfo');
 	}
 
+	public function citizenInfo(Students $student){
+		$user          = RCAuth::user();
+
+		$us_resident   = USResidence::where('RCID', $user->rcid)->first();
+		$foreign       = CitizenshipInformation::where('RCID', $user->rcid)->get();
+
+		$visa_types    = VisaTypes::all();
+		$visa          = VisaTypeMap::where('RCID', $user->rcid)->first();
+
+		$states        = States::all();
+		$countries     = Countries::all();
+		$counties      = Counties::all()->keyBy("county_id")->map(
+			function ($item) {
+				$display = $item->description;
+
+				if(strpos($display, 'Co:') !== false){
+	    			$display = str_replace("Co: ", "", $display);
+	    			$display .= " County";
+	  		}
+
+				if(strpos($display, 'Ct:') !== false){
+					$display = str_replace("Ct: ", "", $display);
+				}
+
+				$item->display = $display;
+				return $item;
+		})->sortBy("display");
+
+		return view('citizen_info', compact('countries', 'student', 'us_resident', 'foreign', 'visa_types', 'visa', 'counties', 'states'));
+	}
+
+	public function citizenInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
+		$user          = RCAuth::user();
+		$visa          = VisaTypeMap::where('RCID', $user->rcid)->first();
+		$foreign       = CitizenshipInformation::orderBy('ID')->where('RCID', $user->rcid)->get();
+
+		$student->us_citizen = (bool)$request->US_citizen;
+
+		if ($request->US_citizen){
+			// Student is a US Citizen
+			$us_resident   = USResidence::firstOrNew(['RCID' => $user->rcid, 'created_by' => $user->rcid, 'updated_by' => $user->rcid]);
+
+			$us_resident->fkey_StateCode = $request->state;
+			if(!empty($request->county) && $request->state == "VA"){
+				// ASSERT: Student lives in VA
+				$us_resident->fkey_CityCode = $request->county;
+			}else{
+				$us_resident->fkey_CityCode = NULL;
+			}
+			$us_resident->save();
+		}else{
+			// Student is not a US Citizen
+			$student->us_citizen = 0;
+			USResidence::where('RCID', $user->rcid)->update(["deleted_by" => $user->rcid, "deleted_at" => \Carbon\Carbon::now()]);
+		}
+
+		$student->other_citizen = (bool)$request->other_citizen;
+		if ($request->other_citizen){
+			// Student has a non-US Citizenship
+			if($foreign->isEmpty()){
+				// Assert: No Previous non-US citizenship information
+				$country1             = new CitizenshipInformation;
+				$country1->RCID       = $user->rcid;
+				$country1->created_by = $user->rcid;
+
+				$country2             = new CitizenshipInformation;
+				$country2->RCID       = $user->rcid;
+				$country2->created_by = $user->rcid;
+			}else{
+				// Assert: Set up required both country 1 and country 2 to be created
+				$country1 = $foreign[0];
+				$country2 = $foreign[1];
+			}
+
+			// Updating foreign country information
+			$country1->updated_by = $user->rcid;
+			$country1->BirthCountry       = $request->BirthCountry[0];
+			$country1->CitizenshipCountry = $request->CitizenshipCountry[0];
+			$country1->PermanentCountry   = $request->PermanentCountry[0];
+			$country2->updated_by = $user->rcid;
+			$country2->BirthCountry       = $request->BirthCountry[1];
+			$country2->CitizenshipCountry = $request->CitizenshipCountry[1];
+			$country2->PermanentCountry   = $request->PermanentCountry[1];
+
+			$country1->save();
+			$country2->save();
+
+			if(!empty($request->GreenCard) && ($request->GreenCard == "GreenCard")){
+				// ASSERT:  Has Green Card
+				$student->green_card = 1;
+			}else{
+				$student->green_card = 0;
+			}
+
+			if(!empty($request->GreenCard) && ($request->GreenCard == "Visa")){
+				// ASSERT: has a Visa
+				if(empty($visa)){
+					$visa 		= New VisaTypeMap;
+					$visa->RCID = $user->rcid;
+					$visa->created_by = $user->rcid;
+					$visa->updated_by = $user->rcid;
+				}
+				$visa->fkey_code = $request->VisaTypes;
+				$visa->save();
+			}else{
+				// ASSERT: NO Visa
+				if(!empty($visa)){
+					// ASSERT: Has visa in database that needs to be removed
+					self::deleteObject($visa);
+				}
+			}
+		}else{
+			// Assert: Student does not have a foreign citizenship
+			$student->other_citizen = 0;
+			// deleting any foreign records if there are any
+			self::emptyForeignCitizenship($user->rcid);
+		}
+		$student->save();
+		self::completedCitizenShipInfo();
+
+		return redirect()->action('StudentInformationController@allergyInfo');
+	}
+
 	public function allergyInfo(){
 		$user           = RCAuth::user();
 		$student 	    = self::getStudent($user->rcid);
@@ -524,141 +647,6 @@ class StudentInformationController extends Controller
 		self::completedParentInfo();
 
 		return redirect()->action('StudentInformationController@parentAndGuardianInfo');
-	}
-
-	public function citizenInfo(){
-		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
-
-		$us_resident   = USResidence::where('RCID', $user->rcid)->first();
-		$foreign       = CitizenshipInformation::where('RCID', $user->rcid)->get();
-
-		$visa_types    = VisaTypes::all();
-		$visa          = VisaTypeMap::where('RCID', $user->rcid)->first();
-
-		$states        = States::all();
-		$countries     = Countries::all();
-		$counties      = Counties::all();
-
-		$updated_counties = collect();
-
-		// Making counties and cities easier to read and sorting alphabetically
-		foreach($counties as $county){
-			$display = $county->description;
-			if(strpos($display, 'Co:') !== false){
-    			$display = str_replace("Co: ", "", $display);
-    			$display .= " County";
-    		}
-			if(strpos($display, 'Ct:') !== false){
-				$display = str_replace("Ct: ", "", $display);
-			}
-			$updated_counties[$county->county_id] = $display;
-		}
-
-		$updated_counties = $updated_counties->sort();
-
-		return view('citizen_info', compact('countries', 'student', 'us_resident', 'foreign', 'visa_types', 'visa', 'counties', 'states', 'updated_counties'));
-	}
-
-	public function citizenInfoUpdate(Request $request){
-		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
-		$visa          = VisaTypeMap::where('RCID', $user->rcid)->first();
-		$us_resident   = USResidence::where('RCID', $user->rcid)->first();
-		$foreign       = CitizenshipInformation::orderBy('ID')->where('RCID', $user->rcid)->get();
-
-		if($request->US_citizen == "US_citizen"){
-			// Student is a US Citizen
-			$student->us_citizen = 1;
-			if(empty($us_resident)){
-				// ASSERT: No previous US citizenship information
-				$us_resident 			 = New USResidence;
-				$us_resident->RCID 		 = $user->rcid;
-				$us_resident->created_by = $user->rcid;
-			}
-			$us_resident->fkey_StateCode = $request->state;
-			if(!empty($request->county) && $request->state == "VA"){
-				// ASSERT: Student lives in VA
-				$us_resident->fkey_CityCode = $request->county;
-			}else{
-				$us_resident->fkey_CityCode = NULL;
-			}
-			$us_resident->save();
-		}else{
-			// Student is not a US Citizen
-			$student->us_citizen = 0;
-			if(!empty($us_resident)){
-				// Delete old Residence infomation
-				self::deleteObject($us_resident);
-			}
-		}
-
-
-		if($request->other_citizen == "other_citizen"){
-			// Student has a non-US Citizenship
-			$student->other_citizen = 1;
-			if(empty($foreign[0])){
-				// Assert: No Previous non-US citizenship information
-				$country1             = new CitizenshipInformation;
-				$country1->RCID       = $user->rcid;
-				$country1->created_by = $user->rcid;
-
-				$country2             = new CitizenshipInformation;
-				$country2->RCID       = $user->rcid;
-				$country2->created_by = $user->rcid;
-			}else{
-				// Assert: Set up required both country 1 and country 2 to be created
-				$country1 = $foreign[0];
-				$country2 = $foreign[1];
-			}
-
-			// Updating foreign country information
-			$country1->updated_by = $user->rcid;
-			$country1->BirthCountry       = $request->BirthCountry[0];
-			$country1->CitizenshipCountry = $request->CitizenshipCountry[0];
-			$country1->PermanentCountry   = $request->PermanentCountry[0];
-			$country2->updated_by = $user->rcid;
-			$country2->BirthCountry       = $request->BirthCountry[1];
-			$country2->CitizenshipCountry = $request->CitizenshipCountry[1];
-			$country2->PermanentCountry   = $request->PermanentCountry[1];
-
-			$country1->save();
-			$country2->save();
-
-			if(!empty($request->GreenCard) && ($request->GreenCard == "GreenCard")){
-				// ASSERT:  Has Green Card
-				$student->green_card = 1;
-			}else{
-				$student->green_card = 0;
-			}
-
-			if(!empty($request->GreenCard) && ($request->GreenCard == "Visa")){
-				// ASSERT: has a Visa
-				if(empty($visa)){
-					$visa 		= New VisaTypeMap;
-					$visa->RCID = $user->rcid;
-					$visa->created_by = $user->rcid;
-					$visa->updated_by = $user->rcid;
-				}
-				$visa->fkey_code = $request->VisaTypes;
-				$visa->save();
-			}else{
-				// ASSERT: NO Visa
-				if(!empty($visa)){
-					// ASSERT: Has visa in database that needs to be removed
-					self::deleteObject($visa);
-				}
-			}
-		}else{
-			// Assert: Student does not have a foreign citizenship
-			$student->other_citizen = 0;
-			// deleting any foreign records if there are any
-			self::emptyForeignCitizenship($user->rcid);
-		}
-		$student->save();
-		self::completedCitizenShipInfo();
-
-		return redirect()->action('StudentInformationController@allergyInfo');
 	}
 
 
