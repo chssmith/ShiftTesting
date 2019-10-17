@@ -36,6 +36,8 @@
 
 @section('stylesheets')
 	@parent
+	<link type="text/css" rel="stylesheet" href="{{ asset("css/global.css") }}" />
+
 	<style>
 	 #living{
 	 	padding-left:15px;
@@ -54,20 +56,20 @@
 		   		<h4> Where do you plan to live? </h4>
 			    <div class = "form-group" id="living">
 			    	<div>
-	     				<div class="pretty p-default p-round">  	    
-	            			<input type = "radio" class="residence_radios" name = "residence" value = "hall" 
+	     				<div class="pretty p-default p-round">
+	            			<input type = "radio" class="residence_radios" name = "residence" value = "hall"
 	        			    @if(!$student->home_as_local && empty($local_address)) checked @endif />
-		            		<div class="state p-primary">	
+		            		<div class="state p-primary">
 		        			    <label for = "residence_hall">
-		        			    	I plan to live in a residence hall 
+		        			    	I plan to live in a residence hall
 		        			    </label>
 			            	</div>
 	   	     			</div>
 	     			</div>
 
 	     			<div>
-	     				<div class="pretty p-default p-round">  	     
-		            		<input type = "radio" class="residence_radios" name = "residence" value = "home" 
+	     				<div class="pretty p-default p-round">
+		            		<input type = "radio" class="residence_radios" name = "residence" value = "home"
             					@if($student->home_as_local) checked @endif />
 		            		<div class="state p-primary">
 		            			<label for = "residence_hall">
@@ -78,8 +80,8 @@
 	     			</div>
 
 	     			<div>
-	     				<div class="pretty p-default p-round">  	     	
-		            		<input type = "radio" class="residence_radios" name = "residence" value = "other" 
+	     				<div class="pretty p-default p-round">
+		            		<input type = "radio" class="residence_radios" name = "residence" value = "other"
 				    			@if(!empty($local_address)) checked @endif />
 		            		<div class="state p-primary">
 			    				<label for = "residence_hall">
@@ -87,7 +89,7 @@
 								</label>
 			            	</div>
 	   	     			</div>
-	     			</div>    			   
+	     			</div>
 			    </div>
 			</div>
 		</div>
@@ -97,15 +99,15 @@
 				<div class = "row">
 		   	     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 			        	<div class = "form-group">
-					       	Street <input type= "text" class = "form-control" name = "local_Address1" id = "local_Address1"  
+					       	Street <input type= "text" class = "form-control" name = "local_Address1" id = "local_Address1"
 					        				@if(!empty($local_address)) value="{{$local_address->Address1}}" @endif>
 						</div>
 					</div>
 
 
-		   	     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">        	
+		   	     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 			        	<div class = "form-group address">
-					        <input type= "text" class = "form-control "  name = "local_Address2" id = "local_Address2"  
+					        <input type= "text" class = "form-control "  name = "local_Address2" id = "local_Address2"
 					        	   @if(!empty($local_address)) value="{{$local_address->Address2}}" @endif>
 						</div>
 		        	</div>
@@ -126,7 +128,7 @@
 				   				@foreach($states as $state)
 				   					<option value='{{$state->StateCode}}' @if(!empty($local_address) && ($local_address->fkey_StateId == $state->StateCode)) selected @endif>{{$state->StateName}}
 				   					</option>
-				   				@endforeach	
+				   				@endforeach
 			   				</select>
 			   			</div>
 			   		</div>
@@ -149,4 +151,4 @@
         	</div>
         </div>
     </form>
-@endsection	
+@endsection

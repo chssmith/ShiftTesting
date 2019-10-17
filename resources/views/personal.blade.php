@@ -5,7 +5,10 @@
 @endsection
 
 @section('javascript')
-
+	<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/jquery.inputmask.bundle.js"></script>
+	<script>
+		$("input[type='tel']").inputmask({"mask": "(999) 999-9999"});
+	</script>
 @endsection
 
 @section("stylesheets")
@@ -103,7 +106,7 @@
 					<label for="home_phone">
 						Home Phone
 					</label>
-					<input type="text" class="form-control" name="home_phone" id="home_phone"
+					<input type="tel" class="form-control" name="home_phone" id="home_phone"
 			  			@if (!empty($home_phone)) value="{{$home_phone->PhoneNumber}}" @endif>
 				</div>
     	</div>
@@ -113,7 +116,7 @@
 				  <label for="cell_phone">
 						Cell Phone
 					</label>
-					<input type="text" class="form-control" name="cell_phone" id="cell_phone"
+					<input type="tel" class="form-control" name="cell_phone" id="cell_phone"
 						@if (!empty($cell_phone)) value="{{$cell_phone->PhoneNumber}}" @endif>
 				</div>
     	</div>
@@ -191,10 +194,10 @@
     	</div>
     </div>
 
-    <div class = "row">
+    <div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     		<div class="btn-toolbar">
-	 		    <button type = "submit" class = "btn btn-lg btn-success pull-right"> Save and Continue </button>
+	 		    <button type="submit" class="btn btn-lg btn-success pull-right"> Save and Continue </button>
      			<a href="{{action('StudentInformationController@index')}}" class="btn btn-lg btn-danger pull-right"> Cancel </a>
 				</div>
 			</div>

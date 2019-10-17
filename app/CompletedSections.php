@@ -16,5 +16,6 @@ class CompletedSections extends model
     protected $table      = 'student_forms.completed_sections';
     protected $primaryKey = 'fkey_rcid';
     protected $connection = 'SAO';
+    protected $fillable   = ["fkey_rcid"];
 
 }

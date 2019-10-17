@@ -87,9 +87,8 @@ class StudentInformationController extends Controller
 		return view('personal', compact('user', 'student','cell_phone','home_phone', 'user_races', 'all_races', 'have_SSN','marital_statuses','military_options', 'datamart_student', 'vpb_user'));
 	}
 
-	public function personalInfoUpdate(Request $request){
+	public function personalInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
 		$user    = RCAuth::user();
-		$student = self::getStudent($user->rcid);
 
 		// Updating all the student information
 		$student->first_name 		      = $request->first_name;
@@ -102,32 +101,25 @@ class StudentInformationController extends Controller
 		$student->updated_by          = $user->rcid;
 		$student->save();
 
-		$cell_phone = PhoneMap::where('RCID', $user->rcid)->where('fkey_PhoneTypeId',3)->first();
-
-		if(empty($cell_phone)){
-			// Creating new phone object for a cell phone
-			$cell_phone 				          = new PhoneMap;
-			$cell_phone->RCID			        = $user->rcid;
-			$cell_phone->fkey_PhoneTypeId = 3;
-			$cell_phone->created_by       = $user->rcid;
+		$cell_phone = PhoneMap::firstOrNew(['RCID' => $user->rcid, 'fkey_PhoneTypeId' => 3]);//where('RCID', $user->rcid)->where('fkey_PhoneTypeId',3)->first();
+		if(empty($cell_phone->created_by)){
+			$cell_phone->created_by = $user->rcid;
+			$cell_phone->updated_by = $user->rcid;
 		}
+
 		// updating the cell phone information
-		$cell_phone->PhoneNumber = $request->cell_phone;
-		$cell_phone->updated_by  = $user->rcid;
+		$cell_phone->PhoneNumber = $request->input("cell_phone", null);
 		$cell_phone->save();
 
-		$home_phone = PhoneMap::where('RCID', $user->rcid)->where('fkey_PhoneTypeId',1)->first();
-
-		if(empty($home_phone)){
+		$home_phone = PhoneMap::firstOrNew(['RCID' => $user->rcid, 'fkey_PhoneTypeId' => 1]);//where('RCID', $user->rcid)->where('fkey_PhoneTypeId',1)->first();
+		if(empty($home_phone->created_by)){
 			// Creating a new phone object for a home phone
-			$home_phone 				          = new PhoneMap;
-			$home_phone->RCID			        = $user->rcid;
-			$home_phone->fkey_PhoneTypeId = 1;
-			$home_phone->created_by       = $user->rcid;
+			$home_phone->created_by = $user->rcid;
+			$home_phone->updated_by = $user->rcid;
 		}
+
 		// Updating the home phone information
-		$home_phone->PhoneNumber = $request->home_phone;
-		$cell_phone->updated_by  = $user->rcid;
+		$home_phone->PhoneNumber = $request->input("home_phone", null);
 		$home_phone->save();
 
 		$races     = $request->races;
@@ -137,7 +129,7 @@ class StudentInformationController extends Controller
 			// ASSERT: We have input races to adjust
 			foreach($races as $race){
 				// Creating new race map connections for the student
-				$new_race 			  	  = new RaceMap;
+				$new_race 			  	      = new RaceMap;
 				$new_race->fkey_rcid      = $user->rcid;
 				$new_race->created_by 	  = $user->rcid;
 				$new_race->updated_by 	  = $user->rcid;
@@ -146,67 +138,58 @@ class StudentInformationController extends Controller
 			}
 		}
 
-		self::completedPersonalInfo();
+		if( !empty($student->first_name)          && !empty($student->last_name) &&
+				!empty($student->fkey_marital_status) && !empty($student->fkey_military_id) &&
+				!empty($student->ethnics)             && !empty($cell_phone->PhoneNumber) &&
+				!empty($home_phone->PhoneNumber)      && !empty($races)){
+			// Assert: All Required information is filled out
+			$completed_sections->personal_information = 1;
+		}else{
+			// Assert: Missing Required information
+			$completed_sections->personal_information = 0;
+		}
+		$completed_sections->updated_by = $user->rcid;
+		$completed_sections->save();
+
 		return redirect()->action('StudentInformationController@addressInfo');
 	}
 
-	public function addressInfo(){
+	public function addressInfo(Students $student){
 		$user            = RCAuth::user();
-		$student 		 = Students::where('RCID', $user->rcid)->first();
-		$home_address    = Address::where('RCID', $user->rcid)->where('fkey_AddressTypeId', 1)->first();
-		$billing_address = Address::where('RCID', $user->rcid)->where('fkey_AddressTypeId', 3)->first();
-
-		if(empty($home_address) && empty($billing_address)){
-			$home_address    = DatamartAddress::where('RCID', $user->rcid)->where('fkey_AddressTypeId', 1)->first();
-			$billing_address = DatamartAddress::where('RCID', $user->rcid)->where('fkey_AddressTypeId', 3)->first();
-		}
+		$addresses       = Address::where('RCID', $user->rcid)->whereIn('fkey_AddressTypeId', [1, 3])->get()->keyBy("fkey_AddressTypeId");
+		$dm_addresses    = DatamartAddress::where('RCID', $user->rcid)->whereIn('fkey_AddressTypeId', [1, 3])->get()->keyBy("fkey_AddressTypeId");
+		$home_address    = $addresses->get(1, $dm_addresses->get(1));
+		$billing_address = $addresses->get(3, $dm_addresses->get(3));
 
 		$states          = States::all();
 		$countries       = Countries::all();
 		return view('address', compact('student','home_address', 'billing_address','states', 'countries'));
 	}
 
-	public function addressInfoUpdate(Request $request){
+	public function addressInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
 		$user 			 = RCAuth::user();
-		$student 		 = self::getStudent($user->rcid);
-		$home_address    = Address::where('RCID', $user->rcid)->where('fkey_AddressTypeId', 1)->first();
-		$billing_address = Address::where('RCID', $user->rcid)->where('fkey_AddressTypeId', 3)->first();
 
-		if(empty($home_address)){
-			// ASSERT: Home Address not found
-			// need to create a fresh address
-			$home_address 					  = new Address;
-			$home_address->fkey_AddressTypeId = 1;
-			$home_address->RCID 			  = $user->rcid;
-			$home_address->created_by 		  = $user->rcid;
-		}
+		$home_address    = Address::firstOrNew(['RCID' => $user->rcid, 'fkey_AddressTypeId' => 1, 'created_by' => $user->rcid]);
+
 		// updating the home address information
-		$home_address->Address1 	  = $request->Address1;
-		$home_address->Address2 	  = $request->Address2;
-		$home_address->City     	  = $request->city;
+		$home_address->Address1 	    = $request->Address1;
+		$home_address->Address2 	    = $request->Address2;
+		$home_address->City     	    = $request->city;
 		$home_address->fkey_StateId   = $request->state;
 		$home_address->PostalCode     = $request->zip;
-		$home_address->fkey_CountryId = $request->Country;
+		$home_address->fkey_CountryId = $request->country;
 		$home_address->updated_by     = $user->rcid;
 		$home_address->save();
 
-		if($request->home_as_billing){
+		if ($request->home_as_billing){
 			// ASSERT: Billing Address is same as Home Address
-			$student->home_as_billing = 1;
-			if(!empty($billing_address)){
-				// Need to delete existing billing address
-				self::deleteObject($billing_address);
-			}
+			$student->home_as_billing = true;
+			Address::where('RCID', $user->rcid)->where("fkey_AddressTypeId", 3)->update(["deleted_by" => $user->rcid, "deleted_at" => \Carbon\Carbon::now()]);
 		}else{
 			// Assert: Need a Billing Address Added
-			$student->home_as_billing = 0;
-			if(empty($billing_address)){
-				// Creating a new billing address object
-				$billing_address 					 = new Address;
-				$billing_address->fkey_AddressTypeId = 3;
-				$billing_address->RCID 			  	 = $user->rcid;
-				$billing_address->created_by 		 = $user->rcid;
-			}
+			$student->home_as_billing = false;
+			$billing_address = Address::firstOrNew(['RCID' => $user->rcid, 'fkey_AddressTypeId' => 3, 'created_by' => $user->rcid]);
+
 			// Updating the billing address
 			$billing_address->Address1	     = $request->billing_Address1;
 			$billing_address->Address2	     = $request->billing_Address2;
@@ -219,51 +202,42 @@ class StudentInformationController extends Controller
 		}
 		$student->save();
 
-		self::completedAddressInfo();
+		$has_home_address    = !empty($home_address)  && !empty($home_address->Address1) && !empty($home_address->City) && !empty($home_address->fkey_StateId) && !empty($home_address->PostalCode);
+		$has_billing_address = $student->home_as_billing || (!empty($billing_address) && !empty($billing_address->Address1) && !empty($billing_address->City) && !empty($billing_address->fkey_StateId) && !empty($billing_address->PostalCode));
+
+		$completed_sections->address_information = $has_home_address && $has_billing_address;
+		$completed_sections->updated_by          = $user->rcid;
+		$completed_sections->save();
 
 		return redirect()->action('StudentInformationController@residenceInfo');
 	}
 
-	public function residenceInfo(){
+	public function residenceInfo (Students $student){
 		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
 		$local_address = Address::where('RCID', $user->rcid)->where('fkey_AddressTypeId', 4)->first();
 		$states        = States::all();
 
 		return view('residence_hall', compact('local_address', 'student', 'states'));
 	}
 
-	public function residenceInfoUpdate(Request $request){
-		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
+	public function residenceInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
+		$user = RCAuth::user();
 
-		$local_address = Address::where('RCID', $user->rcid)->where('fkey_AddressTypeId', 4)->first();
-		if($request->residence == "hall"){
+		if (in_array($request->residence, ["hall", "home"])){
 			// Need to delete all local info
-			$student->home_as_local = 0;
-			if(!empty($local_address)){
-				self::deleteObject($local_address);
-			}
-		}else if($request->residence == "home"){
+			Address::where("RCID", $user->rcid)->where("fkey_AddressTypeId", 4)->update(["deleted_by" => $user->rcid, "deleted_at" => \Carbon\Carbon::now()]);
+
+			$student->home_as_local = $request->residence == "home";
 			// need to delete local address and update student bit
-			if(!empty($local_address)){
-				self::deleteObject($local_address);
-			}
-			$student->home_as_local = 1;
 		}else{
 			// need to update student bit and update local address
 			$student->home_as_local = 0;
-			if(empty($local_address)){
-				// Local Address is currently empty and needs to be created
-				$local_address 					   = new Address;
-				$local_address->fkey_AddressTypeId = 4;
-				$local_address->RCID 			   = $user->rcid;
-				$local_address->created_by 		   = $user->rcid;
-			}
+			$local_address = Address::firstOrNew(['RCID' => $user->rcid, 'fkey_AddressTypeId' => 4, 'created_by' => $user->rcid]);
+
 			// updating local address information
-			$local_address->Address1	 = $request->local_Address1;
-			$local_address->Address2	 = $request->local_Address2;
-			$local_address->City     	 = $request->local_city;
+			$local_address->Address1	   = $request->local_Address1;
+			$local_address->Address2	   = $request->local_Address2;
+			$local_address->City     	   = $request->local_city;
 			$local_address->fkey_StateId = $request->local_state;
 			$local_address->PostalCode   = $request->local_zip;
 			$local_address->updated_by   = $user->rcid;
@@ -271,7 +245,10 @@ class StudentInformationController extends Controller
 		}
 
 		$student->save();
-		self::completedResidenceInfo();
+
+		$completed_sections->residence_information = !is_null($student->home_as_local);
+		$completed_sections->updated_by = $user->rcid;
+		$completed_sections->save();
 
 		return redirect()->action('StudentInformationController@citizenInfo');
 	}
@@ -954,21 +931,6 @@ class StudentInformationController extends Controller
 		$cell_phone = PhoneMap::where('RCID', $user->rcid)->where('fkey_PhoneTypeId',3)->first();
 		$home_phone = PhoneMap::where('RCID', $user->rcid)->where('fkey_PhoneTypeId',1)->first();
 		$user_races = RaceMap::where('fkey_rcid', $user->rcid)->pluck('fkey_race_code')->toArray();
-		$completed_sections = CompletedSections::where('fkey_rcid', $user->rcid)->first();
-
-		if( !empty($student) 				   && !empty($student->first_name) &&
-		    !empty($student->last_name) 	   && !empty($student->fkey_marital_status) &&
-		    !empty($student->fkey_military_id) && !empty($student->ethnics) &&
-		    !empty($cell_phone) 			   && !empty($home_phone) &&
-		    !empty($user_races)){
-			// Assert: All Required information is filled out
-			$completed_sections->personal_information = 1;
-		}else{
-			// Assert: Missing Required information
-			$completed_sections->personal_information = 0;
-		}
-		$completed_sections->updated_by = $user->rcid;
-		$completed_sections->save();
 	}
 
 	// Pre:
@@ -980,18 +942,6 @@ class StudentInformationController extends Controller
 		$billing_address = Address::where('RCID', $user->rcid)->where('fkey_AddressTypeId', 3)->first();
 		$completed_sections = CompletedSections::where('fkey_rcid', $user->rcid)->first();
 
-		if( !empty($student) && !empty($home_address)  &&
-			!empty($home_address->Address1) && !empty($home_address->City) && !empty($home_address->fkey_StateId) && !empty($home_address->PostalCode) &&
-		   (!empty($student->home_as_billing) || (!empty($billing_address) &&
-			!empty($billing_address->Address1) && !empty($billing_address->City) && !empty($billing_address->fkey_StateId) && !empty($billing_address->PostalCode)))){
-			// Assert: All Required information is filled out
-			$completed_sections->address_information = 1;
-		}else{
-			// Assert: Missing Required information
-			$completed_sections->address_information = 0;
-		}
-		$completed_sections->updated_by = $user->rcid;
-		$completed_sections->save();
 	}
 
 	// Pre :

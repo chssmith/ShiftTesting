@@ -16,5 +16,6 @@ class Address extends model
     protected $table      = 'student_forms.address';
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
+    protected $fillable   = ["RCID", "fkey_AddressTypeId", "created_by"];
 
 }

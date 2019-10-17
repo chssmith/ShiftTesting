@@ -16,6 +16,7 @@ class Students extends model
     protected $table      = 'student_forms.students';
     protected $connection = 'SAO';
     protected $appends    = ['address'];
+    protected $fillable   = ["RCID"];
 
 
     public function parents(){
@@ -43,7 +44,7 @@ class Students extends model
     	$billing_address = $this->billing_address();
     	$local_address   = $this->local_address();
 
-    	return (['Home'=>$home_address, 'Billing'=>$billing_address, 'Local'=>$local_address]); 
+    	return (['Home'=>$home_address, 'Billing'=>$billing_address, 'Local'=>$local_address]);
     }
 
 }

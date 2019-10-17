@@ -17,4 +17,6 @@ class PhoneMap extends model
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
 
+    protected $fillable   = ['RCID', 'fkey_PhoneTypeId'];
+
 }
