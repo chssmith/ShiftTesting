@@ -41,6 +41,7 @@
 		{{ csrf_field() }}
 
 		<h3> Check all that apply </h3>
+
 		<div>
 			<div class="pretty p-default">
     		<input type="checkbox" class="hideshowbox" name="US_citizen" value=true id="US_citizen" @if($student->us_citizen) checked @endif />
@@ -49,22 +50,21 @@
     		</div>
     	</div>
     </div>
+
     <div id="US_citizen_span" @if(!$student->us_citizen) hidden @endif>
     	<div class="row">
-      	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-					<div class="form-group">
-						<label for="states">
-		      		State of Residence
-						</label>
-			    	<select name="state" form="CitizenForm" class="form-control" id='states'>
-   						<option></option>
-				    	@foreach($states as $state)
-	  						<option value="{{$state->StateCode}}" @if(!empty($us_resident) && $us_resident->fkey_StateCode == $state->StateCode) selected @endif>
-									{{ $state->StateName }}
-								</option>
-	  					@endforeach
-			    	</select>
-        	</div>
+      	<div class="col-xs-12 col-sm-6 form-group">
+					<label for="states">
+	      		State of Residence
+					</label>
+		    	<select name="state" form="CitizenForm" class="form-control" id='states'>
+ 						<option></option>
+			    	@foreach($states as $state)
+  						<option value="{{$state->StateCode}}" @if(!empty($us_resident) && $us_resident->fkey_StateCode == $state->StateCode) selected @endif>
+								{{ $state->StateName }}
+							</option>
+  					@endforeach
+		    	</select>
         </div>
 			</div>
 	    <div id="VA_span" @if(empty($us_resident) || $us_resident->fkey_StateCode != "VA") hidden @endif>
