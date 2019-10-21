@@ -187,23 +187,25 @@
 	   		</div>
 
 	   		<div class="col-xs-12 col-md-6">
-					<label for="billingCountry">
-		   			Country
-					</label>
-			    <select name="billingCountry" form="AddressForm" class="form-control" id='billingCountry'>
-						<option></option>
-			    	@foreach($countries as $country)
-							<option value="{{$country->key_CountryId}}" @if(!empty($billing_address) && $billing_address->fkey_CountryId == $country->key_CountryId) selected @endif>
-								{{ $country->CountryName }}
-							</option>
-						@endforeach
-			    </select>
+					<div class="form-group">
+						<label for="billingCountry">
+			   			Country
+						</label>
+				    <select name="billingCountry" form="AddressForm" class="form-control" id='billingCountry'>
+							<option></option>
+				    	@foreach($countries as $country)
+								<option value="{{$country->key_CountryId}}" @if(!empty($billing_address) && $billing_address->fkey_CountryId == $country->key_CountryId) selected @endif>
+									{{ $country->CountryName }}
+								</option>
+							@endforeach
+				    </select>
+					</div>
 				</div>
 			</div>
    	</span>
 
     <div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    	<div class="col-xs-12">
     		<div class="btn-toolbar">
     	    <button type="submit" class="btn btn-lg btn-success pull-right">
 						Save and Continue
