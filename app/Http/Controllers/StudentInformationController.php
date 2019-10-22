@@ -387,68 +387,25 @@ class StudentInformationController extends Controller
 	}
 
 	public function allergyInfoUpdate(Request $request){
-		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
+		$user    = RCAuth::user();
+		$student = self::getStudent($user->rcid);
 
-		$medications    = Medications::where('rcid', $user->rcid)->first();
-		$med_allergy    = MedicationAllergies::where('rcid', $user->rcid)->first();
-		$insect_allergy = InsectAllergies::where('rcid', $user->rcid)->first();
-
-		if(empty($medications)){
-			// ASSERT: First time student is submitting this information
-			// creating new medication information
-			$medications = New Medications;
-			$medications->rcid       = $user->rcid;
-			$medications->created_by = $user->rcid;
-		}
-		if(!empty($request->medications)){
-			// User takes medications
-			$medications->take_medications = 1;
-			$medications->medications 	   = $request->medications_text;
-		}else{
-			// User does not take medication
-			$medications->take_medications = 0;
-			$medications->medications      = '';
-		}
-		$medications->updated_by = $user->rcid;
+		$medications = Medications::firstOrNew(['rcid' => $user->rcid, "created_by" => $user->rcid]);
+		$medications->take_medications = !empty($request->medications);
+		$medications->medications 	   = $request->input("medications_text", "");
+		$medications->updated_by       = $user->rcid;
 		$medications->save();
 
-		if(empty($med_allergy)){
-			// ASSERT: First time student is submitting this information
-			// Creating new allergy medication object
-			$med_allergy = new MedicationAllergies;
-			$med_allergy->rcid = $user->rcid;
-			$med_allergy->created_by = $user->rcid;
-		}
-		if(!empty($request->med_allergies)){
-			// User has medication allergies
-			$med_allergy->have_medication_allergies = 1;
-			$med_allergy->medication_allergies      = $request->med_allergy_text;
-		}else{
-			// User does not have medication allergies
-			$med_allergy->have_medication_allergies = 0;
-			$med_allergy->medication_allergies      = '';
-		}
-		$med_allergy->updated_by = $user->rcid;
+		$med_allergy = MedicationAllergies::firstOrNew(['rcid' => $user->rcid, "created_by" => $user->rcid]);
+		$med_allergy->have_medication_allergies = !empty($request->med_allergies);
+		$med_allergy->medication_allergies      = $request->input("med_allergy_text", "");
+		$med_allergy->updated_by                = $user->rcid;
 		$med_allergy->save();
 
-		if(empty($insect_allergy)){
-			// ASSERT: First time student is submitting this information
-			// Creating new Insect allergy object
-			$insect_allergy = new InsectAllergies;
-			$insect_allergy->rcid = $user->rcid;
-			$insect_allergy->created_by = $user->rcid;
-		}
-		if(!empty($request->insect_allergies)){
-			// The user has insect allergies
-			$insect_allergy->have_insect_allergies = 1;
-			$insect_allergy->insect_allergies      = $request->insect_allergy_text;
-		}else{
-			// The user does not have insect allergies
-			$insect_allergy->have_insect_allergies = 0;
-			$insect_allergy->insect_allergies      = '';
-		}
-		$insect_allergy->updated_by = $user->rcid;
+		$insect_allergy = InsectAllergies::firstOrNew(['rcid' => $user->rcid, "created_by" => $user->rcid]);
+		$insect_allergy->have_insect_allergies = !empty($request->insect_allergies);
+		$insect_allergy->insect_allergies      = $request->input("insect_allergy_text", "");
+		$insect_allergy->updated_by            = $user->rcid;
 		$insect_allergy->save();
 
 		self::completedAllergyInfo();

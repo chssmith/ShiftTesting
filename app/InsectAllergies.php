@@ -14,5 +14,6 @@ class InsectAllergies extends model
     protected $table      = 'student_forms.insect_allergies';
     protected $primaryKey = 'rcid';
     protected $connection = 'SAO';
+    protected $fillable   = ['rcid', 'created_by'];    
 
 }

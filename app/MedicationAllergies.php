@@ -14,5 +14,6 @@ class MedicationAllergies extends model
     protected $table      = 'student_forms.medication_allergies';
     protected $primaryKey = 'rcid';
     protected $connection = 'SAO';
-
+    protected $fillable   = ['rcid', 'created_by'];
+    
 }

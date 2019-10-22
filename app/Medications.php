@@ -14,5 +14,6 @@ class Medications extends model
     protected $table      = 'student_forms.medications';
     protected $primaryKey = 'rcid';
     protected $connection = 'SAO';
+    protected $fillable   = ['rcid', 'created_by'];
 
 }

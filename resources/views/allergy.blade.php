@@ -23,11 +23,18 @@
 	<style>
 		textarea{
 			margin-bottom:10px;
+			width: inherit;
+			height: 200px;
 		}
 
 		label{
 			font-size:20px;
 			width: 100%;
+		}
+		@media(max-width: 767px) {
+			textarea {
+				width: 100%;
+			}
 		}
 	</style>
 @endsection
@@ -60,9 +67,7 @@
 						<label>
 							Please list all medications you are taking.
 						</label>
-						<textarea name="medications_text" id="medications_text" rows="5" cols="50">
-							@if(!empty($medications->medications)){{$medications->medications}}@endif
-						</textarea>
+						<textarea name="medications_text" id="medications_text">@if(!empty($medications->medications)){{$medications->medications}}@endif</textarea>
 					</div>
 				</div>
 			</div>
@@ -82,7 +87,7 @@
 						<label for="med_allergy_text">
 							Please list all medicines you are allergic to.
 						</label>
-   	     		<textarea id="med_allergy_text" name="med_allergy_text" rows="5" cols="50">@if(!empty($med_allergy->medication_allergies)){{$med_allergy->medication_allergies}}@endif</textarea>
+   	     		<textarea id="med_allergy_text" name="med_allergy_text">@if(!empty($med_allergy->medication_allergies)){{$med_allergy->medication_allergies}}@endif</textarea>
    	     	</div>
    	    </div>
 			</div>
@@ -100,7 +105,7 @@
         <div class="row" class="hidden_box" id="insect_allergies_span" @if(empty($insect_allergy->have_insect_allergies)) style="display:none" @endif>
 					<div class="col-xs-12 form-group">
 						<label for="insect_allergy_text">Please list all insects and/or foods that you are allergic too.</label>
- 	     			<textarea id="insect_allergy_text" name="insect_allergy_text" rows="5" cols="50">@if(!empty($insect_allergy->insect_allergies)){{$insect_allergy->insect_allergies}}@endif</textarea>
+ 	     			<textarea id="insect_allergy_text" name="insect_allergy_text">@if(!empty($insect_allergy->insect_allergies)){{$insect_allergy->insect_allergies}}@endif</textarea>
 					</div>
 				</div>
 			</div>
