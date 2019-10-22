@@ -5,3 +5,22 @@
 label {
   font-family: "Helvetica";
 }
+
+.rc-callout {
+  display: grid;
+  grid-template-areas: "icon message close";
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+}
+
+.rc-callout > span {
+  grid-area: icon;
+}
+
+.rc-callout > p {
+  grid-area: message;
+}
+
+.rc-callout > button {
+  grid-area: close;
+}
