@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DatamartStudent extends model
+class DatamartStudent extends Model
 {
     /**
      * The Database table used by the model.

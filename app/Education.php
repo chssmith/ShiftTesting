@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Education extends model
+class Education extends Model
 {
     /**
      * The Database table used by the model.

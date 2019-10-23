@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class EmploymentInfo extends model
+class EmploymentInfo extends Model
 {
     /**
      * The Database table used by the model.

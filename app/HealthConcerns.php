@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class HealthConcerns extends model
+class HealthConcerns extends Model
 {
     /**
      * The Database table used by the model.

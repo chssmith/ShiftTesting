@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MaritalStatuses extends model
+class MaritalStatuses extends Model
 {
     /**
      * The Database table used by the model.

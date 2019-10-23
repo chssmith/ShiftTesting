@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Counties extends model
+class Counties extends Model
 {
     /**
      * The Database table used by the model.

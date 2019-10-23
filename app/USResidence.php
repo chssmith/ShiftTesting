@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class USResidence extends model
+class USResidence extends Model
 {
     /**
      * The Database table used by the model.
@@ -16,7 +16,7 @@ class USResidence extends model
     protected $table      = 'student_forms.us_residence';
     protected $connection = 'SAO';
 
-    
+
     public $incrementing = false;
 
 

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class VisaTypeMap extends model
+class VisaTypeMap extends Model
 {
     /**
      * The Database table used by the model.
