@@ -415,9 +415,8 @@ class StudentInformationController extends Controller
 
 	}
 
-	public function medicalInfo(){
+	public function medicalInfo(Students $student){
 		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
 
 		$health_concerns = HealthConcerns::with(['student_concerns' => function($query) use ($user){
 			$query->where('rcid', $user->rcid);
@@ -428,11 +427,14 @@ class StudentInformationController extends Controller
 		return view('medical', compact('user', 'health_concerns','other_concern'));
 	}
 
-	public function medicalInfoUpdate(Request $request){
+	public function medicalInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
 		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
+
 		// Call to delete all previous medical concerns
-		self::emptyConcerns($user->rcid);
+		StudentConcerns::where("rcid", $user->rcid)->update(["deleted_by" => $user->rcid,
+																												 "deleted_at" => \Carbon\Carbon::now()]);
+		OtherConcerns::where("rcid", $user->rcid)->update(["deleted_by" => $user->rcid,
+																											 "deleted_at" => \Carbon\Carbon::now()]);
 
 		$student_concerns = $request->concerns;
 		if(!empty($student_concerns)){
@@ -460,46 +462,32 @@ class StudentInformationController extends Controller
 			}
 			$other_concern->other_concern = $request->other_concerns;
 			$other_concern->save();
-		}else{
-			// Assert: we have no other concerns
-			if(!empty($other_concern)){
-				// ASSERT: we have old concerns
-				// deleting old concerns
-				self::deleteObject($other_concern);
-			}
 		}
 
 		// update that the student submitted this page
 		$student->submitted_health_concerns = 1;
 		$student->save();
 
-		self::completedHealthInfo();
+		$completed_sections->medical_information = 1;
+		$completed_sections->save();
 
 		return redirect()->action('StudentInformationController@missingPersonContact');
 	}
 
-	public function nonEmergency(){
+	public function nonEmergency(Students $student){
 		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
 
 		return view('non_emergency', compact('student'));
 	}
 
-	public function nonEmergencyUpdate(Request $request){
+	public function nonEmergencyUpdate(Request $request, Students $student, CompletedSections $completed_sections){
 		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
 
-		if(!empty($request->non_emergency)){
-			// ASSERT: Request for non_emergency contacts
-			$student->non_emergency = 1;
-		}else{
-			// ASSERT: Refuse non emergency contacts
-			$student->non_emergency = 0;
-		}
-
+		$student->non_emergency = !empty($request->non_emergency);
 		$student->save();
 
-		self::completedNonEmergency();
+		$completed_sections->non_emergency_contact = 1;
+		$completed_sections->save();
 
 		return redirect()->action('StudentInformationController@independentStudent');
 	}
