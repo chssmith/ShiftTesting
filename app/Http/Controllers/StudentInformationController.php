@@ -495,8 +495,78 @@ class StudentInformationController extends Controller
 		$missing_contact->save();
 
 		$completed_sections->missing_person = $missing_contact->completed();
+		if ($missing_contact->emergency_contact) {
+			$completed_sections->emergency_information = 1;
+		}
 		$completed_sections->updated_by     = $student->RCID;
 		$completed_sections->save();
+
+		return redirect()->action('StudentInformationController@emergencyContact');
+	}
+
+	public function emergencyContact (Students $student){
+		$contacts = EmergencyContact::where('student_rcid', $student->RCID)->where('emergency_contact',1)->get();
+
+		return view('emergency_contacts', compact('contacts'));
+	}
+
+	public function individualEmergencyContact(Students $student, $id = null){
+		$user     = RCAuth::user();
+
+		$contact = EmergencyContact::where('id', $id)->where("student_rcid", $student->RCID)->where('emergency_contact', 1)->first();
+
+		if(empty($id) || !empty($contact)){
+			$redirect = view('individual_emergency_contact', compact('contact', 'id'));
+		}else{
+			$redirect = redirect()->action('StudentInformationController@index');
+		}
+
+		return $redirect;
+	}
+
+	public function emergencyContactUpdate(Request $request, Students $student, CompletedSections $completed_sections, $id = null){
+		$user     = RCAuth::user();
+
+		$emergency_contact = EmergencyContact::where('student_rcid', $user->rcid)->where('id',$id)->where('emergency_contact', 1)->first();
+
+		if(empty($emergency_contact)){
+			$emergency_contact = new EmergencyContact;
+			$emergency_contact->student_rcid   = $user->rcid;
+			$emergency_contact->missing_person = 0;
+			$emergency_contact->created_by 	 = $user->rcid;
+		}
+		$emergency_contact->emergency_contact = 1;
+		$emergency_contact->name = $request->contact_name;
+		$emergency_contact->relationship = $request->relationship;
+		$emergency_contact->day_phone = $request->daytime_phone;
+		$emergency_contact->evening_phone = $request->evening_phone;
+		$emergency_contact->cell_phone = $request->cell_phone;
+		$emergency_contact->updated_by = $user->rcid;
+		$emergency_contact->save();
+
+		self::completedEmergency($student, $completed_sections);
+
+		// UPDATE TO CORRECT PATH
+		return redirect()->action('StudentInformationController@emergencyContact');
+	}
+
+	public function deleteContact(Students $student, CompletedSections $completed_sections, $id){
+		$user     = RCAuth::user();
+
+		$contact = EmergencyContact::where('student_rcid', $user->rcid)->where('id', $id)->first();
+		if(!empty($contact)){
+			if($contact->missing_person){
+				$contact->emergency_contact = 0;
+				$contact->updated_by = $user->rcid;
+				$contact->save();
+			}else{
+				$contact->deleted_by = $user->rcid;
+				$contact->save();
+				$contact->delete();
+			}
+		}
+
+		self::completedEmergency($student, $completed_sections);
 
 		return redirect()->action('StudentInformationController@emergencyContact');
 	}
@@ -688,75 +758,6 @@ class StudentInformationController extends Controller
 		self::completedParentInfo();
 
 		return redirect()->action('StudentInformationController@infoRelease', ['id' => $guardian->id]);
-	}
-
-	public function emergencyContact(){
-		$user     = RCAuth::user();
-		$student  = self::getStudent($user->rcid);
-
-		$contacts = EmergencyContact::where('student_rcid', $user->rcid)->where('emergency_contact',1)->get();
-
-		return view('emergency_contacts', compact('contacts'));
-	}
-
-	public function individualEmergencyContact($id = null){
-		$user     = RCAuth::user();
-		$student  = self::getStudent($user->rcid);
-
-		$contact = EmergencyContact::where('id', $id)->where('emergency_contact', 1)->first();
-
-		if(empty($contact) || $contact->student_rcid == $user->rcid){
-			$redirect = view('individual_emergency_contact', compact('contact', 'id'));
-		}else{
-			$redirect = redirect()->action('StudentInformationController@index');
-		}
-
-		return $redirect;
-	}
-
-	public function emergencyContactUpdate(Request $request, $id = null){
-		$user     = RCAuth::user();
-		$student  = self::getStudent($user->rcid);
-
-		$emergency_contact = EmergencyContact::where('student_rcid', $user->rcid)->where('id',$id)->where('emergency_contact', 1)->first();
-
-		if(empty($emergency_contact)){
-			$emergency_contact = new EmergencyContact;
-			$emergency_contact->student_rcid   = $user->rcid;
-			$emergency_contact->missing_person = 0;
-			$emergency_contact->created_by 	 = $user->rcid;
-		}
-		$emergency_contact->emergency_contact = 1;
-		$emergency_contact->name = $request->contact_name;
-		$emergency_contact->relationship = $request->relationship;
-		$emergency_contact->day_phone = $request->daytime_phone;
-		$emergency_contact->evening_phone = $request->evening_phone;
-		$emergency_contact->cell_phone = $request->cell_phone;
-		$emergency_contact->updated_by = $user->rcid;
-		$emergency_contact->save();
-
-		self::completedEmergency();
-		// UPDATE TO CORRECT PATH
-		return redirect()->action('StudentInformationController@emergencyContact');
-	}
-
-	public function deleteContact($id){
-		$user     = RCAuth::user();
-		$student  = self::getStudent($user->rcid);
-
-		$contact = EmergencyContact::where('student_rcid', $user->rcid)->where('id', $id)->first();
-		if(!empty($contact)){
-			if($contact->missing_person){
-				$contact->emergency_contact = 0;
-				$contact->updated_by = $user->rcid;
-				$contact->save();
-			}else{
-				self::deleteObject($contact);
-			}
-		}
-
-		return redirect()->action('StudentInformationController@emergencyContact');
-
 	}
 
 	public function deleteGuardian($id){
@@ -984,21 +985,15 @@ class StudentInformationController extends Controller
 
 	// Pre :
 	// Post: checks that the emergency forms are completed
-	private function completedEmergency(){
-		$user       = RCAuth::user();
-		$student 	= self::getStudent($user->rcid);
-		$contacts   = EmergencyContact::where('student_rcid', $user->rcid)->where('emergency_contact',1)->get();
-		$completed_sections = CompletedSections::where('fkey_rcid', $user->rcid)->first();
-
-		// On Page guardian_verificationon
-		// If we have at least one contact it is complete
-		if(count($contacts) > 0){
-			$completed_sections->emergency_information = 1;
-		}else{
-			$completed_sections->emergency_information = 0;
-		}
-
-		$completed_sections->updated_by = $user->rcid;
+	private function completedEmergency(Students $student, CompletedSections $completed_sections){
+		$num_completed_contacts                    = EmergencyContact::where("student_rcid", $student->RCID)
+																																 ->where("emergency_contact", 1)
+																																 ->get()
+																																 ->filter(function ($item) {
+																																	 return $item->completed();
+																																 })->count();
+		$completed_sections->emergency_information = $num_completed_contacts > 0;
+		$completed_sections->updated_by            = RCAuth::user()->rcid;
 		$completed_sections->save();
 	}
 
