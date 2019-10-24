@@ -607,84 +607,6 @@ class StudentInformationController extends Controller
 		return redirect()->action('StudentInformationController@parentAndGuardianInfo');
 	}
 
-	public function infoRelease($id = NULL){
-		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
-
-		$guardian      = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->first();
-		if(!empty($guardian)){
-			return view('info_release', compact('student','guardian'));
-		}else{
-			return redirect()->action('StudentInformationController@index');
-		}
-	}
-
-	public function infoReleaseUpdate(Request $request, $id){
-		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
-
-		$guardian      = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->first();
-
-		if(!empty($request->info_release)){
-			// Student gives information release permission
-			$guardian->info_release = 1;
-		}else{
-			$guardian->info_release = 0;
-		}
-		$guardian->updated_by = $user->rcid;
-		$guardian->save();
-
-		self::completedParentInfo();
-
-		return redirect()->action('StudentInformationController@employmentInfo', ['id'=> $id]);
-	}
-
-	public function employmentInfo($id = NULL){
-		$user 			 = RCAuth::user();
-		$student 		 = self::getStudent($user->rcid);
-
-		$guardian        = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->first();
-		$states          = States::all();
-		$countries 		 = Countries::all();
-
-		if(!empty($guardian)){
-			$employment = EmploymentInfo::where('fkey_guardian_id', $guardian->id)->first();
-			return view('employment_info', compact('student','guardian','employment', 'states', 'countries'));
-		}else{
-			return redirect()->action('StudentInformationController@index');
-		}
-	}
-
-	public function employmentInfoUpdate(Request $request, $id){
-		$user 			 = RCAuth::user();
-		$student 		 = self::getStudent($user->rcid);
-
-		$employment_info = EmploymentInfo::where('fkey_guardian_id', $id)->first();
-		if(empty($employment_info)){
-			$employment_info = new EmploymentInfo;
-			$employment_info->fkey_guardian_id = $id;
-			$employment_info->created_by = $user->rcid;
-		}
-		$employment_info->employer_name   = $request->employer_name;
-		$employment_info->position        = $request->position;
-		$employment_info->business_number = $request->business_number;
-		$employment_info->business_email  = $request->business_email;
-		$employment_info->Street1         = $request->Address1;
-		$employment_info->Street2         = $request->Address2;
-		$employment_info->city 			  = $request->city;
-		$employment_info->fkey_StateCode  = $request->state;
-		$employment_info->postal_code     = $request->zip;
-		$employment_info->updated_by	  = $user->rcid;
-		$employment_info->fkey_CountryId  = $request->Country;
-
-		$employment_info->save();
-
-		self::completedParentInfo();
-
-		return redirect()->action('StudentInformationController@parentAndGuardianInfo');
-	}
-
-
 	public function parentAndGuardianInfo(){
 		$user          = RCAuth::user();
 		$student 	   = self::getStudent($user->rcid);
@@ -706,54 +628,40 @@ class StudentInformationController extends Controller
 		return view('guardian_verification', compact('guardian','marital','states', 'id', 'education', 'countries'));
 	}
 
-	public function parentAndGuardianInfoUpdate(Request $request, $id = null){
+	public function parentAndGuardianInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections, $id = null){
 		$user     = RCAuth::user();
-		$student  = self::getStudent($user->rcid);
 
-		$guardian = GuardianInfo::where('id', $id)->where('student_rcid',$user->rcid)->first();
-		if(empty($guardian)){
-			$guardian = new GuardianInfo;
-			$guardian->student_rcid    = $user->rcid;
-			$guardian->created_by 	   = $user->rcid;
-		}
+		$guardian = GuardianInfo::where("id", $id)->firstOrNew(['student_rcid' => $student->RCID, 'created_by' => $student->RCID]);
+
 		$guardian->first_name     	   = $request->first_name;
 		$guardian->nick_name      	   = $request->nick_name;
 		$guardian->middle_name    	   = $request->middle_name;
 		$guardian->last_name      	   = $request->last_name;
-		$guardian->fkey_marital_status = $request->MaritalStatus;
+		$guardian->fkey_marital_status = $request->marital_status;
 		$guardian->relationship   	   = $request->relationship;
 		$guardian->email          	   = $request->email;
 		$guardian->home_phone     	   = $request->home_phone;
 		$guardian->cell_phone     	   = $request->cell_phone;
-		$guardian->Address1      	   = $request->Address1;
+		$guardian->Address1      	     = $request->Address1;
 		$guardian->Address2       	   = $request->Address2;
 		$guardian->City           	   = $request->city;
-		$guardian->fkey_StateCode	   = $request->state;
+		$guardian->fkey_StateCode	     = $request->state;
 		$guardian->PostalCode     	   = $request->zip;
-		$guardian->fkey_CountryId	   = $request->Country;
+		$guardian->fkey_CountryId	     = $request->Country;
 		$guardian->joint_mail1    	   = $request->joint1;
 		$guardian->joint_mail2    	   = $request->joint2;
 		$guardian->fkey_education_id   = $request->education;
 		$guardian->updated_by          = $user->rcid;
-		if(isset($request->reside_with)){
-			$guardian->reside_with  = 1;
-		}else{
-			$guardian->reside_with  = 0;
-		}
-
-		if(isset($request->dependent)){
-			$guardian->claimed_dependent = 1;
-		}else{
-			$guardian->claimed_dependent = 0;
-		}
-
+		$guardian->reside_with         = isset($request->reside_with);
+		$guardian->claimed_dependent   = isset($request->dependent);
 		$guardian->save();
-		self::completedParentInfo();
+
+		self::completedParentInfo($student, );
 
 		return redirect()->action('StudentInformationController@infoRelease', ['id' => $guardian->id]);
 	}
 
-	public function deleteGuardian($id){
+	public function deleteGuardian($id){ //TODO
 		$user     = RCAuth::user();
 		$student  = self::getStudent($user->rcid);
 
@@ -765,6 +673,80 @@ class StudentInformationController extends Controller
 		return redirect()->action('StudentInformationController@parentAndGuardianInfo');
 
 	}
+
+	public function infoRelease(Students $student, $id=NULL){
+		$user     = RCAuth::user();
+		$guardian = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->first();
+
+		if(!empty($guardian)){
+			return view('info_release', compact('student','guardian'));
+		}else{
+			return redirect()->action('StudentInformationController@index');
+		}
+	}
+
+	public function infoReleaseUpdate(Request $request, Students $student, CompletedSections $completed_sections, $id){
+		$user     = RCAuth::user();
+
+		$guardian = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->first();
+
+		if (empty($guardian)) {
+			return redirect()->action("StudentInformationController@index");
+		}
+
+		$guardian->info_release = !empty($request->info_release) && $request->info_release;
+		$guardian->updated_by   = $user->rcid;
+		$guardian->save();
+
+		self::completedParentInfo($student, $completed_sections);
+
+		return redirect()->action('StudentInformationController@employmentInfo', ['id' => $id]);
+	}
+
+	public function employmentInfo($id = NULL){
+		$user 			 = RCAuth::user();
+		$student 		 = self::getStudent($user->rcid);
+
+		$guardian        = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->first();
+		$states          = States::all();
+		$countries 		 = Countries::all();
+
+		if(!empty($guardian)){
+			$employment = EmploymentInfo::where('fkey_guardian_id', $guardian->id)->first();
+			return view('employment_info', compact('student','guardian','employment', 'states', 'countries'));
+		}else{
+			return redirect()->action('StudentInformationController@index');
+		}
+	}
+
+	public function employmentInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections, $id){
+		$user 			 = RCAuth::user();
+
+		$employment_info = EmploymentInfo::where('fkey_guardian_id', $id)->first();
+		if(empty($employment_info)){
+			$employment_info = new EmploymentInfo;
+			$employment_info->fkey_guardian_id = $id;
+			$employment_info->created_by = $user->rcid;
+		}
+		$employment_info->employer_name   = $request->employer_name;
+		$employment_info->position        = $request->position;
+		$employment_info->business_number = $request->business_number;
+		$employment_info->business_email  = $request->business_email;
+		$employment_info->Street1         = $request->Address1;
+		$employment_info->Street2         = $request->Address2;
+		$employment_info->city 			  = $request->city;
+		$employment_info->fkey_StateCode  = $request->state;
+		$employment_info->postal_code     = $request->zip;
+		$employment_info->updated_by	  = $user->rcid;
+		$employment_info->fkey_CountryId  = $request->Country;
+
+		$employment_info->save();
+
+		self::completedParentInfo($student, $completed_sections);
+
+		return redirect()->action('StudentInformationController@parentAndGuardianInfo');
+	}
+
 
 	public function confirmation(){
 		return view('confirmation');
@@ -1006,29 +988,10 @@ class StudentInformationController extends Controller
 
 	// Pre :
 	// Post: checks that the emergency forms are completed
-	private function completedParentInfo(){
-		$user       = RCAuth::user();
-		$student 	= self::getStudent($user->rcid);
-
-		$parents    = GuardianInfo::where('student_rcid', $user->rcid)->with('employment')->get();
-
-		$complete = true;
-		foreach($parents as $parent){
-			if(empty($parent->employment) || is_null($parent->info_release)){
-				// Submitting employment page at least makes an entry
-				// Info Release always marks a 0 or 1 if completed and stays NULL otherwise
-				$complete = false;
-			}
-		}
-
-		$completed_sections = CompletedSections::where('fkey_rcid', $user->rcid)->first();
-		if($complete){
-			$completed_sections->parent_and_guardian_information = 1;
-		}else{
-			$completed_sections->parent_and_guardian_information = 0;
-		}
+	private function completedParentInfo(Students $student, CompletedSections $completed_sections){
+		$incomplete = GuardianInfo::where('student_rcid', $student->RCID)->whereNull("info_release")->whereDoesntHave('employment')->count();
+		$completed_sections->parent_and_guardian_information = $incomplete == 0;
 		$completed_sections->updated_by = $user->rcid;
-
 		$completed_sections->save();
 	}
 

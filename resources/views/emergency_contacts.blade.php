@@ -27,35 +27,6 @@
 		.table > tbody > tr > td:last-child {
 			text-align: right;
 		}
-		.btn-toolbar {
-			display: grid;
-			grid-template-areas: "cancel new save";
-			grid-column-gap: 10px;
-			grid-template-columns: repeat(3, 1fr);
-		}
-		.btn-toolbar > .btn {
-			width: 100%;
-			display: grid;
-			grid-template-columns: 40px 1fr;
-		}
-		.btn-toolbar > .btn > span:first-child {
-			justify-content: center;
-			line-height: 24px;
-		}
-		.btn-toolbar > .btn-danger {
-			grid-area: cancel;
-		}
-		.btn-toolbar > .btn-info {
-			grid-area: new;
-		}
-		.btn-toolbar > .btn-success {
-			grid-area: save;
-		}
-		@media (max-width: 1000px) {
-			.btn-toolbar {
-				grid-template-areas: "save" "new"  "cancel";
-			}
-		}
 		.modal-body {
 			font-size: 18pt;
 			line-height: 1.4;
@@ -129,7 +100,7 @@
 
 	<div class="row">
 		<div class="col-md-6 col-md-offset-6 col-sm-12">
-			<div class="btn-toolbar">
+			<div class="btn-toolbar three">
 				<a href="{{action('StudentInformationController@index')}}" class="btn btn-lg btn-danger"> <span class="far fa-times" aria-hidden="true"></span> Cancel </a>
 				<a href="{{action('StudentInformationController@individualEmergencyContact')}}" class="btn btn-lg btn-info"> <span class="far fa-plus" aria-hidden="true"></span> New Contact </a>
 				<a href="{{action('StudentInformationController@nonEmergency')}}" class="btn btn-lg btn-success"> <span class="fas fa-save" aria-hidden="true"></span> Save and Continue </a>

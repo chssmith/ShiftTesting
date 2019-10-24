@@ -29,3 +29,36 @@ label {
   font-size: 22px;
   line-height: 18pt;
 }
+
+.btn-toolbar.three {
+  display: grid;
+  grid-template-areas: "cancel new save";
+  grid-gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.btn-toolbar.three > .btn {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+}
+.btn-toolbar.three > .btn > span:first-child {
+  justify-content: center;
+  line-height: 24px;
+}
+.btn-toolbar.three > .btn-danger {
+  grid-area: cancel;
+}
+.btn-toolbar.three > .btn-info {
+  grid-area: new;
+}
+.btn-toolbar.three > .btn-success {
+  grid-area: save;
+}
+@media (max-width: 1000px) {
+  .btn-toolbar.three {
+    grid-template-areas: "new" "save" "cancel";
+  }
+  .main-container {
+    padding: 20px 0px;
+  }
+}
