@@ -589,27 +589,20 @@ class StudentInformationController extends Controller
 		return redirect()->action('StudentInformationController@independentStudent');
 	}
 
-	public function independentStudent(){
-		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
-
+	public function independentStudent(Students $student){
 		return view('independent_student', compact('student'));
 	}
 
-	public function independentStudentUpdate(Request $request){
+	public function independentStudentUpdate(Request $request, Students $student, CompletedSections $completed_sections){
 		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
 
-		if(!empty($request->independent_student)){
-			// Assert: Student declares themselves as independent
-			$student->independent_student = 1;
-		}else{
-			// Assert: Student declared non-independent
-			$student->independent_student = 0;
-		}
+		$student->independent_student = !empty($request->independent_student);
+		$student->updated_by          = $user->rcid;
 		$student->save();
 
-		self::completedIndependentInfo();
+		$completed_sections->independent_student = !is_null($student->independent_student);
+		$completed_sections->updated_by = $user->rcid;
+		$completed_sections->save();
 
 		return redirect()->action('StudentInformationController@parentAndGuardianInfo');
 	}
