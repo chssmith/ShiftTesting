@@ -474,6 +474,33 @@ class StudentInformationController extends Controller
 		return redirect()->action('StudentInformationController@missingPersonContact');
 	}
 
+	public function missingPersonContact(Students $student){
+		$user    = RCAuth::user();
+		$contact = EmergencyContact::where('student_rcid', $student->RCID)->where('missing_person', 1)->first();
+
+		return view('missing_person', compact('contact'));
+	}
+
+	public function missingPersonContactUpdate(Request $request, Students $student, CompletedSections $completed_sections){
+		$user     = RCAuth::user();
+
+		$missing_contact = EmergencyContact::firstOrNew(["student_rcid" => $student->RCID, "created_by" => $student->RCID, "missing_person" => 1]);
+		$missing_contact->name              = $request->contact_name;
+		$missing_contact->relationship      = $request->relationship;
+		$missing_contact->day_phone         = $request->daytime_phone;
+		$missing_contact->evening_phone     = $request->evening_phone;
+		$missing_contact->cell_phone        = $request->cell_phone;
+		$missing_contact->emergency_contact = $request->emergency == "emergency";
+		$missing_contact->updated_by        = $student->RCID;
+		$missing_contact->save();
+
+		$completed_sections->missing_person = $missing_contact->completed();
+		$completed_sections->updated_by     = $student->RCID;
+		$completed_sections->save();
+
+		return redirect()->action('StudentInformationController@emergencyContact');
+	}
+
 	public function nonEmergency(Students $student){
 		$user          = RCAuth::user();
 
@@ -710,47 +737,6 @@ class StudentInformationController extends Controller
 
 		self::completedEmergency();
 		// UPDATE TO CORRECT PATH
-		return redirect()->action('StudentInformationController@emergencyContact');
-	}
-
-	public function missingPersonContact(){
-		$user     = RCAuth::user();
-		$student  = self::getStudent($user->rcid);
-
-		$contact = EmergencyContact::where('student_rcid', $user->rcid)->where('missing_person', 1)->first();
-
-		return view('missing_person', compact('contact'));
-
-
-	}
-
-	public function missingPersonContactUpdate(Request $request){
-		$user     = RCAuth::user();
-		$student  = self::getStudent($user->rcid);
-
-		$missing_contact = EmergencyContact::where('student_rcid', $user->rcid)->where('missing_person', 1)->first();
-
-		if(empty($missing_contact)){
-			$missing_contact = new EmergencyContact;
-			$missing_contact->student_rcid   = $user->rcid;
-			$missing_contact->missing_person = 1;
-			$missing_contact->created_by 	 = $user->rcid;
-		}
-		$missing_contact->name = $request->contact_name;
-		$missing_contact->relationship = $request->relationship;
-		$missing_contact->day_phone = $request->daytime_phone;
-		$missing_contact->evening_phone = $request->evening_phone;
-		$missing_contact->cell_phone = $request->cell_phone;
-		if($request->emergency == "emergency"){
-			$missing_contact->emergency_contact = 1;
-		}else{
-			$missing_contact->emergency_contact = 0;
-		}
-		$missing_contact->updated_by = $user->rcid;
-		$missing_contact->save();
-
-		self::completedMissingPerson();
-
 		return redirect()->action('StudentInformationController@emergencyContact');
 	}
 
@@ -1025,23 +1011,9 @@ class StudentInformationController extends Controller
 		$missing_person = EmergencyContact::where('student_rcid', $user->rcid)->where('missing_person',1)->first();
 		$completed_sections = CompletedSections::where('fkey_rcid', $user->rcid)->first();
 
-		$completed_sections->missing_person = self::completedContact($missing_person);
+		$completed_sections->missing_person = $missing_person->completed();
 		$completed_sections->updated_by = $user->rcid;
-
 		$completed_sections->save();
-	}
-
-	private function completedContact($contact){
-		if( !empty($contact) && !empty($contact->name) && !empty($contact->relationship) &&
-		   (!empty($contact->day_phone) || !empty($contact->evening_phone) ||
-		    !empty($contact->cell_phone)))	{
-		   	// Fully filled out the Form
-		   	$return = 1;
-		}else{
-			// Assert: Missing Required information
-			$return = 0;
-		}
-		return $return;
 	}
 
 	// Pre :

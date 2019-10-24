@@ -24,3 +24,8 @@ label {
 .rc-callout > button {
   grid-area: close;
 }
+
+.panel-body {
+  font-size: 22px;
+  line-height: 18pt;
+}
