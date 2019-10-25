@@ -28,7 +28,7 @@ Route::get('logout', function() {
 
 
 Route::middleware('force_login')->group( function (){
-
+	Route::get("guardian/{id}/confirm", "StudentInformationController@getGuardianVerification");
 });
 
 
@@ -65,7 +65,7 @@ Route::get('emergency_contact/edit/{id?}', 'StudentInformationController@individ
 Route::get('missing_person', 'StudentInformationController@missingPersonContact');
 Route::get('employement_info/{id?}', 'StudentInformationController@employmentInfo');
 Route::delete('delete_contact/{id}', 'StudentInformationController@deleteContact');
-Route::get('delete_guardian/{id}', 'StudentInformationController@deleteGuardian');
+Route::delete('guardian/{id}', 'StudentInformationController@deleteGuardian');
 Route::get('confirmation', 'StudentInformationController@confirmation');
 
 Route::post('personal_info/update', 'StudentInformationController@personalInfoUpdate');
@@ -77,7 +77,7 @@ Route::post('non_emergency/update', 'StudentInformationController@nonEmergencyUp
 Route::post('independent_student/update', 'StudentInformationController@independentStudentUpdate');
 Route::post('info_release/update/{id}', 'StudentInformationController@infoReleaseUpdate');
 Route::post('citizen_info/update', 'StudentInformationController@citizenInfoUpdate');
-Route::post('parent_info/update/{id?}', 'StudentInformationController@parentAndGuardianInfoUpdate');
+Route::post('guardian/update/{id?}', 'StudentInformationController@parentAndGuardianInfoUpdate');
 Route::post('emergency_contact/update/{id?}', 'StudentInformationController@emergencyContactUpdate');
 Route::post('missing_person/update', 'StudentInformationController@missingPersonContactUpdate');
 Route::post('employment/update/{id?}', 'StudentInformationController@employmentInfoUpdate');

@@ -118,75 +118,7 @@
 		</div>
 
 		<h3> Home Address</h3>
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="form-group">
-					<label for="address_1">
-						Street
-					</label>
-					<input type="text" class="form-control" name="Address1" id="address_1" @if(!empty($guardian)) value="{{$guardian->Address1}}" @endif required>
-				</div>
-			</div>
-
-
-			<div class="col-xs-12">
-				<div class="form-group address">
-					<input type="text" class="form-control"  name="Address2" id="Address2" @if(!empty($guardian)) value="{{$guardian->Address2}}" @endif>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-xs-12 col-md-6">
-				<div class="form-group">
-					<label for="city">
-	   				City
-					</label>
-					<input type="text" class="form-control" name="city" id="city" @if(!empty($guardian)) value="{{$guardian->City}}" @endif required>
-				</div>
-			</div>
-
-			<div class="col-xs-12 col-md-6">
-				<div class="form-group address">
-					<label for="state">
-						State
-					</label>
-					<select id="state" name="state" class="form-control" required>
-						<option></option>
-						@foreach($states as $state)
-							<option value='{{$state->StateCode}}' @if(!empty($guardian) && ($guardian->fkey_StateCode == $state->StateCode)) selected @endif>
-								{{$state->StateName}}
-							</option>
-						@endforeach
-					</select>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-xs-12 col-md-6">
-				<div class="form-group">
-					<label for="zip">
-						Zip Code
-					</label>
-					<input type="text" class="form-control" name="zip" id="zip" @if(!empty($guardian)) value="{{$guardian->PostalCode}}" @endif required>
-				</div>
-			</div>
-
-			<div class="col-xs-12 col-md-6">
-				<label for="country">
-					Country
-				</label>
-				<select name="Country" class ="form-control" id='country' required>
-					<option></option>
-		    	@foreach($countries as $country)
-						<option @if(!empty($guardian) && $guardian->fkey_CountryId == $country->key_CountryId) selected @endif value="{{$country->key_CountryId}}">
-							{{ $country->CountryName }}
-						</option>
-					@endforeach
-		    </select>
-   		</div>
- 		</div>
+		@include("partials.address", ['postfix' => ''])
 
 		<div class="form-group">
 			<h3> Please address joint postal mailings to this household as follows:</h3>

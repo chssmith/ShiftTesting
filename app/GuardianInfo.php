@@ -18,8 +18,24 @@ class GuardianInfo extends Model
     protected $connection = 'SAO';
     protected $fillable   = ['student_rcid', 'created_by'];
 
-     public function employment(){
+    public function employment(){
     	return $this->hasOne('App\EmploymentInfo', 'fkey_guardian_id', 'id');
+    }
+
+    public function marital_status () {
+      return $this->hasOne("App\MaritalStatuses", "key_maritalStatus", "fkey_marital_status");
+    }
+
+    public function country () {
+      return $this->hasOne("App\Countries", "key_CountryId", "fkey_CountryId");
+    }
+
+    public function state () {
+      return $this->hasOne("App\States", "StateCode", "fkey_StateCode");
+    }
+
+    public function education () {
+      return $this->hasOne("App\Education", "id", "fkey_education_id");
     }
 
     public function getDisplayNameAttribute () {

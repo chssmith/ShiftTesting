@@ -31,6 +31,7 @@ use App\Education;
 use App\DatamartStudent;
 use App\DatamartPhones;
 use App\DatamartAddress;
+use App\GenericAddress;
 use RCAuth;
 
 class StudentInformationController extends Controller
@@ -607,25 +608,30 @@ class StudentInformationController extends Controller
 		return redirect()->action('StudentInformationController@parentAndGuardianInfo');
 	}
 
-	public function parentAndGuardianInfo(){
-		$user          = RCAuth::user();
-		$student 	   = self::getStudent($user->rcid);
+	public function getGuardianVerification (Students $student, $id) {
+		$guardian           = GuardianInfo::where('id', $id)->with(["employment.country", "employment.state", "education", "marital_status", "state", "country"])->first();
+		$guardian_address   = GenericAddress::fromGuardianInfo($guardian);
+		$employment_address = GenericAddress::fromEmploymentInfo($guardian->employment);
+		return view()->make("partials.guardian_confirm_modal_contents", compact("guardian", "guardian_address", "employment_address"));
+	}
 
-		$guardians     = GuardianInfo::where('student_rcid', $user->rcid)->get();
+	public function parentAndGuardianInfo(Students $student){
+		$user      = RCAuth::user();
+		$guardians = GuardianInfo::where('student_rcid', $user->rcid)->get();
 		return view('parent_guardian_info', compact('guardians'));
 	}
 
-	public function individualGuardian($id = NULL){
+	public function individualGuardian(Students $student, $id = NULL){
 		$user     = RCAuth::user();
-		$student  = self::getStudent($user->rcid);
 
 		$guardian  = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->first();
+		$address   = GenericAddress::fromGuardianInfo($guardian);
 		$education = Education::all();
 		$marital   = MaritalStatuses::all();
 		$states    = States::all();
 		$countries = Countries::all();
 
-		return view('guardian_verification', compact('guardian','marital','states', 'id', 'education', 'countries'));
+		return view('guardian_verification', compact('guardian','address', 'marital','states', 'id', 'education', 'countries'));
 	}
 
 	public function parentAndGuardianInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections, $id = null){
@@ -633,30 +639,40 @@ class StudentInformationController extends Controller
 
 		$guardian = GuardianInfo::where("id", $id)->firstOrNew(['student_rcid' => $student->RCID, 'created_by' => $student->RCID]);
 
-		$guardian->first_name     	   = $request->first_name;
-		$guardian->nick_name      	   = $request->nick_name;
-		$guardian->middle_name    	   = $request->middle_name;
-		$guardian->last_name      	   = $request->last_name;
-		$guardian->fkey_marital_status = $request->marital_status;
-		$guardian->relationship   	   = $request->relationship;
-		$guardian->email          	   = $request->email;
-		$guardian->home_phone     	   = $request->home_phone;
-		$guardian->cell_phone     	   = $request->cell_phone;
-		$guardian->Address1      	     = $request->Address1;
-		$guardian->Address2       	   = $request->Address2;
-		$guardian->City           	   = $request->city;
-		$guardian->fkey_StateCode	     = $request->state;
-		$guardian->PostalCode     	   = $request->zip;
-		$guardian->fkey_CountryId	     = $request->Country;
-		$guardian->joint_mail1    	   = $request->joint1;
-		$guardian->joint_mail2    	   = $request->joint2;
-		$guardian->fkey_education_id   = $request->education;
-		$guardian->updated_by          = $user->rcid;
-		$guardian->reside_with         = isset($request->reside_with);
-		$guardian->claimed_dependent   = isset($request->dependent);
+		$guardian->first_name     	   	 = $request->first_name;
+		$guardian->nick_name      	   	 = $request->nick_name;
+		$guardian->middle_name    	   	 = $request->middle_name;
+		$guardian->last_name      	   	 = $request->last_name;
+		$guardian->fkey_marital_status 	 = $request->marital_status;
+		$guardian->relationship   	   	 = $request->relationship;
+		$guardian->email          	   	 = $request->email;
+		$guardian->home_phone     	   	 = $request->home_phone;
+		$guardian->cell_phone     	   	 = $request->cell_phone;
+		$guardian->fkey_CountryId	     	 = $request->country;
+		if ($request->country == GenericAddress::US_ID) {
+			$guardian->Address1      	     	 = $request->address[0];
+			$guardian->Address2       	   	 = $request->address[1];
+			$guardian->City           	   	 = $request->city;
+			$guardian->fkey_StateCode	     	 = $request->state;
+			$guardian->PostalCode     	   	 = $request->zip;
+			$guardian->international_address = null;
+		} else {
+			$guardian->Address1      	     	 = null;
+			$guardian->Address2       	   	 = null;
+			$guardian->City           	   	 = null;
+			$guardian->fkey_StateCode	     	 = null;
+			$guardian->PostalCode     	   	 = null;
+			$guardian->international_address = $request->input("international_address", "");
+		}
+		$guardian->joint_mail1    	   	 = $request->joint1;
+		$guardian->joint_mail2    	   	 = $request->joint2;
+		$guardian->fkey_education_id   	 = $request->education;
+		$guardian->updated_by          	 = $user->rcid;
+		$guardian->reside_with         	 = isset($request->reside_with);
+		$guardian->claimed_dependent   	 = isset($request->dependent);
 		$guardian->save();
 
-		self::completedParentInfo($student, );
+		self::completedParentInfo($student, $completed_sections);
 
 		return redirect()->action('StudentInformationController@infoRelease', ['id' => $guardian->id]);
 	}
@@ -703,17 +719,16 @@ class StudentInformationController extends Controller
 		return redirect()->action('StudentInformationController@employmentInfo', ['id' => $id]);
 	}
 
-	public function employmentInfo($id = NULL){
-		$user 			 = RCAuth::user();
-		$student 		 = self::getStudent($user->rcid);
-
-		$guardian        = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->first();
-		$states          = States::all();
-		$countries 		 = Countries::all();
+	public function employmentInfo(Students $student, $id = NULL){
+		$user	     = RCAuth::user();
+		$guardian  = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->first();
+		$states		 = States::all();
+		$countries = Countries::all();
 
 		if(!empty($guardian)){
-			$employment = EmploymentInfo::where('fkey_guardian_id', $guardian->id)->first();
-			return view('employment_info', compact('student','guardian','employment', 'states', 'countries'));
+			$employment = EmploymentInfo::where('fkey_guardian_id', $guardian->id)->firstOrNew([]);
+			$address    = GenericAddress::fromEmploymentInfo($employment);
+			return view('employment_info', compact('student','guardian','employment', 'address', 'states', 'countries'));
 		}else{
 			return redirect()->action('StudentInformationController@index');
 		}
@@ -722,23 +737,30 @@ class StudentInformationController extends Controller
 	public function employmentInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections, $id){
 		$user 			 = RCAuth::user();
 
-		$employment_info = EmploymentInfo::where('fkey_guardian_id', $id)->first();
-		if(empty($employment_info)){
-			$employment_info = new EmploymentInfo;
-			$employment_info->fkey_guardian_id = $id;
-			$employment_info->created_by = $user->rcid;
-		}
+		$employment_info = EmploymentInfo::firstOrNew(['fkey_guardian_id' => $id], ['created_by' => $user->rcid]);
+
 		$employment_info->employer_name   = $request->employer_name;
 		$employment_info->position        = $request->position;
 		$employment_info->business_number = $request->business_number;
 		$employment_info->business_email  = $request->business_email;
-		$employment_info->Street1         = $request->Address1;
-		$employment_info->Street2         = $request->Address2;
-		$employment_info->city 			  = $request->city;
-		$employment_info->fkey_StateCode  = $request->state;
-		$employment_info->postal_code     = $request->zip;
-		$employment_info->updated_by	  = $user->rcid;
-		$employment_info->fkey_CountryId  = $request->Country;
+		$employment_info->fkey_CountryId  = $request->country_business;
+
+		if ($employment_info->fkey_CountryId == GenericAddress::US_ID) {
+			$employment_info->Street1         			= $request->input("address_business", ["", ""])[0];
+			$employment_info->Street2         			= $request->input("address_business", ["", ""])[1];
+			$employment_info->city 			      			= $request->city_business;
+			$employment_info->fkey_StateCode  			= $request->state_business;
+			$employment_info->postal_code     			= $request->zip_business;
+			$employment_info->international_address = null;
+		} else {
+			$employment_info->Street1         			= null;
+			$employment_info->Street2         			= null;
+			$employment_info->city 			      			= null;
+			$employment_info->fkey_StateCode  			= null;
+			$employment_info->postal_code     			= null;
+			$employment_info->international_address = $request->international_address_business;
+		}
+		$employment_info->updated_by	    = $user->rcid;
 
 		$employment_info->save();
 
@@ -989,6 +1011,7 @@ class StudentInformationController extends Controller
 	// Pre :
 	// Post: checks that the emergency forms are completed
 	private function completedParentInfo(Students $student, CompletedSections $completed_sections){
+		$user       = RCAuth::user();
 		$incomplete = GuardianInfo::where('student_rcid', $student->RCID)->whereNull("info_release")->whereDoesntHave('employment')->count();
 		$completed_sections->parent_and_guardian_information = $incomplete == 0;
 		$completed_sections->updated_by = $user->rcid;

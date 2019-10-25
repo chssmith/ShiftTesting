@@ -1,6 +1,26 @@
 @extends('forms_template')
 
 @section('javascript')
+	<script>
+		$(document).on("click", ".delete", function () {
+			var action_url = $(this).data("href");
+			var name       = $(this).parents("tr").find("td:first-child").html();
+
+			$("#delete-form").attr("action", action_url);
+			$("#delete_name").html(name);
+		});
+
+		$(document).on("click", ".confirm", function () {
+			var request_url = $(this).data("href");
+			$.ajax({
+				url: request_url,
+				method: "GET",
+				success: function (response) {
+					$("#confirm_modal .modal-body").html(response);
+				}
+			});
+		});
+	</script>
 @endsection
 
 @section('heading')
@@ -16,6 +36,10 @@
 			font-size:20px;
 		}
 
+		.modal-body label {
+			font-size: unset;
+		}
+
 		ul{
 			list-style-type:disc;
 			padding-left:25px;
@@ -28,6 +52,35 @@
 		table {
 			margin-bottom:25px !important;
 		}
+
+		.row-buttons {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr 1fr;
+			grid-gap: 10px;
+		}
+
+		#delete_name {
+			font-weight: bold;
+			font-style: italic;
+		}
+
+		@media(max-width: 1000px) {
+			.row-buttons {
+				grid-template-columns: 1fr;
+				grid-column-start: 1;
+			}
+		}
+
+		@media(min-width: 1000px) {
+			.row-buttons > *:first-child {
+				grid-column-start: 2;
+			}
+
+			table td:last-child {
+				text-align: right;
+			}
+		}
+
 	</style>
 @endsection
 
@@ -61,7 +114,6 @@
 			<tr>
 				<th>Parent/Guardian Name</th>
 				<th class="hidden-xs hidden-sm">Relationship</th>
-				<th class="hidden-xs hidden-sm">Verified</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -70,12 +122,14 @@
 			@if(!empty($guardians[0]))
 				@foreach($guardians as $guardian)
 					<tr>
-						<td>{{$guardian->first_name . " " . $guardian->last_name}}</td>
+						<td>{{ $guardian->display_name }}</td>
 						<td class="hidden-xs hidden-sm">{{$guardian->relationship}}</td>
-						<td class="hidden-xs hidden-sm"> No </td>
 						<td>
-							<a href="{{action('StudentInformationController@individualGuardian', ['id'=>$guardian->id])}}" class="btn btn-primary"><i class="far fa-edit" aria-hidden="true"></i> Edit</a>
-							<a href="{{action('StudentInformationController@deleteGuardian', ['id'=>$guardian->id])}}" class="btn btn-danger"> <i class="far fa-trash-alt" aria-hidden="true"></i> Delete</a>
+							<div class="row-buttons">
+								<a href="{{action('StudentInformationController@individualGuardian', ['id'=>$guardian->id])}}" class="btn btn-primary"><span class="far fa-edit" aria-hidden="true"></span> Edit</a>
+								<button type="button" data-href="{{ action("StudentInformationController@getGuardianVerification", ["id" => $guardian->id]) }}" class="btn btn-info confirm" data-toggle="modal" data-target="#confirm_modal"> <span class="fas fa-check" aria-hidden="true"></span> Verify</button>
+								<button type="button" data-href="{{ action('StudentInformationController@deleteGuardian', ['id'=>$guardian->id]) }}" class="btn btn-danger delete" data-toggle="modal" data-target="#delete_confirm_modal"> <span class="far fa-trash-alt" aria-hidden="true"></span> Delete</button>
+							</div>
 						</td>
 					</tr>
 				@endforeach
@@ -86,6 +140,45 @@
 			@endif
 		</tbody>
 	</table>
+
+	<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog" aria-labelledby="confirmation_title">
+	  <div class="modal-dialog modal-lg" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="confirmation_title">Confirm Information</h4>
+	      </div>
+	      <div class="modal-body">
+	      </div>
+	      <div class="modal-footer">
+        	<button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">Close</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<div class="modal fade" id="delete_confirm_modal" tabindex="-1" role="dialog" aria-labelledby="delete_confirmation_title">
+	  <div class="modal-dialog modal-lg" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="delete_confirmation_title">Confirm Deletion</h4>
+	      </div>
+	      <div class="modal-body">
+					<p>
+						Are you sure you want to remove <span id="delete_name"></span> from your guardians?
+					</p>
+	      </div>
+	      <div class="modal-footer">
+					<form id="delete-form" method="POST">
+						{!! csrf_field() !!}
+						{!! method_field("DELETE") !!}
+        		<button type="submit" class="btn btn-danger"><span id="far fa-trash-alt"></span> Delete</button>
+					</form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
 	<div class="row">
 		<div class="col-md-6 col-md-offset-6 col-xs-12">
