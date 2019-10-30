@@ -129,7 +129,7 @@
 
 		<div id="collapseOthers" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOthers">
 	   	<div class="panel-body">
-	   		Other Forms can go here!
+				@include("partials.other_forms")
 	   	</div>
 	  </div>
   </div>

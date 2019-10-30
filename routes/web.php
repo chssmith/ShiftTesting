@@ -29,6 +29,14 @@ Route::get('logout', function() {
 
 Route::middleware('force_login')->group( function (){
 	Route::get("guardian/{id}/confirm", "StudentInformationController@getGuardianVerification");
+	Route::get("ap", "StudentInformationController@getAPExams");
+	Route::get("ib", "StudentInformationController@getIBCourses");
+
+	Route::get("academic_integrity", "StudentInformationController@showAcademicIntegrityStatement");
+	Route::post("academic_integrity", "StudentInformationController@completeAcademicIntegrityStatement");
+
+	Route::get("financial", "StudentInformationController@showFinancialAcceptance");
+	Route::post("financial", "StudentInformationController@completeFinancialAcceptance");
 });
 
 
@@ -42,11 +50,13 @@ Route::middleware('force_login')->get('/', function(){
 	}
 });
 
-Route::get('admin', 'AdminController@index');
-Route::get('admin/changes', 'AdminController@changedStudents');
-Route::get('admin/parents', 'AdminController@changedParentInfo');
-Route::get('admin/create_student_snap', 'AdminController@createStudentSnap');
-Route::get('admin/create_parent_snap', 'AdminController@createParentSnap');
+Route::prefix("admin")->middleware("force_login")->group( function () {
+	Route::get('/', 'AdminController@index');
+	Route::get('changes', 'AdminController@changedStudents');
+	Route::get('parents', 'AdminController@changedParentInfo');
+	Route::get('create_student_snap', 'AdminController@createStudentSnap');
+	Route::get('create_parent_snap', 'AdminController@createParentSnap');
+});
 
 Route::get('/', 'StudentInformationController@index');
 Route::get('personal_info', 'StudentInformationController@personalInfo');

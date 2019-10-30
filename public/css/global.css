@@ -6,6 +6,16 @@ label {
   font-family: "Helvetica";
 }
 
+.panel-heading.list-group-item {
+  border-bottom: none;
+}
+
+.panel-heading.list-group-item > .panel-title > a > div {
+  font-size: 22px;
+  font-weight: 400;
+  color: #555;
+}
+
 .rc-callout {
   display: grid;
   grid-template-areas: "icon message close";

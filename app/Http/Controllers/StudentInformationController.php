@@ -42,10 +42,8 @@ class StudentInformationController extends Controller
 			$this->middleware("populate_dependencies");
 	}
 
-	public function index(){
+	public function index(Students $student, CompletedSections $completed_sections){
 		$user     = RCAuth::user();
-
-		$completed_sections = CompletedSections::where('fkey_rcid', $user->rcid)->first();
 
 		$sections['Personal Information']     	 = ['status' => $completed_sections->personal_information,			      'link' => action("StudentInformationController@personalInfo")];
 		$sections['Address Information']      	 = ['status' => $completed_sections->address_information,			        'link' => action("StudentInformationController@addressInfo")];
@@ -59,7 +57,7 @@ class StudentInformationController extends Controller
 		$sections['Independent Student']     	   = ['status' => $completed_sections->independent_student,			        'link' => "independent_student"];
 		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => "parent_info"];
 
-		return view('index', compact('sections'));
+		return view('index', compact('sections', "student"));
 	}
 
 	public function personalInfo(Students $student, \App\User $vpb_user){
@@ -624,7 +622,7 @@ class StudentInformationController extends Controller
 	public function individualGuardian(Students $student, $id = NULL){
 		$user     = RCAuth::user();
 
-		$guardian  = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->first();
+		$guardian  = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->firstOrNew([]);
 		$address   = GenericAddress::fromGuardianInfo($guardian);
 		$education = Education::all();
 		$marital   = MaritalStatuses::all();
@@ -1016,6 +1014,30 @@ class StudentInformationController extends Controller
 		$completed_sections->parent_and_guardian_information = $incomplete == 0;
 		$completed_sections->updated_by = $user->rcid;
 		$completed_sections->save();
+	}
+
+	public function showFinancialAcceptance (Students $student) {
+		return view()->make("financial", compact("student"));
+	}
+
+	public function completeFinancialAcceptance (Request $request, Students $student) {
+		$student->financial_acceptance = $request->has("acknowledge");
+		$student->updated_by = \RCAuth::user()->rcid;
+		$student->save();
+
+		return redirect()->action("StudentInformationController@index");
+	}
+
+	public function showAcademicIntegrityStatement (Students $student) {
+		return view()->make("AI", compact("student"));
+	}
+
+	public function completeAcademicIntegrityStatement (Request $request, Students $student) {
+		$student->ai_and_student_conduct = $request->has("acknowledge");
+		$student->updated_by             = \RCAuth::user()->rcid;
+		$student->save();
+
+		return redirect()->action("StudentInformationController@index");
 	}
 
 }
