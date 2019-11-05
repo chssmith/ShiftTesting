@@ -49,7 +49,7 @@
         <select id="state{{$postfix}}" name="state{{$postfix}}" class="form-control">
           <option></option>
           @foreach($states as $state)
-            <option value='{{$state->StateCode}}' @if(!empty($address) && ($address->state == $state->StateCode)) selected @endif>
+            <option value='{{$state->StateCode}}' @if((empty($address->state) && $state->StateCode == 'VA') || (!empty($address) && ($address->state == $state->StateCode))) selected @endif>
               {{$state->StateName}}
             </option>
           @endforeach

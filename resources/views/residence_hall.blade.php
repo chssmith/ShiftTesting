@@ -95,6 +95,25 @@
 		</div>
 
 		<span id="local" @if(empty($local_address)) style="display:none" @endif>
+			<div class="row">
+				<div class="col-sm-12 col-md-6 col-md-offset-3">
+					<div class="rc-callout alert alert-warning light">
+						<span class="fas fa-exclamation-triangle"></span>
+						<div>
+							<p>
+								In order to live locally and not at home, you must get
+								permission from the Residence Life office at Roanoke College.
+								If you are not sure if you are permitted to stay off campus,
+								contact the Residence Life office at (540) 375 - 2308.
+							</p>
+							<p>
+								Completion of this form does not grant permission to live off campus.
+							</p>
+						</div>
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true" style="align-self: center"></button>
+					</div>
+				</div>
+			</div>
 			<h4> Local Address </h4>
 				<div class = "row">
 		   	     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">

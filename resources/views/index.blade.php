@@ -57,15 +57,22 @@
 					<h3 style="margin-top; 0px">Welcome	to the RC Community!</h3>
 
 					<p>
-						We need your help with completing some required forms, which will
-						take about 15 minutes. Sorry for all the questions but we need your
-						input! When you have successfully submitted the Student Information
-						Form, you will receive an RC email that confirms this. If you don't
-						get an e-mail confirmation, you've missed a step(s) and need to go
-						back through the form. Carefully completing all items on the form is
-						a good thing so you aren't face with a do-over! We appreciate your
-						time and look forward to see you on campus.
+						<ul style="list-style: circle; margin-bottom: 10px; padding-left: 40px;">
+							<li>
+								You must go through each section.
+							</li>
+							<li>
+								Progress is saves as you complete each section.
+							</li>
+							<li>
+								Make sure you hit the submit button when you are finished.  Make
+								sure you recieve a confirmation email.
+							</li>
+						</ul>
 
+						We appreciate your time and look forward to see you on campus.
+					</p>
+					<p>
 						Go Maroons!
 					</p>
 				</div>
@@ -77,29 +84,29 @@
 	<div id="accordion" class="panel panel-default">
  		<div class="panel-heading" role="tab" id="headingForms">
     	<h4 class="panel-title">
-		    <a role="button" target="Forms" class="accordian-button" style="color:black;" data-toggle="collapse" data-parent="#accordion" href="#collapseForms" aria-expanded="false" aria-controls="collapseForms">
+		    <a role="button" target="Forms" class="accordian-button" style="color:black;" data-toggle="collapse" data-parent="#accordion" href="#collapseForms" aria-expanded="true" aria-controls="collapseForms">
 		    	<div>
-			        Student Forms
+			        Student Information Forms
 			        @if(false)
 		        		<span style="background-color:#70A204" class="badge">
 		        			Completed
 								</span>
 		        	@elseif(false)
 		        		<span style="background-color:#FCBF06; color:black" class="badge">
-		        			Pending
+		        			Submitted
 								</span>
 		        	@else
 		        		<span style="background-color:#CB0D0B" class="badge">
 		        			Incomplete
 								</span>
 		        	@endif
-			    	<span id="Forms" class="accordian-circle fas fa-chevron-circle-down fa-lg pull-right circle" style="color: grey"></span>
+			    	<span id="Forms" class="accordian-circle fas fa-chevron-circle-up fa-lg pull-right circle" style="color: grey"></span>
 	        </div>
 		    </a>
 			</h4>
 		</div>
 
-		<div id="collapseForms" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingForms">
+		<div id="collapseForms" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingForms">
 	   	<div class="panel-body">
 	   		<div class="panel panel-default">
 			    <div class="list-group">
@@ -116,20 +123,22 @@
 			</div>
 		</div>
 
- 		<div class="panel-heading" role="tab" id="headingOthers">
+ 		<div class="panel-heading" role="tab" id="headingOthers" style="border-top: solid 1px #70132D">
     	<h4 class="panel-title">
-		    <a role="button" class="accordian-button" target="OtherStuff" style="color:black" data-toggle="collapse" data-parent="#accordion" href="#collapseOthers" aria-expanded="false" aria-controls="collapseOthers">
+		    <a role="button" class="accordian-button" target="OtherStuff" style="color:black" data-toggle="collapse" data-parent="#accordion" href="#collapseOthers" aria-expanded="true" aria-controls="collapseOthers">
 					<div>
-						<span id="OtherStuff" class="accordian-circle fas fa-chevron-circle-down fa-lg pull-right check" style="color: grey"></span>
+						<span id="OtherStuff" class="accordian-circle fas fa-chevron-circle-up fa-lg pull-right check" style="color: grey"></span>
 						Other Forms
 					</div>
 		    </a>
   		</h4>
   	</div>
 
-		<div id="collapseOthers" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOthers">
+		<div id="collapseOthers" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOthers">
 	   	<div class="panel-body">
-				@include("partials.other_forms")
+				<div class="panel panel-default">
+					@include("partials.other_forms")
+				</div>
 	   	</div>
 	  </div>
   </div>

@@ -156,9 +156,13 @@ class StudentInformationController extends Controller
 	public function addressInfo(Students $student){
 		$user            = RCAuth::user();
 		$addresses       = Address::where('RCID', $user->rcid)->whereIn('fkey_AddressTypeId', [1, 3])->get()->keyBy("fkey_AddressTypeId");
+		$home_Address    =
 		$dm_addresses    = DatamartAddress::where('RCID', $user->rcid)->whereIn('fkey_AddressTypeId', [1, 3])->get()->keyBy("fkey_AddressTypeId");
 		$home_address    = $addresses->get(1, $dm_addresses->get(1));
 		$billing_address = $addresses->get(3, $dm_addresses->get(3));
+
+		$home_address    = GenericAddress::fromMixedAddress($addresses->get(1, $dm_addresses->get(1)));
+		$billing_address = GenericAddress::fromMixedAddress($addresses->get(3, $dm_addresses->get(3)));
 
 		$states          = States::all();
 		$countries       = Countries::all();
@@ -171,12 +175,12 @@ class StudentInformationController extends Controller
 		$home_address    = Address::firstOrNew(['RCID' => $user->rcid, 'fkey_AddressTypeId' => 1, 'created_by' => $user->rcid]);
 
 		// updating the home address information
-		$home_address->Address1 	    = $request->Address1;
-		$home_address->Address2 	    = $request->Address2;
-		$home_address->City     	    = $request->city;
-		$home_address->fkey_StateId   = $request->state;
-		$home_address->PostalCode     = $request->zip;
-		$home_address->fkey_CountryId = $request->country;
+		$home_address->Address1 	    = $request->Address1_home;
+		$home_address->Address2 	    = $request->Address2_home;
+		$home_address->City     	    = $request->city_home;
+		$home_address->fkey_StateId   = $request->state_home;
+		$home_address->PostalCode     = $request->zip_home;
+		$home_address->fkey_CountryId = $request->country_home;
 		$home_address->updated_by     = $user->rcid;
 		$home_address->save();
 
@@ -190,12 +194,12 @@ class StudentInformationController extends Controller
 			$billing_address = Address::firstOrNew(['RCID' => $user->rcid, 'fkey_AddressTypeId' => 3, 'created_by' => $user->rcid]);
 
 			// Updating the billing address
-			$billing_address->Address1	     = $request->billing_Address1;
-			$billing_address->Address2	     = $request->billing_Address2;
-			$billing_address->City     	     = $request->billing_city;
-			$billing_address->fkey_StateId   = $request->billing_state;
-			$billing_address->PostalCode     = $request->billing_zip;
-			$billing_address->fkey_CountryId = $request->billingCountry;
+			$billing_address->Address1	     = $request->Address1_billing;
+			$billing_address->Address2	     = $request->Address2_billing;
+			$billing_address->City     	     = $request->city_billing;
+			$billing_address->fkey_StateId   = $request->state_billing;
+			$billing_address->PostalCode     = $request->zip_billing;
+			$billing_address->fkey_CountryId = $request->country_billing;
 			$billing_address->updated_by     = $user->rcid;
 			$billing_address->save();
 		}
@@ -326,13 +330,15 @@ class StudentInformationController extends Controller
 				$country2 = $foreign[1];
 			}
 
+			$student->country_of_birth = $request->input("BirthCountry", NULL);
+			$student->updated_by       = $user->rcid;
+			$student->save();
+
 			// Updating foreign country information
 			$country1->updated_by = $user->rcid;
-			$country1->BirthCountry       = $request->BirthCountry[0];
 			$country1->CitizenshipCountry = $request->CitizenshipCountry[0];
 			$country1->PermanentCountry   = $request->PermanentCountry[0];
 			$country2->updated_by = $user->rcid;
-			$country2->BirthCountry       = $request->BirthCountry[1];
 			$country2->CitizenshipCountry = $request->CitizenshipCountry[1];
 			$country2->PermanentCountry   = $request->PermanentCountry[1];
 
@@ -624,7 +630,7 @@ class StudentInformationController extends Controller
 
 		$guardian  = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->firstOrNew([]);
 		$address   = GenericAddress::fromGuardianInfo($guardian);
-		$education = Education::all();
+		$education = Education::orderBy("id")->get();
 		$marital   = MaritalStatuses::all();
 		$states    = States::all();
 		$countries = Countries::all();
@@ -1038,6 +1044,10 @@ class StudentInformationController extends Controller
 		$student->save();
 
 		return redirect()->action("StudentInformationController@index");
+	}
+
+	private function checkCompletion (Request $request, Students $student, CompletedSections $completed_sections) {
+		return true;
 	}
 
 }

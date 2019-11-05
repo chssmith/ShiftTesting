@@ -23,7 +23,7 @@
 			}
 		});
 
-		$('.foreignCard').on('change', function(){
+		$('.foreignCard[value="Visa"]').on('change', function(){
 			$("#Visa_span").toggle();
 		});
 	</script>
@@ -96,6 +96,24 @@
     </div>
 
     <div class="row" id="other_citizen_span" @if(count($foreign) == 0) hidden @endif>
+			<div class="row">
+				<div class="col-sm-12 col-md-6">
+					<div class="form-group">
+				    <label for="BirthCountry">
+				  	   Country of birth
+				    </label>
+				    <select name="BirthCountry" form="CitizenForm" class="form-control" id='BirthCountry'>
+				      <option></option>
+				      @foreach($countries as $country)
+				        <option @if(!empty($student) && $student->country_of_birth == $country->key_CountryId) selected @endif value="{{$country->key_CountryId}}">
+				          {{ $country->CountryName }}
+				        </option>
+				      @endforeach
+				    </select>
+				  </div>
+				</div>
+			</div>
+
      	@php($foreign_count = 1)
     	@foreach($foreign as $individual_country)
 	     	@include("partials.citizenship_info")
@@ -116,14 +134,14 @@
 				</div>
         <div>
 					<div class="pretty p-default p-round">
-		    		<input type = "radio" name = "GreenCard" class="foreignCard" value = "GreenCard" id = "GreenCard" @if($student->green_card) checked @endif />
+		    		<input type="checkbox" name="GreenCard" class="foreignCard" value="GreenCard" id="GreenCard" @if($student->green_card) checked @endif />
 		    		<div class="state p-primary p-round">
 		    			<label>Green Card</label>
 		    		</div>
 		    	</div>
 
 		    	<div class="pretty p-default p-round">
-		    		<input type = "radio" class="foreignCard" name = "GreenCard" value = "Visa" id = "Visa" @if(!empty($visa)) checked @endif />
+		    		<input type="checkbox" class="foreignCard" name="GreenCard" value="Visa" id="Visa" @if(!empty($visa)) checked @endif />
 		    		<div class="state p-primary p-round">
 		    			<label>Visa</label>
 		    		</div>

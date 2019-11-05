@@ -17,7 +17,31 @@ class GenericAddress {
   public $international_address;
 
   public function __construct () {
-    $this->address = [];
+    $this->address = ["", ""];
+  }
+
+  public static function fromMixedAddress ($address) {
+    $new_address = new GenericAddress;
+    if(!empty($address)) {
+      $new_address->address[0]            = $address->Address1;
+      $new_address->address[1]            = $address->Address2;
+      $new_address->city                  = $address->City;
+      $new_address->state                 = $address->fkey_StateId;
+      if (isset($address->state)) {
+        $new_address->state_name          = $address->state->StateName;
+      }
+      $new_address->zip_code              = $address->PostalCode;
+      $new_address->country_id            = $address->fkey_CountryId;
+      if (isset($address->country)) {
+        $new_address->country_name        = $address->country->CountryName;
+      }
+      if( !empty($address->international_address) ) {
+        $new_address->international_address = $address->international_address;
+      }
+    } else {
+
+    }
+    return $new_address;
   }
 
   public static function fromAddress (Address $address) {
