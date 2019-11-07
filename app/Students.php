@@ -15,8 +15,11 @@ class Students extends Model
     use SoftDeletes;
     protected $table      = 'student_forms.students';
     protected $connection = 'SAO';
+    protected $primaryKey = "RCID";
     protected $appends    = ['address'];
     protected $fillable   = ["RCID"];
+
+    public $incrementing  = false;
 
 
     public function parents(){
@@ -37,6 +40,10 @@ class Students extends Model
 
     public function visa(){
     	return $this->hasOne('App\VisaTypeMap', 'RCID', 'RCID');
+    }
+
+    public function citizenship() {
+      return $this->hasOne("App\CitizenshipInformation", "fkey_rcid");
     }
 
     public function getAddressAttribute($value){

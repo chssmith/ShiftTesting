@@ -5,17 +5,16 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class VisaTypeMap extends Model
+class CitizenshipCountryMap extends Model
 {
-    use SoftDeletes;
     /**
      * The Database table used by the model.
      *
      * @var  string
      */
-    protected $table      = 'student_forms.visa_type_map';
+    use SoftDeletes;
+    protected $table      = 'Scotty_StudentAffairsOperations.student_forms.citizenship_country_map';
+    protected $primaryKey = 'id';
     protected $connection = 'SAO';
-    protected $primaryKey = "RCID";
-    protected $fillable   = ["RCID", "created_by"];
 
 }

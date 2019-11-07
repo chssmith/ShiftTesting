@@ -101,10 +101,10 @@
 						<span class="fas fa-exclamation-triangle"></span>
 						<div>
 							<p>
-								In order to live locally and not at home, you must get
+								In order to live locally and not at home, you must have
 								permission from the Residence Life office at Roanoke College.
 								If you are not sure if you are permitted to stay off campus,
-								contact the Residence Life office at (540) 375 - 2308.
+								contact the Residence Life office at <phone-number>(540) 375 - 2308</phone-number>.
 							</p>
 							<p>
 								Completion of this form does not grant permission to live off campus.

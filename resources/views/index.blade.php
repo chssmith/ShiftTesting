@@ -70,7 +70,7 @@
 							</li>
 						</ul>
 
-						We appreciate your time and look forward to see you on campus.
+						We appreciate your time and look forward to seeing you on campus.
 					</p>
 					<p>
 						Go Maroons!

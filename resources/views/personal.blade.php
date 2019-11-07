@@ -5,10 +5,6 @@
 @endsection
 
 @section('javascript')
-	<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/jquery.inputmask.bundle.js"></script>
-	<script>
-		$("input[type='tel']").inputmask({"mask": "(999) 999-9999"});
-	</script>
 @endsection
 
 @section("stylesheets")
@@ -17,6 +13,7 @@
 	<style>
 		#SSN {
 			font-size: 12pt;
+			line-height: 1.4;
 		}
 	</style>
 @endsection
@@ -82,10 +79,10 @@
     	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 				<label for="SSN">Social Security Number</label>
 				<p id="SSN">
-					@if($have_SSN)
-
+					@if(!empty($datamart_student) && !empty($datamart_student->ssn))
+						We have your number on file.  If you would like to double check this information, please call <phone-number>(540) 375 - 2211</phone-number> to securely verify your Social Security Number.
 					@else
-						We do not have your Social Security Number on file.  Please call (540) 375 - XXXX to securely provide your Social Security Number to us.
+						We do not have your Social Security Number on file.  Please call <phone-number>(540) 375 - 2211</phone-number> to securely provide your Social Security Number to us.
 					@endif
 				</p>
 			</div>

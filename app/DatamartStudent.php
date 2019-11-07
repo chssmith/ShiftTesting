@@ -15,4 +15,9 @@ class DatamartStudent extends Model
     protected $primaryKey = 'RCID';
     protected $connection = 'DataMart';
 
+    public function ssn () {
+      return $this->hasOne("App\HaveSSN", "ID");
+    }
+
+
 }
