@@ -354,7 +354,7 @@ class StudentInformationController extends Controller
 		$user = RCAuth::user();
 
 		// Assert: If NULL than we have not completed the form
-		$completed_sections->citizenship_information = !empty($citizenship) && !empty($citizenship->us);
+		$completed_sections->citizenship_information = !empty($citizenship) && ($citizenship->us || $citizenship->another || $citizenship->other);
 		$completed_sections->updated_by              = $user->rcid;
 		$completed_sections->save();
 	}
