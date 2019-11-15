@@ -72,6 +72,7 @@ Route::get('parent_info', 'StudentInformationController@parentAndGuardianInfo');
 Route::get('individual_guardian/{id?}', 'StudentInformationController@individualGuardian');
 Route::get('emergency_contact', 'StudentInformationController@emergencyContact');
 Route::get('emergency_contact/edit/{id?}', 'StudentInformationController@individualEmergencyContact');
+Route::get('emergency_contact/double_check', 'StudentInformationController@emergencyDoubleCheck');
 Route::get('missing_person', 'StudentInformationController@missingPersonContact');
 Route::get('employement_info/{id?}', 'StudentInformationController@employmentInfo');
 Route::delete('delete_contact/{id}', 'StudentInformationController@deleteContact');

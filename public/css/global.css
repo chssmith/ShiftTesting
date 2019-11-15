@@ -1,3 +1,7 @@
+.btn:focus {
+  overflow: visible !important;
+}
+
 phone-number {
   white-space: pre;
 }
@@ -68,10 +72,10 @@ label {
 .btn-toolbar.three > .btn-success {
   grid-area: save;
 }
-@media (max-width: 1000px) {
+@media (max-width: 1325px) {
   .btn-toolbar.three {
-    grid-template-areas: "new" "save" "cancel";
-    grid-template-columns: 1fr;
+    grid-template-areas: "padding new" "padding save" "padding cancel";
+    grid-template-columns: 5fr 1fr;
   }
   .main-container {
     padding: 20px 0px;

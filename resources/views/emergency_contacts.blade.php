@@ -103,7 +103,7 @@
 			<div class="btn-toolbar three">
 				<a href="{{action('StudentInformationController@index')}}" class="btn btn-lg btn-danger"> <span class="far fa-times" aria-hidden="true"></span> Cancel </a>
 				<a href="{{action('StudentInformationController@individualEmergencyContact')}}" class="btn btn-lg btn-info"> <span class="far fa-plus" aria-hidden="true"></span> New Contact </a>
-				<a href="{{action('StudentInformationController@nonEmergency')}}" class="btn btn-lg btn-success"> <span class="fas fa-save" aria-hidden="true"></span> Save and Continue </a>
+				<a href="{{action('StudentInformationController@emergencyDoubleCheck')}}" class="btn btn-lg btn-success"> <span class="fas fa-save" aria-hidden="true"></span> Save and Continue </a>
 			</div>
 		</div>
 	</div>

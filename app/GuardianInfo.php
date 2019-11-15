@@ -45,4 +45,12 @@ class GuardianInfo extends Model
       }
       return sprintf("%s %s", $name, $this->last_name);
     }
+
+    public function complete () {
+      return !empty($this->first_name) && !empty($this->last_name) &&
+             !empty($this->fkey_marital_status) && !empty($this->relationship) &&
+             (!empty($this->email) || !empty($this->home_phone) || !empty($this->cell_phone)) &&
+             !empty($this->fkey_CountryId) && GenericAddress::fromGuardianInfo($this)->complete() &&
+             !is_null($this->info_release);
+    }
 }

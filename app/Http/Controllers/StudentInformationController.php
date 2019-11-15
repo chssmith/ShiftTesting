@@ -47,6 +47,8 @@ class StudentInformationController extends Controller
 	public function index(Students $student, CompletedSections $completed_sections){
 		$user     = RCAuth::user();
 
+
+
 		$sections['Personal Information']     	 = ['status' => $completed_sections->personal_information,			      'link' => action("StudentInformationController@personalInfo")];
 		$sections['Address Information']      	 = ['status' => $completed_sections->address_information,			        'link' => action("StudentInformationController@addressInfo")];
 		$sections['Residence Information']   	   = ['status' => $completed_sections->residence_information,			      'link' => action("StudentInformationController@residenceInfo")];
@@ -59,7 +61,7 @@ class StudentInformationController extends Controller
 		$sections['Independent Student']     	   = ['status' => $completed_sections->independent_student,			        'link' => "independent_student"];
 		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => "parent_info"];
 
-		return view('index', compact('sections', "student"));
+		return view('index', compact('sections', "student", "completed_sections"));
 	}
 
 	//*************************************************************************************************************
@@ -85,10 +87,7 @@ class StudentInformationController extends Controller
 		$military_options = MilitaryOptions::all();
 		$marital_statuses = MaritalStatuses::all();
 
-		// Need to figure out how to check their SSN
-		$have_SSN   = 0;
-
-		return view('personal', compact('user', 'student','cell_phone','home_phone', 'user_races', 'all_races', 'have_SSN','marital_statuses','military_options', 'datamart_student', 'vpb_user'));
+		return view('personal', compact('user', 'student','cell_phone','home_phone', 'user_races', 'all_races','marital_statuses','military_options', 'datamart_student', 'vpb_user'));
 	}
 
 	public function personalInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
@@ -128,9 +127,12 @@ class StudentInformationController extends Controller
 			$new_race->save();
 		}
 
-		$personal_completed = !empty($student->first_name) && !empty($student->last_name) && !empty($student->fkey_marital_status) &&
-													!empty($student->fkey_military_id) && !empty($student->ethnics) && !empty($cell_phone->PhoneNumber) &&
-													!empty($home_phone->PhoneNumber) && !empty($races);
+		$datamart_student   = DatamartStudent::where('rcid', $user->rcid)->with("ssn")->first();
+		$personal_completed = !empty($student->first_name) && !empty($student->last_name) &&
+													!empty($student->fkey_marital_status) && !empty($student->fkey_military_id) &&
+													!empty($student->ethnics) && !empty($races) &&
+													!(empty($cell_phone->PhoneNumber) && empty($home_phone->PhoneNumber)) &&
+													!empty($datamart_student->ssn);
 
 		$completed_sections->personal_information = $personal_completed;
 		$completed_sections->updated_by = $user->rcid;
@@ -199,8 +201,8 @@ class StudentInformationController extends Controller
 		}
 		$student->save();
 
-		$has_home_address    = !empty($home_address)  && !empty($home_address->Address1) && !empty($home_address->City) && !empty($home_address->fkey_StateId) && !empty($home_address->PostalCode);
-		$has_billing_address = $student->home_as_billing || (!empty($billing_address) && !empty($billing_address->Address1) && !empty($billing_address->City) && !empty($billing_address->fkey_StateId) && !empty($billing_address->PostalCode));
+		$has_home_address    = GenericAddress::fromAddress($home_address)->complete();
+		$has_billing_address = $student->home_as_billing || (!empty($billing_address) && GenericAddress::fromAddress($billing_address)->complete());
 
 		$completed_sections->address_information = $has_home_address && $has_billing_address;
 		$completed_sections->updated_by          = $user->rcid;
@@ -249,7 +251,7 @@ class StudentInformationController extends Controller
 
 		$student->save();
 
-		$completed_sections->residence_information = !is_null($student->home_as_local);
+		$completed_sections->residence_information = $student->home_as_local || GenericAddress::fromAddress($local_address)->complete();
 		$completed_sections->updated_by            = $user->rcid;
 		$completed_sections->save();
 
@@ -294,16 +296,16 @@ class StudentInformationController extends Controller
 	}
 
 	public function citizenInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
-		$user          = RCAuth::user();
-		$green_card_input        = $request->input("GreenCard", []);
+		$user              = RCAuth::user();
+		$green_card_input  = $request->input("GreenCard", []);
+		$us_resident       = USResidence::firstOrNew(['RCID' => $student->RCID, 'created_by' => $user->rcid], ['updated_by' => $user->rcid]);
 
 		$citizenship                      = CitizenshipInformation::find($student->RCID);//$student->load("citizenship");
 		$citizenship->country_of_birth    = $request->input("BirthCountry", NULL);
 		$citizenship->updated_by          = $user->rcid;
 
-		$citizenship->us         = (bool)$request->US_citizen;
+		$citizenship->us = (bool)$request->US_citizen;
 		if ($request->US_citizen){
-			$us_resident                 = USResidence::firstOrNew(['RCID' => $student->RCID, 'created_by' => $user->rcid], ['updated_by' => $user->rcid]);
 			$us_resident->fkey_StateCode = $request->state;
 			$us_resident->fkey_CityCode  = $request->input("county", NULL);
 			$us_resident->save();
@@ -330,9 +332,10 @@ class StudentInformationController extends Controller
 			//Delete all foreign information, because they are not listed as a citizen of another country
 			$citizenship->permanent_residence = $citizenship->green_card = NULL;
 			CitizenshipCountryMap::orderBy('ID')->where('RCID', $user->rcid)->update(['deleted_by' => $user->rcid, 'deleted_at' => \Carbon\Carbon::now()]);
+			$foreign = collect();
 		}
 
-		if($citizenship->another && in_array("Visa", $green_card_input)) {
+		if($citizenship->another && in_array("Visa", $green_card_input) && !empty($request->get("VisaTypes", NULL))) {
 			$visa             = VisaTypeMap::firstOrNew(["RCID" => $student->RCID, "created_by" => $user->rcid]);
 			$visa->updated_by = $user->rcid;
 			$visa->fkey_code  = $request->VisaTypes;
@@ -343,18 +346,26 @@ class StudentInformationController extends Controller
 
 		$citizenship->other = (bool)$request->other_citizen;
 		$citizenship->save();
-		self::completedCitizenshipInfo($student, $completed_sections, $citizenship);
+		self::completedCitizenshipInfo($student, $completed_sections, $citizenship, $us_resident, $foreign, !empty($citizenship) && $citizenship->green_card, isset($visa) && !empty($visa));
 
 		return redirect()->action('StudentInformationController@allergyInfo');
 	}
 
 	// Pre :
 	// Post: Checks that the form is completed
-	private function completedCitizenshipInfo(Students $student, CompletedSections $completed_sections, CitizenshipInformation $citizenship){
+	private function completedCitizenshipInfo(Students $student, CompletedSections $completed_sections, CitizenshipInformation $citizenship,
+																						USResidence $us_resident, $foreign, $permanent_residence, $visa){
 		$user = RCAuth::user();
 
-		// Assert: If NULL than we have not completed the form
-		$completed_sections->citizenship_information = !empty($citizenship) && ($citizenship->us || $citizenship->another || $citizenship->other);
+		$basic_citizenship   = !empty($citizenship) && !empty($citizenship->country_of_birth) && ($citizenship->us || $citizenship->another || $citizenship->other);
+		$us_citizenship      = $basic_citizenship && (!$citizenship->us || (!empty($us_resident) && !empty($us_resident->fkey_StateCode) &&
+																																			  ($us_resident->fkey_StateCode != "VA" || !empty($us_resident->fkey_CityCode))));
+		$another_citizenship = $basic_citizenship && (!$citizenship->another || (!empty($citizenship->permanent_residence) &&
+																																						 $foreign->reduce(function ($collector, $item) {
+																																							 	return $collector || !empty($item->CitizenshipCountry);
+																																						 	}, false) && ($permanent_residence || $visa)));
+
+		$completed_sections->citizenship_information = $basic_citizenship && $us_citizenship && $another_citizenship;
 		$completed_sections->updated_by              = $user->rcid;
 		$completed_sections->save();
 	}
@@ -382,19 +393,19 @@ class StudentInformationController extends Controller
 
 		$medications = Medications::firstOrNew(['rcid' => $user->rcid, "created_by" => $user->rcid]);
 		$medications->take_medications = !empty($request->medications);
-		$medications->medications 	   = $request->input("medications_text", "");
+		$medications->medications 	   = !empty($request->medications) ? $request->input("medications_text", "") : NULL;
 		$medications->updated_by       = $user->rcid;
 		$medications->save();
 
 		$med_allergy = MedicationAllergies::firstOrNew(['rcid' => $user->rcid, "created_by" => $user->rcid]);
 		$med_allergy->have_medication_allergies = !empty($request->med_allergies);
-		$med_allergy->medication_allergies      = $request->input("med_allergy_text", "");
+		$med_allergy->medication_allergies      = !empty($request->med_allergies) ? $request->input("med_allergy_text", "") : NULL;
 		$med_allergy->updated_by                = $user->rcid;
 		$med_allergy->save();
 
 		$insect_allergy = InsectAllergies::firstOrNew(['rcid' => $user->rcid, "created_by" => $user->rcid]);
 		$insect_allergy->have_insect_allergies = !empty($request->insect_allergies);
-		$insect_allergy->insect_allergies      = $request->input("insect_allergy_text", "");
+		$insect_allergy->insect_allergies      = !empty($request->insect_allergies) ? $request->input("insect_allergy_text", "") : NULL;
 		$insect_allergy->updated_by            = $user->rcid;
 		$insect_allergy->save();
 
@@ -467,13 +478,17 @@ class StudentInformationController extends Controller
 			}
 			$other_concern->other_concern = $request->other_concerns;
 			$other_concern->save();
+		} else if (!empty($other_concern)) {
+			$other_concern->deleted_by = $user->rcid;
+			$other_concern->save();
+			$other_concern->delete();
 		}
 
 		// update that the student submitted this page
 		$student->submitted_health_concerns = 1;
 		$student->save();
 
-		$completed_sections->medical_information = 1;
+		$completed_sections->medical_information = $request->other != "other" || (!empty($other_concern) && !empty($other_concern->other_concern));
 		$completed_sections->save();
 
 		return redirect()->action('StudentInformationController@missingPersonContact');
@@ -594,15 +609,20 @@ class StudentInformationController extends Controller
 	// Pre :
 	// Post: checks that the emergency forms are completed
 	private function completedEmergency(Students $student, CompletedSections $completed_sections){
-		$num_completed_contacts                    = EmergencyContact::where("student_rcid", $student->RCID)
-																																 ->where("emergency_contact", 1)
-																																 ->get()
-																																 ->filter(function ($item) {
-																																	 return $item->completed();
-																																 })->count();
-		$completed_sections->emergency_information = $num_completed_contacts > 0;
+		$contacts = EmergencyContact::where("student_rcid", $student->RCID)
+																			->where("emergency_contact", 1)
+																		 	->get();
+		$completed_sections->emergency_information = $contacts->count() > 0 && $contacts->reduce(function ($collector, $item) {
+																																							return $collector && $item->completed();
+																																						}, true);
 		$completed_sections->updated_by            = RCAuth::user()->rcid;
 		$completed_sections->save();
+	}
+
+	public function emergencyDoubleCheck (Students $student, CompletedSections $completed_sections) {
+		self::completedEmergency($student, $completed_sections);
+
+		return redirect()->action("StudentInformationController@nonEmergency");
 	}
 	//*************************************************************************************************************
 	// END Emergency Contact FORMS
@@ -648,8 +668,10 @@ class StudentInformationController extends Controller
 		$student->updated_by          = $user->rcid;
 		$student->save();
 
+		self::completedParentInfo($student, $completed_sections);
+
 		$completed_sections->independent_student = !is_null($student->independent_student);
-		$completed_sections->updated_by = $user->rcid;
+		$completed_sections->updated_by          = $user->rcid;
 		$completed_sections->save();
 
 		return redirect()->action('StudentInformationController@parentAndGuardianInfo');
@@ -666,7 +688,7 @@ class StudentInformationController extends Controller
 	public function getGuardianVerification (Students $student, $id) {
 		$guardian           = GuardianInfo::where('id', $id)->with(["employment.country", "employment.state", "education", "marital_status", "state", "country"])->first();
 		$guardian_address   = GenericAddress::fromGuardianInfo($guardian);
-		$employment_address = GenericAddress::fromEmploymentInfo($guardian->employment);
+		$employment_address = !empty($guardian->employment) ? GenericAddress::fromEmploymentInfo($guardian->employment) : new GenericAddress;
 		return view()->make("partials.guardian_confirm_modal_contents", compact("guardian", "guardian_address", "employment_address"));
 	}
 
@@ -732,14 +754,15 @@ class StudentInformationController extends Controller
 		return redirect()->action('StudentInformationController@infoRelease', ['id' => $guardian->id]);
 	}
 
-	public function deleteGuardian($id){ //TODO
+	public function deleteGuardian(Students $student, CompletedSections $completed_sections, $id){ //TODO
 		$user     = RCAuth::user();
-		$student  = self::getStudent($user->rcid);
 
 		$guardian = GuardianInfo::where('student_rcid', $user->rcid)->where('id', $id)->first();
 		if(!empty($guardian)){
 			self::deleteObject($guardian);
 		}
+
+		self::completedParentInfo($student, $completed_sections);
 
 		return redirect()->action('StudentInformationController@parentAndGuardianInfo');
 
@@ -826,8 +849,15 @@ class StudentInformationController extends Controller
 
 	private function completedParentInfo(Students $student, CompletedSections $completed_sections){
 		$user       = RCAuth::user();
-		$incomplete = GuardianInfo::where('student_rcid', $student->RCID)->whereNull("info_release")->count();
-		$completed_sections->parent_and_guardian_information = $incomplete == 0;
+		$guardians  = GuardianInfo::where('student_rcid', $student->RCID)->get();
+		$complete   = $guardians->filter(function ($item) {
+										return $item->complete();
+									}, true)->count();
+		$incomplete = $guardians->filter(function ($item) {
+										return !$item->complete();
+									})->count();
+
+		$completed_sections->parent_and_guardian_information = $incomplete == 0 && ($student->independent_student || $complete > 0);
 		$completed_sections->updated_by = $user->rcid;
 		$completed_sections->save();
 	}

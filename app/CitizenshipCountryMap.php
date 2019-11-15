@@ -17,4 +17,6 @@ class CitizenshipCountryMap extends Model
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
 
+
+
 }

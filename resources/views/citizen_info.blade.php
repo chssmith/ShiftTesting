@@ -179,6 +179,7 @@
 					    			Visa Type
 									</label>
 							    <select name="VisaTypes" form="CitizenForm" class="form-control" id='visa_type'>
+										<option value="" hidden @if(empty($visa)) selected @endif> -- Select a Visa Type --</option>
 						    		@foreach($visa_types as $visa_type)
 			  							<option value="{{ $visa_type->code }}" @if(!empty($visa) && $visa->fkey_code == $visa_type->code) selected @endif>
 												{{ $visa_type->descr }}

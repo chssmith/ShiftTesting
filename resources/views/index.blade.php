@@ -46,6 +46,40 @@
 			.panel-heading {
 				border-bottom: 10px solid;
 			}
+
+			.complete {
+				background-color: #70A204;
+			}
+			.incomplete {
+				background-color: #CB0D0B;
+			}
+			.btn-complete {
+				color: #FFFFFF;
+				text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+				background-color: #649103;
+				*background-color: #649103;
+				background-image: -moz-linear-gradient(top, #70A204, #649103);
+				background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70A204), to(#649103));
+				background-image: -webkit-linear-gradient(top, #70A204, #649103);
+				background-image: -o-linear-gradient(top, #70A204, #649103);
+				background-image: linear-gradient(to bottom, #70A204, #649103);
+				background-repeat: repeat-x;
+				border-color: #649103;
+				border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+				filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#70A204', endColorstr='#649103', GradientType=0);
+				filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+			}
+			.btn-complete:hover,
+			.btn-complete:focus,
+			.btn-complete:active,
+			.btn-complete.active,
+			.btn-complete.disabled,
+			.btn-complete[disabled] {
+				color: #FFFFFF;
+				background-color: #649103;
+				*background-color: #003bb3;
+			}
+
 		</style>
 @endsection
 
@@ -113,12 +147,21 @@
 			    	@foreach($sections as $section_name => $section_completion)
 		        	<a href="{{$section_completion['link']}}" class="list-group-item">
 								{{$section_name}}
+								<span class="badge pull-right @if(is_null($section_completion['status'])) not-started @elseif($section_completion['status']) complete @else incomplete @endif">
+									@if (is_null($section_completion['status']))
+										Not Started
+									@elseif($section_completion['status'])
+										<span class="fas fa-check" aria-hidden="true"></span>
+									@else
+										Incomplete
+									@endif
+								</span>
 		        	</a>
 		        @endforeach
 			    </div>
 				</div>
 				<div style="text-align: right; margin: 20px 0px;">
-					<a class="btn btn-success btn-lg" href="{{action('StudentInformationController@confirmation')}}" class="list-group-item"> Submit</a>
+					<a class="btn btn-complete btn-lg" href="{{action('StudentInformationController@confirmation')}}" class="list-group-item"> Submit</a>
 				</div>
 			</div>
 		</div>

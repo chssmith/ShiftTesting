@@ -100,4 +100,37 @@ class GenericAddress {
 
     return $new_address;
   }
+
+  public function get_missing () {
+    $messages = collect();
+
+    if(empty($this->country_id)) {
+      $messages[] = "is missing Country information.  Please enter all necessary address information.";
+    } else if ($this->country_id == \App\GenericAddress::US_UD) {
+      if (empty($this->address[0])) {
+        $messages[] = "must have the first address line populated.";
+      }
+
+      if (!empty($this->city)) {
+        $messages[] = "must have a valid City chosen.";
+      }
+
+      if (!empty($this->state)) {
+        $messages[] = "must have a valid City chosen.";
+      }
+
+      if (!empty($this->zip_code)) {
+        $messages[] = "must have a valid Zip Code chosen.";
+      }
+    } else if (empty($this->international_address)) {
+      $messages[] = "must have full mailing address entered.";
+    }
+
+    return $messages;
+  }
+
+  public function complete () {
+    return !empty($this->international_address) ||
+          (!empty($this->address[0]) && !empty($this->country_id) && !empty($this->city) && !empty($this->state) && !empty($this->zip_code));
+  }
 }
