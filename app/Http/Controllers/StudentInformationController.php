@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\PERC;
 use App\Students;
 use App\PhoneMap;
 use App\RaceMap;
@@ -92,6 +93,7 @@ class StudentInformationController extends Controller
 
 	public function personalInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
 		$user    = RCAuth::user();
+		$datamart_student = DatamartStudent::where('rcid', $user->rcid)->with("ssn")->first();
 
 		// Updating all the student information
 		$student->first_name 		      = $request->first_name;
@@ -130,7 +132,7 @@ class StudentInformationController extends Controller
 		$datamart_student   = DatamartStudent::where('rcid', $user->rcid)->with("ssn")->first();
 		$personal_completed = !empty($student->first_name) && !empty($student->last_name) &&
 													!empty($student->fkey_marital_status) && !empty($student->fkey_military_id) &&
-													!empty($student->ethnics) && !empty($races) &&
+													!is_null($student->ethnics) && !empty($races) &&
 													!(empty($cell_phone->PhoneNumber) && empty($home_phone->PhoneNumber)) &&
 													!empty($datamart_student->ssn);
 
@@ -1019,7 +1021,6 @@ class StudentInformationController extends Controller
 
 	// Pre :
 	// Post: checks that the emergency forms are completed
-
 	public function showFinancialAcceptance (Students $student) {
 		return view()->make("financial", compact("student"));
 	}
@@ -1028,6 +1029,11 @@ class StudentInformationController extends Controller
 		$student->financial_acceptance = $request->has("acknowledge");
 		$student->updated_by = \RCAuth::user()->rcid;
 		$student->save();
+
+		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('BFA%s', \Carbon\Carbon::now()->format("y"))],
+														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
+														 	'updated_by' => \RCAuth::user()->rcid]);
+		$perc->save();
 
 		return redirect()->action("StudentInformationController@index");
 	}
@@ -1040,6 +1046,11 @@ class StudentInformationController extends Controller
 		$student->ai_and_student_conduct = $request->has("acknowledge");
 		$student->updated_by             = \RCAuth::user()->rcid;
 		$student->save();
+
+		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('AIC%s', \Carbon\Carbon::now()->format("y"))],
+														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
+														 	'updated_by' => \RCAuth::user()->rcid]);
+		$perc->save();
 
 		return redirect()->action("StudentInformationController@index");
 	}
