@@ -81,3 +81,29 @@ label {
     padding: 20px 0px;
   }
 }
+.btn-complete {
+  color: #FFFFFF;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #649103;
+  *background-color: #649103;
+  background-image: -moz-linear-gradient(top, #70A204, #649103);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70A204), to(#649103));
+  background-image: -webkit-linear-gradient(top, #70A204, #649103);
+  background-image: -o-linear-gradient(top, #70A204, #649103);
+  background-image: linear-gradient(to bottom, #70A204, #649103);
+  background-repeat: repeat-x;
+  border-color: #649103;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#70A204', endColorstr='#649103', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.btn-complete:hover,
+.btn-complete:focus,
+.btn-complete:active,
+.btn-complete.active,
+.btn-complete.disabled,
+.btn-complete[disabled] {
+  color: #FFFFFF;
+  background-color: #649103;
+  *background-color: #003bb3;
+}
