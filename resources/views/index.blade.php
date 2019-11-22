@@ -54,6 +54,14 @@
 				background-color: #CB0D0B;
 			}
 
+			.modal-body {
+				font-family: "Calibri";
+			}
+			.missing_info {
+				line-height: 1.8;
+				font-weight: bold;
+			}
+
 		</style>
 @endsection
 
@@ -95,11 +103,7 @@
 		    <a role="button" target="Forms" class="accordian-button" style="color:black;" data-toggle="collapse" data-parent="#accordion" href="#collapseForms" aria-expanded="true" aria-controls="collapseForms">
 		    	<div>
 			        Student Information Forms
-			        @if(false)
-		        		<span style="background-color:#70A204" class="badge">
-		        			Completed
-								</span>
-		        	@elseif(false)
+							@if($submitted)
 		        		<span style="background-color:#FCBF06; color:black" class="badge">
 		        			Submitted
 								</span>
@@ -119,7 +123,7 @@
 	   		<div class="panel panel-default">
 			    <div class="list-group">
 			    	@foreach($sections as $section_name => $section_completion)
-		        	<a href="{{$section_completion['link']}}" class="list-group-item">
+		        	<a @if(!$submitted)href="{{$section_completion['link']}}"@endif class="list-group-item">
 								{{$section_name}}
 								<span class="badge pull-right @if(is_null($section_completion['status'])) not-started @elseif($section_completion['status']) complete @else incomplete @endif">
 									@if (is_null($section_completion['status']))
@@ -135,9 +139,52 @@
 			    </div>
 				</div>
 				<div style="text-align: right; margin: 20px 0px;">
-					<a class="btn btn-complete btn-lg" href="{{action('StudentInformationController@confirmation')}}" class="list-group-item"> Submit</a>
+					<button class="btn btn-complete btn-lg" data-toggle="modal" data-target="#confirm_submit">Submit</a>
 				</div>
 			</div>
+		</div>
+
+		<div class="modal fade" id="confirm_submit" tabindex="-1" role="dialog" aria-labelledby="confirm_submit_title">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title" id="confirm_submit_title">Confirm Submit</h4>
+		      </div>
+		      <div class="modal-body" style="font-size: 12pt;">
+		        <p>
+							Please make sure all information for the student information forms is correct before submitting.
+						</p>
+
+						<p>
+							Once you submit these forms, you will not be able to make changes until after the form is fully processed.
+						</p>
+						@php
+							$missing_info = array_reduce($sections, function ($counter, $item) {if ($item['status'] == '0') {$counter++;} return $counter;}, 0) > 0;
+						@endphp
+						@if ($missing_info)
+							<div class="alert alert-danger light missing_info">
+								There is some missing information:
+								<div class="list-group">
+									@foreach($sections as $section_name => $section)
+										@if($section['status'] == '0')
+											<a href="{{ $section['link'] }}" class="list-group-item">
+												{{$section_name}}
+											</a>
+										@endif
+									@endforeach
+								</div>
+							</div>
+						@endif
+		      </div>
+		      <div class="modal-footer">
+						<form action="@if(!$missing_info){{action('StudentInformationController@confirmationUpdate')}}@endif" method="POST">
+							{{ csrf_field() }}
+		        	<button type="submit" class="btn btn-complete" @if($missing_info) disabled @endif>Submit</button>
+						</form>
+		      </div>
+		    </div>
+		  </div>
 		</div>
 
  		<div class="panel-heading" role="tab" id="headingOthers" style="border-top: solid 1px #70132D">

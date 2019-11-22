@@ -48,7 +48,7 @@ class StudentInformationController extends Controller
 	public function index(Students $student, CompletedSections $completed_sections){
 		$user     = RCAuth::user();
 
-
+		$submitted                               = !empty(PERC::where("rcid", $student->RCID)->where("perc", sprintf("RSI%s", \Carbon\Carbon::now()->format("y")))->first());
 
 		$sections['Personal Information']     	 = ['status' => $completed_sections->personal_information,			      'link' => action("StudentInformationController@personalInfo")];
 		$sections['Address Information']      	 = ['status' => $completed_sections->address_information,			        'link' => action("StudentInformationController@addressInfo")];
@@ -62,7 +62,7 @@ class StudentInformationController extends Controller
 		$sections['Independent Student']     	   = ['status' => $completed_sections->independent_student,			        'link' => "independent_student"];
 		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => "parent_info"];
 
-		return view('index', compact('sections', "student", "completed_sections"));
+		return view('index', compact('sections', "student", "completed_sections", "submitted"));
 	}
 
 	//*************************************************************************************************************
@@ -868,14 +868,105 @@ class StudentInformationController extends Controller
 	//END Parent/Guardian FORMS
 	//*************************************************************************************************************
 
+	//*************************************************************************************************************
+	// BEGIN Financial Acceptance
+	//*************************************************************************************************************
 
-
-	public function confirmation(){
-		return view('confirmation');
+	// Pre :
+	// Post: checks that the emergency forms are completed
+	public function showFinancialAcceptance (Students $student) {
+		return view()->make("financial", compact("student"));
 	}
 
-	public function confirmationUpdate(){
-		dd('completed');
+	public function completeFinancialAcceptance (Request $request, Students $student) {
+		$student->financial_acceptance = $request->has("acknowledge");
+		$student->updated_by = \RCAuth::user()->rcid;
+		$student->save();
+
+		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('BFA%s', \Carbon\Carbon::now()->format("y"))],
+														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
+														 	'updated_by' => \RCAuth::user()->rcid]);
+
+		if ($student->financial_acceptance) {
+			$perc->save();
+		} else if (!empty($perc->id)) {
+			$perc->deleted_by = \RCAuth::user()->rcid;
+			$perc->save();
+			$perc->delete();
+		}
+
+		return redirect()->action("StudentInformationController@index");
+	}
+
+	//*************************************************************************************************************
+	// END Financial Acceptance
+	//*************************************************************************************************************
+
+	//*************************************************************************************************************
+	// BEGIN Academic Integrity & Student Conduct
+	//*************************************************************************************************************
+	public function showAcademicIntegrityStatement (Students $student) {
+		return view()->make("AI", compact("student"));
+	}
+
+	public function completeAcademicIntegrityStatement (Request $request, Students $student) {
+		$student->ai_and_student_conduct = $request->has("acknowledge");
+		$student->updated_by             = \RCAuth::user()->rcid;
+		$student->save();
+
+		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('AIC%s', \Carbon\Carbon::now()->format("y"))],
+														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
+															'updated_by' => \RCAuth::user()->rcid]);
+
+		if ($student->ai_and_student_conduct) {
+			$perc->save();
+		} else if (!empty($perc->id)) {
+			$perc->deleted_by = \RCAuth::user()->rcid;
+			$perc->save();
+			$perc->delete();
+		}
+
+		return redirect()->action("StudentInformationController@index");
+	}
+
+	private function checkCompletion (Request $request, Students $student, CompletedSections $completed_sections) {
+		return true;
+	}
+	//*************************************************************************************************************
+	// BEGIN Academic Integrity & Student Conduct
+	//*************************************************************************************************************
+
+
+	public function confirmationUpdate(Request $request, Students $student, CompletedSections $completed_sections){
+		$actually_done = (
+				$completed_sections->personal_information &&
+				$completed_sections->address_information &&
+				$completed_sections->residence_information &&
+				$completed_sections->citizenship_information &&
+				$completed_sections->allergy_information &&
+				$completed_sections->medical_information &&
+				$completed_sections->missing_person &&
+				$completed_sections->emergency_information &&
+				$completed_sections->non_emergency_contact &&
+				$completed_sections->independent_student &&
+				$completed_sections->parent_and_guardian_information
+			);
+			$perc    = PERC::firstOrCreate(['rcid' => $student->RCID, 'perc' => sprintf('RSI%s', \Carbon\Carbon::now()->format("y"))],
+															 			 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
+																	 	  'updated_by' => \RCAuth::user()->rcid]);
+
+			$perc->save();
+			$message = "Submitted successfully.  Please check your Roanoke College email account for confirmation.";
+			if (!$actually_done) {
+				$perc->deleted_by = \RCAuth::user()->rcid;
+				$perc->save();
+				$perc->delete();
+				$message = "Missing information";
+			}
+
+			//TODO: Send Email
+
+			return redirect()->action("StudentInformationController@index")->with("message", $message);
 	}
 
 	// Pre :
@@ -1018,45 +1109,4 @@ class StudentInformationController extends Controller
 		$completed_sections->save();
 
 	}
-
-	// Pre :
-	// Post: checks that the emergency forms are completed
-	public function showFinancialAcceptance (Students $student) {
-		return view()->make("financial", compact("student"));
-	}
-
-	public function completeFinancialAcceptance (Request $request, Students $student) {
-		$student->financial_acceptance = $request->has("acknowledge");
-		$student->updated_by = \RCAuth::user()->rcid;
-		$student->save();
-
-		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('BFA%s', \Carbon\Carbon::now()->format("y"))],
-														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
-														 	'updated_by' => \RCAuth::user()->rcid]);
-		$perc->save();
-
-		return redirect()->action("StudentInformationController@index");
-	}
-
-	public function showAcademicIntegrityStatement (Students $student) {
-		return view()->make("AI", compact("student"));
-	}
-
-	public function completeAcademicIntegrityStatement (Request $request, Students $student) {
-		$student->ai_and_student_conduct = $request->has("acknowledge");
-		$student->updated_by             = \RCAuth::user()->rcid;
-		$student->save();
-
-		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('AIC%s', \Carbon\Carbon::now()->format("y"))],
-														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
-														 	'updated_by' => \RCAuth::user()->rcid]);
-		$perc->save();
-
-		return redirect()->action("StudentInformationController@index");
-	}
-
-	private function checkCompletion (Request $request, Students $student, CompletedSections $completed_sections) {
-		return true;
-	}
-
 }
