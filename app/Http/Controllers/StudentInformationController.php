@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\PERC;
+use App\AdditionalForms;
 use App\Students;
 use App\PhoneMap;
 use App\RaceMap;
@@ -48,7 +49,8 @@ class StudentInformationController extends Controller
 	public function index(Students $student, CompletedSections $completed_sections){
 		$user     = RCAuth::user();
 
-		$submitted                               = !empty(PERC::where("rcid", $student->RCID)->where("perc", sprintf("RSI%s", \Carbon\Carbon::now()->format("y")))->first());
+		$percs                                   = PERC::where("rcid", $student->RCID)->get();
+		$submitted                               = !$percs->where("perc", sprintf("RSI%s", \Carbon\Carbon::now()->format("y")))->isEmpty();
 
 		$sections['Personal Information']     	 = ['status' => $completed_sections->personal_information,			      'link' => action("StudentInformationController@personalInfo")];
 		$sections['Address Information']      	 = ['status' => $completed_sections->address_information,			        'link' => action("StudentInformationController@addressInfo")];
@@ -62,7 +64,9 @@ class StudentInformationController extends Controller
 		$sections['Independent Student']     	   = ['status' => $completed_sections->independent_student,			        'link' => "independent_student"];
 		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => "parent_info"];
 
-		return view('index', compact('sections', "student", "completed_sections", "submitted"));
+		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("title")->get();
+
+		return view('index', compact('sections', "student", "completed_sections", "additional_forms", "percs", "submitted"));
 	}
 
 	//*************************************************************************************************************

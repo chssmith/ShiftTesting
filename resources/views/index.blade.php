@@ -62,6 +62,31 @@
 				font-weight: bold;
 			}
 
+			#additional_forms a.list-group-item {
+				display: grid;
+				grid-template-areas: "title due-date badge";
+				grid-template-columns: 4fr 200px 95px;
+				grid-column-gap: 20px;
+			}
+
+			#additional_forms link-title {
+				grid-area: title;
+			}
+			#additional_forms due-date {
+				grid-area: due-date;
+			}
+			#additional_forms badge {
+				grid-area: badge;
+			}
+
+			@media (max-width: 1200px) {
+				#additional_forms a.list-group-item {
+					grid-template-areas: "title title" "due-date badge";
+					grid-template-columns: 1fr 1fr;
+					grid-row-gap: 30px;
+				}
+			}
+
 		</style>
 @endsection
 
