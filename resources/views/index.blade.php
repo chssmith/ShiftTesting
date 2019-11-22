@@ -1,7 +1,7 @@
 @extends('forms_template')
 
 @section('heading')
-	All Forms
+	Student Forms
 @endsection
 
 @section("header")
@@ -78,7 +78,7 @@
 								You must go through each section.
 							</li>
 							<li>
-								Progress is saves as you complete each section.
+								Progress is saved as you complete each section.
 							</li>
 							<li>
 								Make sure you hit the submit button when you are finished.  Make
@@ -100,7 +100,7 @@
 	<div id="accordion" class="panel panel-default">
  		<div class="panel-heading" role="tab" id="headingForms">
     	<h4 class="panel-title">
-		    <a role="button" target="Forms" class="accordian-button" style="color:black;" data-toggle="collapse" data-parent="#accordion" href="#collapseForms" aria-expanded="true" aria-controls="collapseForms">
+		    <a role="button" target="Forms" class="accordian-button" style="color:black;" data-toggle="collapse" data-parent="#accordion" href="#collapseForms" aria-expanded="false" aria-controls="collapseForms">
 		    	<div>
 			        Student Information Forms
 							@if($submitted)
@@ -112,13 +112,13 @@
 		        			Incomplete
 								</span>
 		        	@endif
-			    	<span id="Forms" class="accordian-circle fas fa-chevron-circle-up fa-lg pull-right circle" style="color: grey"></span>
+			    	<span id="Forms" class="accordian-circle fas fa-chevron-circle-down fa-lg pull-right circle" style="color: grey"></span>
 	        </div>
 		    </a>
 			</h4>
 		</div>
 
-		<div id="collapseForms" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingForms">
+		<div id="collapseForms" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingForms">
 	   	<div class="panel-body">
 	   		<div class="panel panel-default">
 			    <div class="list-group">
@@ -189,16 +189,16 @@
 
  		<div class="panel-heading" role="tab" id="headingOthers" style="border-top: solid 1px #70132D">
     	<h4 class="panel-title">
-		    <a role="button" class="accordian-button" target="OtherStuff" style="color:black" data-toggle="collapse" data-parent="#accordion" href="#collapseOthers" aria-expanded="true" aria-controls="collapseOthers">
+		    <a role="button" class="accordian-button" target="OtherStuff" style="color:black" data-toggle="collapse" data-parent="#accordion" href="#collapseOthers" aria-expanded="false" aria-controls="collapseOthers">
 					<div>
-						<span id="OtherStuff" class="accordian-circle fas fa-chevron-circle-up fa-lg pull-right check" style="color: grey"></span>
-						Other Forms
+						<span id="OtherStuff" class="accordian-circle fas fa-chevron-circle-down fa-lg pull-right check" style="color: grey"></span>
+						Additional Forms
 					</div>
 		    </a>
   		</h4>
   	</div>
 
-		<div id="collapseOthers" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOthers">
+		<div id="collapseOthers" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOthers">
 	   	<div class="panel-body">
 				<div class="panel panel-default">
 					@include("partials.other_forms")
