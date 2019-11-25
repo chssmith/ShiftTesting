@@ -58,6 +58,11 @@ Route::prefix("admin")->middleware("force_login")->group( function () {
 	Route::get('create_parent_snap', 'AdminController@createParentSnap');
 });
 
+Route::prefix("sims")->group( function () {
+	Route::get ("registration", "SIMSRegistrationController@index");
+	Route::post("registration", "SIMSRegistrationController@register");
+});
+
 Route::get('/', 'StudentInformationController@index');
 Route::get('personal_info', 'StudentInformationController@personalInfo');
 Route::get('address_info', 'StudentInformationController@addressInfo');
