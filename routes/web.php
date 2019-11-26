@@ -63,6 +63,11 @@ Route::prefix("sims")->group( function () {
 	Route::post("registration", "SIMSRegistrationController@register");
 });
 
+Route::prefix("academic_achievement")->group( function () {
+	Route::get("/",  "StudentInformationController@showAcademicAchievement");
+	Route::post("/", "StudentInformationController@storeAcademicAchievement");
+});
+
 Route::get('/', 'StudentInformationController@index');
 Route::get('personal_info', 'StudentInformationController@personalInfo');
 Route::get('address_info', 'StudentInformationController@addressInfo');

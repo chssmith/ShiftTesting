@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use App\APMap;
+use App\APExams;
+use App\IBMap;
+use App\IBExams;
 use App\PERC;
 use App\AdditionalForms;
 use App\Students;
@@ -937,7 +942,46 @@ class StudentInformationController extends Controller
 		return true;
 	}
 	//*************************************************************************************************************
-	// BEGIN Academic Integrity & Student Conduct
+	// END Academic Integrity & Student Conduct
+	//*************************************************************************************************************
+
+	//*************************************************************************************************************
+	// BEGIN Academic Achievement
+	//*************************************************************************************************************
+	public function showAcademicAchievement (Request $request, Students $student) {
+		$ap_exams = \App\APExams::orderBy("name")->with(["map" => function ($query) use ($student) {
+			$query->where("rcid", $student->RCID);
+		}])->get();
+
+		$ib_exams = \App\IBExams::orderBy("name")->with(["map" => function ($query) use ($student) {
+			$query->where("rcid", $student->RCID);
+		}])->get();
+
+		return view()->make("academic_achievement.index", compact("ap_exams", "ib_exams"));
+	}
+
+	public function storeAcademicAchievement (Request $request, Students $student) {
+		APMap::where("rcid", $student->RCID)->update(["deleted_at" => Carbon::now()]);
+		IBMap::where("rcid", $student->RCID)->update(["deleted_at" => Carbon::now()]);
+
+		foreach ($request->input("ap_exams", []) as $exam) {
+			$map = new APMap;
+			$map->rcid         = $student->RCID;
+			$map->fkey_ap_exam = $exam;
+			$map->save();
+		}
+
+		foreach ($request->input("ib_exams", []) as $exam) {
+			$map = new IBMap;
+			$map->rcid         = $student->RCID;
+			$map->fkey_ib_exam = $exam;
+			$map->save();
+		}
+
+		return redirect()->action("StudentInformationController@showAcademicAchievement");
+	}
+	//*************************************************************************************************************
+	// END Academic Achievement
 	//*************************************************************************************************************
 
 
