@@ -8,6 +8,8 @@ use App\APMap;
 use App\APExams;
 use App\IBMap;
 use App\IBExams;
+use App\DEMap;
+use App\DualEnrollmentCourses;
 use App\PERC;
 use App\AdditionalForms;
 use App\Students;
@@ -949,20 +951,25 @@ class StudentInformationController extends Controller
 	// BEGIN Academic Achievement
 	//*************************************************************************************************************
 	public function showAcademicAchievement (Request $request, Students $student) {
-		$ap_exams = \App\APExams::orderBy("name")->with(["map" => function ($query) use ($student) {
+		$ap_exams = APExams::orderBy("name")->with(["map" => function ($query) use ($student) {
 			$query->where("rcid", $student->RCID);
 		}])->get();
 
-		$ib_exams = \App\IBExams::orderBy("name")->with(["map" => function ($query) use ($student) {
+		$ib_exams = IBExams::orderBy("name")->with(["map" => function ($query) use ($student) {
 			$query->where("rcid", $student->RCID);
 		}])->get();
 
-		return view()->make("academic_achievement.index", compact("ap_exams", "ib_exams"));
+		$de_courses = DualEnrollmentCourses::orderBy("name")->with(["map" => function ($query) use ($student) {
+			$query->where("rcid", $student->RCID);
+		}])->get();
+
+		return view()->make("academic_achievement.index", compact("ap_exams", "ib_exams", "de_courses"));
 	}
 
 	public function storeAcademicAchievement (Request $request, Students $student) {
 		APMap::where("rcid", $student->RCID)->update(["deleted_at" => Carbon::now()]);
 		IBMap::where("rcid", $student->RCID)->update(["deleted_at" => Carbon::now()]);
+		DEMap::where("rcid", $student->RCID)->update(["deleted_at" => Carbon::now()]);
 
 		foreach ($request->input("ap_exams", []) as $exam) {
 			$map = new APMap;
@@ -975,6 +982,13 @@ class StudentInformationController extends Controller
 			$map = new IBMap;
 			$map->rcid         = $student->RCID;
 			$map->fkey_ib_exam = $exam;
+			$map->save();
+		}
+
+		foreach ($request->input("de_courses", []) as $course) {
+			$map = new DEMap;
+			$map->rcid                        = $student->RCID;
+			$map->fkey_dual_enrollment_course = $course;
 			$map->save();
 		}
 
