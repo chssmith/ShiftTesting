@@ -54,4 +54,16 @@ class Students extends Model
     	return (['Home'=>$home_address, 'Billing'=>$billing_address, 'Local'=>$local_address]);
     }
 
+    public function ap_exams () {
+      return $this->hasManyThrough("\App\APExams", "\App\APMap", "rcid", "id", "RCID", "fkey_ap_exam");
+    }
+
+    public function ib_exams () {
+      return $this->hasManyThrough("\App\IBExams", "\App\IBMap", "rcid", "id", "RCID", "fkey_ib_exam");
+    }
+
+    public function de_courses () {
+      return $this->hasManyThrough("\App\DualEnrollmentCourses", "\App\DEMap", "rcid", "id", "RCID", "fkey_dual_enrollment_course");
+    }
+
 }

@@ -56,6 +56,8 @@ Route::prefix("admin")->middleware("force_login")->group( function () {
 	Route::get('parents', 'AdminController@changedParentInfo');
 	Route::get('create_student_snap', 'AdminController@createStudentSnap');
 	Route::get('create_parent_snap', 'AdminController@createParentSnap');
+
+	Route::get("academic_achievement/export", "AdminController@exportAcademicAchievementCSV");
 });
 
 Route::prefix("sims")->group( function () {

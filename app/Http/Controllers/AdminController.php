@@ -95,4 +95,24 @@ class AdminController extends Controller
 		$pdf = \PDF::loadView('reports.parent_report', compact('all_changed'));
 		return $pdf;
 	}
+
+
+	public function exportAcademicAchievementCSV (Request $request) {
+		$ap_exams   = \App\APExams::orderBy("name")->pluck("colleague_code");
+		$ib_exams   = \App\IBExams::orderBy("name")->pluck("colleague_code");
+		$de_courses = \App\DualEnrollmentCourses::orderBy("name")->pluck("colleague_code");
+
+		$headings   = $ap_exams->merge($ib_exams)->merge($de_courses);
+
+		$students   = Students::with(["ap_exams", "ib_exams", "de_courses"])->get()
+										->map(function ($item) {
+												$item->courses   = $item->ap_exams->merge($item->ib_exams)->merge($item->de_courses)->keyBy("colleague_code");
+												return $item;
+										});
+		$filename   = sprintf("StudentInformationForms_AcademicAchievement_%s.csv", \Carbon\Carbon::now()->format("Ydm"));
+		return response(view()->make("academic_achievement.csv", compact("students", "headings"))->render(), 200)
+							->header("Content-Type",        "application/csv")
+							->header("Content-Disposition", "attachment; filename=\"$filename\"");
+	}
+
 }
