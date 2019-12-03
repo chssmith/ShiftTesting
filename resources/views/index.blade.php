@@ -114,6 +114,15 @@
 		</div>
 	</div>
 
+	@if(\Session::has("message"))
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="alert alert-warning light">
+					{{ \Session::get("message") }}
+				</div>
+			</div>
+		</div>
+	@endif
 
 	<div id="accordion" class="panel panel-default">
  		<div class="panel-heading" role="tab" id="headingForms">
@@ -157,7 +166,7 @@
 			    </div>
 				</div>
 				<div style="text-align: right; margin: 20px 0px;">
-					<button class="btn btn-complete btn-lg" data-toggle="modal" data-target="#confirm_submit">Submit</a>
+					<button class="btn btn-complete btn-lg" data-toggle="modal" data-target="#confirm_submit" @if($submitted) disabled @endif>Submit</a>
 				</div>
 			</div>
 		</div>

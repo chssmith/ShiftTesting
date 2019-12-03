@@ -1,11 +1,14 @@
 <div id="additional_forms" class="list-group">
   @foreach($additional_forms as $additional_form)
     @if (!empty($additional_form->link))
-      <a href="{{$additional_form->link}}" class="list-group-item">
+      @php
+        $completed = !$percs->where("perc", $additional_form->getPerc())->isEmpty();
+      @endphp
+      <a @if(!$completed)href="{{ ($additional_form->internal ? action($additional_form->link) : $additional_form->link) }}"@endif class="list-group-item">
         <link-title>{{ $additional_form->title }}</link-title>
         <due-date>{{ $additional_form->due_date->format("n/j/Y") }}</due-date>
         <badge>
-          @if (!$percs->where("perc", $additional_form->getPerc())->isEmpty())
+          @if ($completed)
             @include("partials.complete_badge")
           @endif
         </badge>

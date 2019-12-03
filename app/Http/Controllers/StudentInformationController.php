@@ -992,7 +992,12 @@ class StudentInformationController extends Controller
 			$map->save();
 		}
 
-		return redirect()->action("StudentInformationController@showAcademicAchievement");
+		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('ACADF', \Carbon\Carbon::now()->format("y"))],
+														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
+															'updated_by' => \RCAuth::user()->rcid]);
+		$perc->save();
+
+		return redirect()->action("StudentInformationController@index");
 	}
 	//*************************************************************************************************************
 	// END Academic Achievement
@@ -1027,6 +1032,12 @@ class StudentInformationController extends Controller
 			}
 
 			//TODO: Send Email
+			try {
+				$vpb_student = \App\User::find($student->RCID);
+				\App\EmailQueue::sendEmail($vpb_student->CampusEmail, "Student Information Form has been submitted", view()->make("email.success")->render());
+			} catch (\Exception $e) {
+				$message = "We cannot locate your email address.  Please contact the Registrar's office at (540) 375-2211 for confirmation of your submission";
+			}
 
 			return redirect()->action("StudentInformationController@index")->with("message", $message);
 	}
