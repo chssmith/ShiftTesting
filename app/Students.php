@@ -66,4 +66,7 @@ class Students extends Model
       return $this->hasManyThrough("\App\DualEnrollmentCourses", "\App\DEMap", "rcid", "id", "RCID", "fkey_dual_enrollment_course");
     }
 
+    public function prospect_status () {
+      return $this->hasOne ("\App\StudentProspect", "key_ProspectId", "RCID");
+    }
 }

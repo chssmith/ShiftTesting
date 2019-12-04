@@ -54,24 +54,30 @@ class StudentInformationController extends Controller
 	}
 
 	public function index(Students $student, CompletedSections $completed_sections){
-		$user     = RCAuth::user();
+		$user              = RCAuth::user();
+		$student           = $student->load("prospect_status");
 
-		$percs                                   = PERC::where("rcid", $student->RCID)->get();
-		$submitted                               = !$percs->where("perc", sprintf("RSI%s", \Carbon\Carbon::now()->format("y")))->isEmpty();
+		$returning_student = \App\Semesters::where("EndDate", ">=", Carbon::parse())->where("key_SemesterId", (!empty($student->prospect_status) ? $student->prospect_status->StartTerm : ""))->get()->isEmpty();
+		$student_type      = ((!$returning_student && !empty($student->prospect_status)) ? $student->prospect_status->fkey_AdmitStatusCode : "other");
+
+		$percs             = PERC::where("rcid", $student->RCID)->get();
+		$submitted         = !$percs->where("perc", sprintf("RSI%s", \Carbon\Carbon::now()->format("y")))->isEmpty();
 
 		$sections['Personal Information']     	 = ['status' => $completed_sections->personal_information,			      'link' => action("StudentInformationController@personalInfo")];
 		$sections['Address Information']      	 = ['status' => $completed_sections->address_information,			        'link' => action("StudentInformationController@addressInfo")];
 		$sections['Residence Information']   	   = ['status' => $completed_sections->residence_information,			      'link' => action("StudentInformationController@residenceInfo")];
 		$sections['Citizenship Information'] 	   = ['status' => $completed_sections->citizenship_information,		      'link' => action("StudentInformationController@citizenInfo")];
-		$sections['Allergy Information']   	   	 = ['status' => $completed_sections->allergy_information,			        'link' => "allergy_info"];
-		$sections['Medical Information']   	   	 = ['status' => $completed_sections->medical_information,			        'link' => "medical_info"];
-		$sections['Missing Person']			 	       = ['status' => $completed_sections->missing_person,				          'link' => "missing_person"];
-		$sections['Emergency Contact']		 	     = ['status' => $completed_sections->emergency_information,			      'link' => "emergency_contact"];
-		$sections['Non Emergency Contact']   	   = ['status' => $completed_sections->non_emergency_contact,			      'link' => "non_emergency"];
-		$sections['Independent Student']     	   = ['status' => $completed_sections->independent_student,			        'link' => "independent_student"];
-		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => "parent_info"];
+		$sections['Allergy Information']   	   	 = ['status' => $completed_sections->allergy_information,			        'link' => action("StudentInformationController@allergyInfo")];
+		$sections['Medical Information']   	   	 = ['status' => $completed_sections->medical_information,			        'link' => action("StudentInformationController@medicalInfo")];
+		$sections['Missing Person']			 	       = ['status' => $completed_sections->missing_person,				          'link' => action("StudentInformationController@missingPersonContact")];
+		$sections['Emergency Contact']		 	     = ['status' => $completed_sections->emergency_information,			      'link' => action("StudentInformationController@emergencyContact")];
+		$sections['Non Emergency Contact']   	   = ['status' => $completed_sections->non_emergency_contact,			      'link' => action("StudentInformationController@nonEmergency")];
+		$sections['Independent Student']     	   = ['status' => $completed_sections->independent_student,			        'link' => action("StudentInformationController@independentStudent")];
+		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => action("StudentInformationController@parentAndGuardianInfo")];
 
-		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("title")->get();
+		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("title")->get()->filter(function ($item) use ($student_type) {
+			return $item->$student_type;
+		});
 
 		return view('index', compact('sections', "student", "completed_sections", "additional_forms", "percs", "submitted"));
 	}
