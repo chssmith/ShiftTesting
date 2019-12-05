@@ -69,14 +69,14 @@
 
 				<div>
 					<div class="pretty p-default">
-		    		<input type="checkbox" class="hideshowbox" name="US_citizen" value=true id="US_citizen" @if($citizenship->us) checked @endif />
+		    		<input type="checkbox" class="hideshowbox" name="US_citizen" value=true id="US_citizen" @if(!empty($citizenship) && $citizenship->us) checked @endif />
 		    		<div class="state p-primary">
 		    			<label>I am a United States Citizen</label>
 		    		</div>
 		    	</div>
 		    </div>
 
-		    <div id="US_citizen_span" @if(!$citizenship->us) hidden @endif>
+		    <div id="US_citizen_span" @if(empty($citizenship) || !$citizenship->us) hidden @endif>
 		    	<div class="row">
 		      	<div class="col-xs-12 col-sm-6 form-group">
 							<label for="states">
@@ -113,14 +113,14 @@
 
 		    <div>
 					<div class="pretty p-default">
-		    		<input type="checkbox" class="hideshowbox" name="another_citizen" value=true id="other_citizen" @if($citizenship->another) checked @endif />
+		    		<input type="checkbox" class="hideshowbox" name="another_citizen" value=true id="other_citizen" @if(!empty($citizenship) && $citizenship->another) checked @endif />
 		    		<div class="state p-primary">
 		    			<label>I am a citizen of another country.</label>
 		    		</div>
 		    	</div>
 		    </div>
 
-		    <div class="row" id="other_citizen_span" @if(!$citizenship->another) hidden @endif>
+		    <div class="row" id="other_citizen_span" @if(empty($citizenship) || !$citizenship->another) hidden @endif>
 					<div class="row">
 						<div class="col-xs-12 col-md-6">
 							<div class="form-group">
@@ -130,7 +130,7 @@
 						    <select name="PermanentCountry" form="CitizenForm" class="form-control" id='PermanentCountry'>
 						      <option></option>
 						      @foreach($countries as $country)
-						        <option @if($citizenship->permanent_residence == $country->key_CountryId) selected @endif
+						        <option @if(!empty($citizenship) && $citizenship->permanent_residence == $country->key_CountryId) selected @endif
 						          value="{{$country->key_CountryId}}">
 						          {{ $country->CountryName }}
 						        </option>
@@ -141,11 +141,12 @@
 					</div>
 
 		     	@php($foreign_count = 1)
-		    	@foreach($citizenship->countries as $individual_country)
-			     	@include("partials.citizenship_info")
-				    @php($foreign_count++)
-			    @endforeach
-
+					@if(!empty($citizenship))
+			    	@foreach($citizenship->countries as $individual_country)
+				     	@include("partials.citizenship_info")
+					    @php($foreign_count++)
+				    @endforeach
+					@endif
 			    @php($individual_country = NULL)
 
 			    @if($foreign_count < 3)
@@ -160,7 +161,7 @@
 						</div>
 		        <div>
 							<div class="pretty p-default p-round">
-				    		<input type="checkbox" name="GreenCard[]" class="foreignCard" value="GreenCard" id="GreenCard" @if($citizenship->green_card) checked @endif />
+				    		<input type="checkbox" name="GreenCard[]" class="foreignCard" value="GreenCard" id="GreenCard" @if(!empty($citizenship) && $citizenship->green_card) checked @endif />
 				    		<div class="state p-primary p-round">
 				    			<label>Permanent Residency</label>
 				    		</div>
@@ -193,7 +194,7 @@
 		    </div>
 				<div>
 					<div class="pretty p-default">
-						<input type="checkbox" class="hideshowbox" name="other_citizen" value=true id="other" @if($citizenship->other) checked @endif/>
+						<input type="checkbox" class="hideshowbox" name="other_citizen" value=true id="other" @if(!empty($citizenship) && $citizenship->other) checked @endif/>
 						<div class="state p-primary">
 							<label>Other</label>
 						</div>
