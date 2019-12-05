@@ -50,12 +50,12 @@ class AdminController extends Controller
 	public function changedStudents(){
 		ini_set('max_execution_time', 300);
 		$user = RCAuth::user();
-		$all_changed = Students::with('visa')->get();
-
+		$all_changed = Students::with(['visa', 'home_address', 'billing_address', 'local_address', 'datamart_user'])->get()->keyBy("RCID");
 		$storage_path = storage_path();
 
 		$count = 1;
 		foreach($all_changed as $student){
+
 			$report_string = view()->make("reports.student_report", ['student'=>$student])->render();
 			$pdf = \PDF::loadHtml($report_string);
 			$new_page = $pdf->output();

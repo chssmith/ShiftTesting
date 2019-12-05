@@ -11,13 +11,16 @@ class DatamartStudent extends Model
      *
      * @var  string
      */
-    protected $table      = 'dbo.Person';
+    protected $table      = 'DataMart.dbo.Person';
     protected $primaryKey = 'RCID';
-    protected $connection = 'DataMart';
 
     public function ssn () {
       return $this->hasOne("App\HaveSSN", "ID");
     }
 
+
+    public function getRcidAttribute($value) {
+      return trim($value);
+    }
 
 }

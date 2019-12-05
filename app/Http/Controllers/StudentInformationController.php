@@ -28,6 +28,7 @@ use App\MedicationAllergies;
 use App\InsectAllergies;
 use App\Countries;
 use App\CitizenshipInformation;
+use App\ODS\CitizenshipInformation as ODSCitizenshipInformation;
 use App\CitizenshipCountryMap;
 use App\Counties;
 use App\USResidence;
@@ -185,11 +186,12 @@ class StudentInformationController extends Controller
 	public function addressInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
 		$user 			  = RCAuth::user();
 
-		$home_address = Address::firstOrNew(['RCID' => $user->rcid, 'fkey_AddressTypeId' => 1, 'created_by' => $user->rcid]);
+		$home_address   = Address::firstOrNew(['RCID' => $user->rcid, 'fkey_AddressTypeId' => 1, 'created_by' => $user->rcid]);
+		$home_addresses = $request->input("address_home", ["", ""]);
 
 		// updating the home address information
-		$home_address->Address1 	    			 = $request->input("Address1_home", NULL);
-		$home_address->Address2 	    			 = $request->input("Address2_home", NULL);
+		$home_address->Address1 	    			 = $home_addresses[0];
+		$home_address->Address2 	    			 = $home_addresses[1];
 		$home_address->City     	    			 = $request->input("city_home", NULL);
 		$home_address->fkey_StateId   			 = $request->input("state_home", NULL);
 		$home_address->PostalCode            = $request->input("zip_home", NULL);
@@ -207,9 +209,11 @@ class StudentInformationController extends Controller
 			$student->home_as_billing = false;
 			$billing_address = Address::firstOrNew(['RCID' => $user->rcid, 'fkey_AddressTypeId' => 3, 'created_by' => $user->rcid]);
 
+			$billing_addresses = $request->input("address_billing", ["", ""]);
+
 			// Updating the billing address
-			$billing_address->Address1	            = $request->input("Address1_billing", NULL);
-			$billing_address->Address2	            = $request->input("Address2_billing", NULL);
+			$billing_address->Address1	            = $billing_addresses[0];
+			$billing_address->Address2	            = $billing_Addresses[1];
 			$billing_address->City     	            = $request->input("city_billing", NULL);
 			$billing_address->fkey_StateId          = $request->input("state_billing", NULL);
 			$billing_address->PostalCode            = $request->input("zip_billing", NULL);
@@ -291,6 +295,8 @@ class StudentInformationController extends Controller
 
 		$visa_types    = VisaTypes::all();
 		$visa          = VisaTypeMap::where('RCID', $user->rcid)->first();
+
+		$ods_citizenship = ODSCitizenshipInformation::where('fkey_rcid', $user->rcid)->with("countries")->first();
 
 		$states        = States::all();
 		$countries     = Countries::all();

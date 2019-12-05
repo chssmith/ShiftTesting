@@ -18,4 +18,8 @@ class Address extends Model
     protected $connection = 'SAO';
     protected $fillable   = ["RCID", "fkey_AddressTypeId", "created_by"];
 
+    public function country_details () {
+      return $this->hasOne("\App\Countries", "key_CountryId", "fkey_CountryId");
+    }
+
 }

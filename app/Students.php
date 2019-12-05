@@ -27,15 +27,15 @@ class Students extends Model
     }
 
     public function home_address(){
-    	return $this->hasOne('App\Address','RCID', 'RCID')->where('fkey_AddressTypeId', 1)->first();
+    	return $this->hasOne('App\Address','RCID', 'RCID')->where('fkey_AddressTypeId', 1);
     }
 
     public function billing_address(){
-    	return $this->hasOne('App\Address','RCID', 'RCID')->where('fkey_AddressTypeId', 3)->first();
+    	return $this->hasOne('App\Address','RCID', 'RCID')->where('fkey_AddressTypeId', 3);
     }
 
     public function local_address(){
-    	return $this->hasOne('App\Address','RCID', 'RCID')->where('fkey_AddressTypeId', 4)->first();
+    	return $this->hasOne('App\Address','RCID', 'RCID')->where('fkey_AddressTypeId', 4);
     }
 
     public function visa(){
@@ -47,11 +47,11 @@ class Students extends Model
     }
 
     public function getAddressAttribute($value){
-    	$home_address    = $this->home_address();
-    	$billing_address = $this->billing_address();
-    	$local_address   = $this->local_address();
-
-    	return (['Home'=>$home_address, 'Billing'=>$billing_address, 'Local'=>$local_address]);
+      $billing = $this->billing_address;
+      $local   = $this->local_address;
+      if ($this->home_as_billing) $billing = $this->home_address;
+      if ($this->home_as_local)   $local   = $this->home_address;
+    	return (['Home'=>$this->home_address, 'Billing'=>$billing, 'Local'=>$local]);
     }
 
     public function ap_exams () {
@@ -68,5 +68,9 @@ class Students extends Model
 
     public function prospect_status () {
       return $this->hasOne ("\App\StudentProspect", "key_ProspectId", "RCID");
+    }
+
+    public function datamart_user () {
+      return $this->hasOne("\App\DatamartStudent", "RCID", "RCID");
     }
 }

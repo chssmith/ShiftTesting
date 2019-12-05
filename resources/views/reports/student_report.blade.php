@@ -52,9 +52,6 @@
 	</header>
 
 	<main>
-		<?php $color = "white";
-			  $rcid = $student->RCID;
-		 ?>
 		<h1 style="text-align:right; margin-bottom:0px; margin-top:5px;"> Student Information </h1>
 		<hr style="border-width:2px;">
 
@@ -84,10 +81,10 @@
 			<tbody>
 				<tr>
 					<td> First Name </td>
-					<td>  </td>
+					<td> {{ $student->datamart_user->FirstName }} </td>
 					<td> {{ $student->first_name }} </td>
 					<td>
-						@if(null != $student->first_name)
+						@if($student->datamart_user->FirstName != $student->first_name)
 							Y
 						@endif
 					</td>
@@ -95,10 +92,10 @@
 
 				<tr>
 					<td> Middle Name </td>
-					<td>  </td>
+					<td> {{ $student->datamart_user->MiddleName }}</td>
 					<td> {{ $student->middle_name }} </td>
 					<td>
-						@if(null != $student->middle_name)
+						@if($student->datamart_user->MiddleName != $student->middle_name)
 							Y
 						@endif
 					</td>
@@ -106,10 +103,10 @@
 
 				<tr>
 					<td> Last Name </td>
-					<td>  </td>
+					<td> {{ $student->datamart_user->LastName }} </td>
 					<td> {{ $student->last_name }} </td>
 					<td>
-						@if(null != $student->last_name)
+						@if($student->datamart_user->LastName != $student->last_name)
 							Y
 						@endif
 					</td>
@@ -117,10 +114,10 @@
 
 				<tr>
 					<td> Maiden Name </td>
-					<td>  </td>
+					<td> {{ $student->datamart_user->MaidenName }} </td>
 					<td> {{ $student->maiden_name }} </td>
 					<td>
-						@if(null != $student->maiden_name)
+						@if($student->datamart_user->MaidenName != $student->maiden_name)
 							Y
 						@endif
 					</td>
@@ -278,8 +275,8 @@
 						<td> Country </td>
 						<td>  </td>
 						<td>
-							@if(!empty($address))
-								{{ $address->fkey_CountryId }}
+							@if(!empty($address->country_details))
+								{{ $address->country_details->CountryCode }}
 							@endif
 						</td>
 						<td>
