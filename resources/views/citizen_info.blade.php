@@ -36,12 +36,14 @@
 @endsection
 
 @section("content")
+	@php
+		use \App\GenericCitizenship;
+	@endphp
 	<form id="CitizenForm" method="POST"
 				action="{{ action("StudentInformationController@citizenInfoUpdate") }}">
 		{{ csrf_field() }}
 
 		<h3> Citizenship Information </h3>
-
 
 		<div class="row">
 			<div class="col-sm-12 col-md-6">
@@ -52,7 +54,12 @@
 					<select name="BirthCountry" form="CitizenForm" class="form-control" id='BirthCountry'>
 						<option></option>
 						@foreach($countries as $country)
-							<option @if(!empty($citizenship) && $citizenship->country_of_birth == $country->key_CountryId) selected @endif value="{{$country->key_CountryId}}">
+							<option
+								@if(GenericCitizenship::matches_expected ($citizenship, "country_of_birth", $country->key_CountryId) ||
+										(empty($citizenship) && GenericCitizenship::matches_expected ($ods_citizenship, "country_of_birth", $country->key_CountryId)))
+									selected
+								@endif
+								value="{{$country->key_CountryId}}">
 								{{ $country->CountryName }}
 							</option>
 						@endforeach
@@ -69,14 +76,18 @@
 
 				<div>
 					<div class="pretty p-default">
-		    		<input type="checkbox" class="hideshowbox" name="US_citizen" value=true id="US_citizen" @if(!empty($citizenship) && $citizenship->us) checked @endif />
+		    		<input type="checkbox" class="hideshowbox" name="US_citizen" value=true id="US_citizen"
+							@php
+								$is_us_citizen = (!empty($citizenship) && $citizenship->us) || (empty($citizenship) && $ods_citizenship->us);
+							@endphp
+							@if ($is_us_citizen) checked @endif />
 		    		<div class="state p-primary">
 		    			<label>I am a United States Citizen</label>
 		    		</div>
 		    	</div>
 		    </div>
 
-		    <div id="US_citizen_span" @if(empty($citizenship) || !$citizenship->us) hidden @endif>
+		    <div id="US_citizen_span" @if(!$is_us_citizen) hidden @endif>
 		    	<div class="row">
 		      	<div class="col-xs-12 col-sm-6 form-group">
 							<label for="states">
@@ -85,14 +96,14 @@
 				    	<select name="state" form="CitizenForm" class="form-control" id='states'>
 		 						<option></option>
 					    	@foreach($states as $state)
-		  						<option value="{{$state->StateCode}}" @if(!empty($us_resident) && $us_resident->fkey_StateCode == $state->StateCode) selected @endif>
+		  						<option value="{{$state->StateCode}}" @if(GenericCitizenship::matches_expected($us_resident, "fkey_StateCode", $state->StateCode)) selected @endif>
 										{{ $state->StateName }}
 									</option>
 		  					@endforeach
 				    	</select>
 		        </div>
 					</div>
-			    <div id="VA_span" @if(empty($us_resident) || $us_resident->fkey_StateCode != "VA") hidden @endif>
+			    <div id="VA_span" @if(!GenericCitizenship::matches_expected($us_resident, "fkey_StateCode", "VA")) hidden @endif>
 			      <div class="row">
 			      	<div class="col-xs-12 col-md-6 form-group">
 								<label for="counties">
@@ -101,7 +112,7 @@
 						    <select name="county" form="CitizenForm" class="form-control" id='counties'>
 									<option></option>
 						    	@foreach($counties as $id => $county)
-										<option value="{{ $id }}" @if(!empty($us_resident) && $us_resident->fkey_CityCode == $id) selected @endif>
+										<option value="{{ $id }}" @if(GenericCitizenship::matches_expected($us_resident, "fkey_CityCode", $id)) selected @endif>
 											{{ $county->display }}
 										</option>
 									@endforeach
@@ -130,7 +141,7 @@
 						    <select name="PermanentCountry" form="CitizenForm" class="form-control" id='PermanentCountry'>
 						      <option></option>
 						      @foreach($countries as $country)
-						        <option @if(!empty($citizenship) && $citizenship->permanent_residence == $country->key_CountryId) selected @endif
+						        <option @if(GenericCitizenship::matches_expected($citizenship, "permanent_residence", $country->key_CountryId)) selected @endif
 						          value="{{$country->key_CountryId}}">
 						          {{ $country->CountryName }}
 						        </option>
@@ -147,6 +158,7 @@
 					    @php($foreign_count++)
 				    @endforeach
 					@endif
+
 			    @php($individual_country = NULL)
 
 			    @if($foreign_count < 3)
@@ -161,14 +173,16 @@
 						</div>
 		        <div>
 							<div class="pretty p-default p-round">
-				    		<input type="checkbox" name="GreenCard[]" class="foreignCard" value="GreenCard" id="GreenCard" @if(!empty($citizenship) && $citizenship->green_card) checked @endif />
+				    		<input type="checkbox" name="GreenCard[]" class="foreignCard" value="GreenCard" id="GreenCard"
+											 @if((!empty($citizenship) && $citizenship->green_card) || (empty($citizenship) && $ods_citizenship->green_card)) checked @endif />
 				    		<div class="state p-primary p-round">
 				    			<label>Permanent Residency</label>
 				    		</div>
 				    	</div>
 
 				    	<div class="pretty p-default p-round">
-				    		<input type="checkbox" class="foreignCard" name="GreenCard[]" value="Visa" id="Visa" @if(!empty($visa)) checked @endif />
+				    		<input type="checkbox" class="foreignCard" name="GreenCard[]" value="Visa" id="Visa"
+									@if(!empty($visa) || (empty($citizenship) && !empty($ods_visa))) checked @endif />
 				    		<div class="state p-primary p-round">
 				    			<label>Visa</label>
 				    		</div>
@@ -182,7 +196,9 @@
 							    <select name="VisaTypes" form="CitizenForm" class="form-control" id='visa_type'>
 										<option value="" hidden @if(empty($visa)) selected @endif> -- Select a Visa Type --</option>
 						    		@foreach($visa_types as $visa_type)
-			  							<option value="{{ $visa_type->code }}" @if(!empty($visa) && $visa->fkey_code == $visa_type->code) selected @endif>
+			  							<option value="{{ $visa_type->code }}"
+												@if(GenericCitizenship::matches_expected($visa, "fkey_code", $visa_type->code) ||
+														GenericCitizenship::matches_expected($ods_visa, "fkey_code", $visa_type->code)) selected @endif>
 												{{ $visa_type->descr }}
 											</option>
 				  					@endforeach

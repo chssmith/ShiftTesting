@@ -15,7 +15,7 @@ class DatamartStudent extends Model
     protected $primaryKey = 'RCID';
 
     public function ssn () {
-      return $this->hasOne("App\HaveSSN", "ID");
+      return $this->hasOne("App\HaveSSN", "ID", "RCID");
     }
 
 

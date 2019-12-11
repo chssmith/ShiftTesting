@@ -8,7 +8,7 @@
     <select name = "CitizenshipCountry[]" form="CitizenForm" class="form-control" id='CitizenshipCountry{{$foreign_count}}'>
       <option></option>
     	@foreach($countries as $country)
-        <option @if(!empty($individual_country) && $individual_country->key_CountryId == $country->key_CountryId) selected @endif
+        <option @if(\App\GenericCitizenship::matches_expected($individual_country, "key_CountryId", $country->key_CountryId)) selected @endif
   		       value="{{$country->key_CountryId}}">
              {{ $country->CountryName }}
         </option>

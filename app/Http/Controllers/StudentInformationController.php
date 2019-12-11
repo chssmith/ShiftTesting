@@ -28,7 +28,6 @@ use App\MedicationAllergies;
 use App\InsectAllergies;
 use App\Countries;
 use App\CitizenshipInformation;
-use App\ODS\CitizenshipInformation as ODSCitizenshipInformation;
 use App\CitizenshipCountryMap;
 use App\Counties;
 use App\USResidence;
@@ -44,6 +43,9 @@ use App\DatamartPhones;
 use App\DatamartAddress;
 use App\GenericAddress;
 use RCAuth;
+
+use App\ODS\CitizenshipInformation as ODSCitizenshipInformation;
+use App\ODS\VisaTypeMap as ODSVisaTypeMap;
 
 class StudentInformationController extends Controller
 {
@@ -93,6 +95,7 @@ class StudentInformationController extends Controller
 		$home_phone = $phones->get(1);
 		$user_races = RaceMap::where('fkey_rcid', $user->rcid)->pluck('fkey_race_code')->toArray();
 		$datamart_student = DatamartStudent::where('rcid', $user->rcid)->with("ssn")->first();
+
 		if (empty($cell_phone) && empty($home_phone) && empty($user_races) && is_null($student->first_name) &&
 			  is_null($student->middle_name) && is_null($student->last_name) && is_null($student->maiden_name) &&
 			  is_null($student->ethnics) && is_null($student->fkey_marital_status) && is_null($student->fkey_military_id)){
@@ -297,6 +300,7 @@ class StudentInformationController extends Controller
 		$visa          = VisaTypeMap::where('RCID', $user->rcid)->first();
 
 		$ods_citizenship = ODSCitizenshipInformation::where('fkey_rcid', $user->rcid)->with("countries")->first();
+		$ods_visa        = ODSVisaTypeMap::find($user->rcid);
 
 		$states        = States::all();
 		$countries     = Countries::all();
@@ -317,7 +321,7 @@ class StudentInformationController extends Controller
 				return $item;
 		})->sortBy("display");
 
-		return view('citizen_info', compact('countries', 'student', 'us_resident', 'citizenship', 'visa_types', 'visa', 'counties', 'states'));
+		return view('citizen_info', compact('countries', 'student', 'us_resident', 'citizenship', 'ods_citizenship', 'visa_types', 'visa', 'ods_visa', 'counties', 'states'));
 	}
 
 	public function citizenInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
@@ -325,7 +329,7 @@ class StudentInformationController extends Controller
 		$green_card_input  = $request->input("GreenCard", []);
 		$us_resident       = USResidence::firstOrNew(['RCID' => $student->RCID, 'created_by' => $user->rcid], ['updated_by' => $user->rcid]);
 
-		$citizenship                      = CitizenshipInformation::find($student->RCID);//$student->load("citizenship");
+		$citizenship                      = CitizenshipInformation::firstOrNew(["fkey_rcid" => $student->RCID], ["created_by" => $user->rcid]);//$student->load("citizenship");
 		$citizenship->country_of_birth    = $request->input("BirthCountry", NULL);
 		$citizenship->updated_by          = $user->rcid;
 

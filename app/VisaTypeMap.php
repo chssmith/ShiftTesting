@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class VisaTypeMap extends Model
+class VisaTypeMap extends \App\ODS\VisaTypeMap
 {
     use SoftDeletes;
     /**
@@ -13,9 +13,9 @@ class VisaTypeMap extends Model
      *
      * @var  string
      */
-    protected $table      = 'student_forms.visa_type_map';
-    protected $connection = 'SAO';
-    protected $primaryKey = "RCID";
-    protected $fillable   = ["RCID", "created_by"];
+     protected $table      = 'student_forms.visa_type_map';
+     protected $fillable   = ["RCID", "created_by"];
+
+     public $timestamps    = true;
 
 }
