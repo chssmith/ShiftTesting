@@ -96,14 +96,18 @@
 				    	<select name="state" form="CitizenForm" class="form-control" id='states'>
 		 						<option></option>
 					    	@foreach($states as $state)
-		  						<option value="{{$state->StateCode}}" @if(GenericCitizenship::matches_expected($us_resident, "fkey_StateCode", $state->StateCode)) selected @endif>
+		  						<option value="{{$state->StateCode}}"
+										@if(GenericCitizenship::matches_expected($us_resident, "fkey_StateCode", $state->StateCode) ||
+											  (empty($us_resident) && GenericCitizenship::matches_expected($ods_resident, "fkey_StateCode", $state->StateCode)))
+											selected
+										@endif>
 										{{ $state->StateName }}
 									</option>
 		  					@endforeach
 				    	</select>
 		        </div>
 					</div>
-			    <div id="VA_span" @if(!GenericCitizenship::matches_expected($us_resident, "fkey_StateCode", "VA")) hidden @endif>
+			    <div id="VA_span" @if(!GenericCitizenship::matches_expected($us_resident, "fkey_StateCode", "VA") && !(empty($us_resident) && GenericCitizenship::matches_expected($ods_resident, "fkey_StateCode", "VA"))) hidden @endif>
 			      <div class="row">
 			      	<div class="col-xs-12 col-md-6 form-group">
 								<label for="counties">
@@ -112,7 +116,11 @@
 						    <select name="county" form="CitizenForm" class="form-control" id='counties'>
 									<option></option>
 						    	@foreach($counties as $id => $county)
-										<option value="{{ $id }}" @if(GenericCitizenship::matches_expected($us_resident, "fkey_CityCode", $id)) selected @endif>
+										<option value="{{ $id }}"
+											@if(GenericCitizenship::matches_expected($us_resident, "fkey_CityCode", $id) ||
+													(empty($us_resident) && GenericCitizenship::matches_expected($ods_resident, "fkey_CityCode", $id)))
+												selected
+											@endif>
 											{{ $county->display }}
 										</option>
 									@endforeach

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CitizenshipInformation extends Model
 {
-    protected $table = "student-forms.ods_citizenship_information";
+    protected $table = "ods.citizenship_information";
     protected $primaryKey = 'fkey_rcid';
     protected $connection = 'SAO';
     public    $incrementing = false;

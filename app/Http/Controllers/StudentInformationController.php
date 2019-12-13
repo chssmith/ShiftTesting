@@ -46,6 +46,7 @@ use RCAuth;
 
 use App\ODS\CitizenshipInformation as ODSCitizenshipInformation;
 use App\ODS\VisaTypeMap as ODSVisaTypeMap;
+use App\ODS\USResidence as ODSUSResidence;
 
 class StudentInformationController extends Controller
 {
@@ -293,35 +294,46 @@ class StudentInformationController extends Controller
 	public function citizenInfo(Students $student){
 		$user          = RCAuth::user();
 
-		$us_resident   = USResidence::where('RCID', $user->rcid)->first();
-		$citizenship   = CitizenshipInformation::where('fkey_rcid', $user->rcid)->with("countries")->first();
+		$us_resident     = USResidence::where('RCID', $user->rcid)->first();
+		if (empty($us_resident)) {
+			$ods_resident  = ODSUSResidence::where('RCID', $user->rcid)->first();
+		} else {
+			$ods_resident  = NULL;
+		}
+
+		$citizenship       = CitizenshipInformation::where('fkey_rcid', $user->rcid)->first();
+		if (empty($citizenship)) {
+			$ods_citizenship = ODSCitizenshipInformation::where('fkey_rcid', $user->rcid)->first();
+		} else {
+			$ods_citizenship = NULL;
+		}
+
+		$visa       = VisaTypeMap::where('RCID', $user->rcid)->first();
+		if (empty($visa)) {
+			$ods_visa = ODSVisaTypeMap::find($user->rcid);
+		} else {
+			$ods_visa = NULL;
+		}
 
 		$visa_types    = VisaTypes::all();
-		$visa          = VisaTypeMap::where('RCID', $user->rcid)->first();
-
-		$ods_citizenship = ODSCitizenshipInformation::where('fkey_rcid', $user->rcid)->with("countries")->first();
-		$ods_visa        = ODSVisaTypeMap::find($user->rcid);
 
 		$states        = States::all();
 		$countries     = Countries::all();
 		$counties      = Counties::all()->keyBy("county_id")->map(
 			function ($item) {
 				$display = $item->description;
-
 				if(strpos($display, 'Co:') !== false){
 	    			$display = str_replace("Co: ", "", $display);
 	    			$display .= " County";
 	  		}
-
 				if(strpos($display, 'Ct:') !== false){
 					$display = str_replace("Ct: ", "", $display);
 				}
-
 				$item->display = $display;
 				return $item;
 		})->sortBy("display");
 
-		return view('citizen_info', compact('countries', 'student', 'us_resident', 'citizenship', 'ods_citizenship', 'visa_types', 'visa', 'ods_visa', 'counties', 'states'));
+		return view('citizen_info', compact('countries', 'student', 'us_resident', 'ods_resident', 'citizenship', 'ods_citizenship', 'visa_types', 'visa', 'ods_visa', 'counties', 'states'));
 	}
 
 	public function citizenInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
@@ -336,7 +348,7 @@ class StudentInformationController extends Controller
 		$citizenship->us = (bool)$request->US_citizen;
 		if ($request->US_citizen){
 			$us_resident->fkey_StateCode = $request->state;
-			$us_resident->fkey_CityCode  = $request->input("county", NULL);
+			$us_resident->fkey_CityCode  = $request->state == "VA" ? $request->input("county", NULL) : NULL;
 			$us_resident->save();
 		}else{
 			USResidence::where('RCID', $user->rcid)->update(["deleted_by" => $user->rcid, "deleted_at" => \Carbon\Carbon::now()]);
