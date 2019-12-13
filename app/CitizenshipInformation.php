@@ -5,16 +5,11 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CitizenshipInformation extends model
+class CitizenshipInformation extends \App\ODS\CitizenshipInformation
 {
-    /**
-     * The Database table used by the model.
-     *
-     * @var  string
-     */
     use SoftDeletes;
     protected $table      = 'student_forms.citizenship_information';
-    protected $primaryKey = 'id';
-    protected $connection = 'SAO';
+    protected $fillable   = ["fkey_rcid", "created_by"];
+    public $timestamps    = true;
 
 }

@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class USResidence extends model
+class USResidence extends \App\ODS\USResidence
 {
     /**
      * The Database table used by the model.
@@ -14,11 +14,7 @@ class USResidence extends model
      */
     use SoftDeletes;
     protected $table      = 'student_forms.us_residence';
-    protected $primaryKey = 'RCID';
-    protected $connection = 'SAO';
-
-    
-    public $incrementing = false;
-
+    protected $fillable   = ['RCID', 'created_by', 'updated_by'];
+    public $timestamps    = true;
 
 }

@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Address extends model
+class Address extends Model
 {
     /**
      * The Database table used by the model.
@@ -16,5 +16,10 @@ class Address extends model
     protected $table      = 'student_forms.address';
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
+    protected $fillable   = ["RCID", "fkey_AddressTypeId", "created_by"];
+
+    public function country_details () {
+      return $this->hasOne("\App\Countries", "key_CountryId", "fkey_CountryId");
+    }
 
 }

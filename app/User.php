@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class User extends model
+class User extends Model
 {
     /**
      * The Database table used by the model.

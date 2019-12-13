@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StudentConcerns extends model
 {
@@ -11,6 +12,8 @@ class StudentConcerns extends model
      *
      * @var  string
      */
+    use SoftDeletes;
+
     protected $table      = 'student_forms.concern_map';
     protected $primaryKey = 'rcid';
     protected $connection = 'SAO';
