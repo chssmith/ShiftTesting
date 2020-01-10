@@ -48,6 +48,7 @@ use RCAuth;
 use App\ODS\CitizenshipInformation as ODSCitizenshipInformation;
 use App\ODS\VisaTypeMap as ODSVisaTypeMap;
 use App\ODS\USResidence as ODSUSResidence;
+use App\ODS\MedicalData as ODSMedicalData;
 
 class StudentInformationController extends Controller
 {
@@ -422,12 +423,13 @@ class StudentInformationController extends Controller
 	//*************************************************************************************************************
 	public function allergyInfo(){
 		$user           = RCAuth::user();
-		$student 	    = self::getStudent($user->rcid);
+		$student 	      = self::getStudent($user->rcid);
 		$medications    = Medications::where('rcid', $user->rcid)->first();
 		$med_allergy    = MedicationAllergies::where('rcid', $user->rcid)->first();
 		$insect_allergy = InsectAllergies::where('rcid', $user->rcid)->first();
+		$ods_data       = ODSMedicalData::find($user->rcid);
 
-		return view('allergy', compact('user', 'medications', 'med_allergy', 'insect_allergy'));
+		return view('allergy', compact('user', 'medications', 'med_allergy', 'insect_allergy', "ods_data"));
 	}
 
 	public function allergyInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
@@ -481,6 +483,7 @@ class StudentInformationController extends Controller
 		}])->get();
 
 		$other_concern   = OtherConcerns::where('rcid', $user->rcid)->first();
+		$ods_other       = ODSMedicalData::find($user->rcid);
 
 		return view('medical', compact('user', 'health_concerns','other_concern'));
 	}
