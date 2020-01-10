@@ -13,7 +13,7 @@ class User extends Model
      */
     protected $table      = 'DataMart.dbo.view_PersonBasic';
     protected $primaryKey = 'RCID';
-    protected $connection = 'DataMart';
+    protected $connection = 'SAO';
     protected $appends    = ['display_name'];
 
     public $incrementing = false;

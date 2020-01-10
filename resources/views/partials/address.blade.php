@@ -4,8 +4,8 @@
       Country
     </label>
     <select name="country{{$postfix}}" class="form-control" id='country{{$postfix}}'>
-      <option></option>
-      @foreach($countries as $country)
+      <option hidden></option>
+      @foreach($countries->sortBy("CountryName") as $country)
         <option @if ((empty($address->country_id) && $country->key_CountryId == \App\GenericAddress::US_ID) || ($address->country_id == $country->key_CountryId)) selected @endif value="{{$country->key_CountryId}}">
           {{ $country->CountryName }}
         </option>
@@ -47,8 +47,8 @@
           State
         </label>
         <select id="state{{$postfix}}" name="state{{$postfix}}" class="form-control">
-          <option></option>
-          @foreach($states as $state)
+          <option hidden></option>
+          @foreach($states->sortBy("StateName") as $state)
             <option value='{{$state->StateCode}}' @if((empty($address->state) && $state->StateCode == 'VA') || (!empty($address) && ($address->state == $state->StateCode))) selected @endif>
               {{$state->StateName}}
             </option>

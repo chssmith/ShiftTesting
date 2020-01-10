@@ -42,6 +42,7 @@ use App\DatamartStudent;
 use App\DatamartPhones;
 use App\DatamartAddress;
 use App\GenericAddress;
+use App\GuardianRelationshipTypes;
 use RCAuth;
 
 use App\ODS\CitizenshipInformation as ODSCitizenshipInformation;
@@ -735,34 +736,34 @@ class StudentInformationController extends Controller
 
 	public function parentAndGuardianInfo(Students $student){
 		$user      = RCAuth::user();
-		$guardians = GuardianInfo::where('student_rcid', $user->rcid)->get();
+		$guardians  = GuardianInfo::where('student_rcid', $user->rcid)->get();
 		return view('parent_guardian_info', compact('guardians'));
 	}
 
 	public function individualGuardian(Students $student, $id = NULL){
 		$user     = RCAuth::user();
 
-		$guardian  = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->firstOrNew([]);
-		$address   = GenericAddress::fromGuardianInfo($guardian);
-		$education = Education::orderBy("id")->get();
-		$marital   = MaritalStatuses::all();
-		$states    = States::all();
-		$countries = Countries::all();
+		$guardian           = GuardianInfo::where('id', $id)->where('student_rcid', $user->rcid)->firstOrNew([]);
+		$relationship_types = GuardianRelationshipTypes::all();
+		$address            = GenericAddress::fromGuardianInfo($guardian);
+		$education 					= Education::orderBy("id")->get();
+		$marital   					= MaritalStatuses::all();
+		$states    					= States::all();
+		$countries 					= Countries::all();
 
-		return view('guardian_verification', compact('guardian','address', 'marital','states', 'id', 'education', 'countries'));
+		return view('guardian_verification', compact('guardian', 'relationship_types', 'address', 'marital','states', 'id', 'education', 'countries'));
 	}
 
 	public function parentAndGuardianInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections, $id = null){
 		$user     = RCAuth::user();
 
-		$guardian = GuardianInfo::where("id", $id)->firstOrNew(['student_rcid' => $student->RCID, 'created_by' => $student->RCID]);
+		$guardian = GuardianInfo::where("id", $id)->firstOrNew(['student_rcid' => $student->RCID], ['created_by' => $student->RCID]);
 
 		$guardian->first_name     	   	 = $request->first_name;
 		$guardian->nick_name      	   	 = $request->nick_name;
 		$guardian->middle_name    	   	 = $request->middle_name;
 		$guardian->last_name      	   	 = $request->last_name;
 		$guardian->fkey_marital_status 	 = $request->marital_status;
-		$guardian->relationship   	   	 = $request->relationship;
 		$guardian->email          	   	 = $request->email;
 		$guardian->home_phone     	   	 = $request->home_phone;
 		$guardian->cell_phone     	   	 = $request->cell_phone;
@@ -788,6 +789,14 @@ class StudentInformationController extends Controller
 		$guardian->updated_by          	 = $user->rcid;
 		$guardian->reside_with         	 = isset($request->reside_with);
 		$guardian->claimed_dependent   	 = isset($request->dependent);
+
+		$guardian->relationship   	   	          = $request->relationship;
+		$guardian->relationship_other_description = NULL;
+		if ($guardian->relationship == "O") {
+			$guardian->relationship_other_description = $request->input("relationship_other", NULL);
+		}
+
+
 		$guardian->save();
 
 		self::completedParentInfo($student, $completed_sections);

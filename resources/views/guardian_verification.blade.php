@@ -1,6 +1,22 @@
 @extends('forms_template')
 
 @section('javascript')
+	@parent
+
+	<script>
+		function show_hide_relationship_other () {
+			if ($("#relationship").val() == 4) {
+				$("#relationship_other").fadeIn();
+			} else {
+				$("#relationship_other").fadeOut();
+			}
+		}
+
+		$("#relationship").change(show_hide_relationship_other);
+
+		show_hide_relationship_other();
+	</script>
+
 @endsection
 
 @section('heading')
@@ -60,15 +76,6 @@
 		<div class="row">
 			<div class="col-xs-12 col-sm-6">
 				<div class="form-group">
-					<label for="relationship">
-						Relationship
-					</label>
-					<input type="text" class="form-control" name="relationship" id="relationship" @if(!empty($guardian)) value="{{$guardian->relationship}}" @endif required>
-				</div>
-			</div>
-
-			<div class="col-xs-12 col-sm-6">
-				<div class="form-group">
 					<label for="marital_status">
 						Marital Status
 					</label>
@@ -80,6 +87,24 @@
 							</option>
 						@endforeach
 					</select>
+				</div>
+			</div>
+
+			<div class="col-xs-12 col-sm-6">
+				<div class="form-group">
+					<label for="relationship">
+						Relationship
+					</label>
+					<select name="relationship" id="relationship" class="form-control">
+						<option hidden>-- Please Select a Relationship Type --</option>
+						@foreach($relationship_types as $relationship_type)
+							<option value="{{$relationship_type->id}}" @if(!empty($guardian) && $guardian->relationship == $relationship_type->id)selected @endif>{{$relationship_type->type}}</option>
+						@endforeach
+					</select>
+					<div id="relationship_other_container" style="margin-top: 15px; height: 20px;">
+						<input type="text" class="form-control" name="relationship_other"
+									 id="relationship_other" @if(!empty($guardian)) value="{{$guardian->relationship_other_description}}" @endif placeholder="Relationship Type" />
+				 	</div>
 				</div>
 			</div>
 		</div>

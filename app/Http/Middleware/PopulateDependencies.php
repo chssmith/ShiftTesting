@@ -7,6 +7,8 @@ use RCAuth;
 use App\Students;
 use App\CompletedSections;
 
+use Illuminate\Support\Facades\Cache; //For atomic locks
+
 class PopulateDependencies
 {
     /**
@@ -27,6 +29,14 @@ class PopulateDependencies
         $student->created_by = $rcid;
         $student->updated_by = $rcid;
         $student->save();
+
+        // COPY: ODS emergency => Local Emergency
+        \DB::statement("EXEC copy_ods_emergency_to_student_forms ?", [$rcid]);
+
+        Cache::lock("copy_guardians")->get(function () {
+          \DB::statement("EXEC copy_ods_guardian_to_student_forms ?", [$rcid]);
+          \DB::statement("EXEC copy_ods_employment_to_student_forms ?", [$rcid]);          
+        });
       }
 
       $new_completion = CompletedSections::firstOrNew(["fkey_rcid" => $rcid]);
