@@ -60,9 +60,9 @@ Route::prefix("admin")->middleware("force_login")->group( function () {
 	Route::get("academic_achievement/export", "AdminController@exportAcademicAchievementCSV");
 });
 
-Route::prefix("sims")->group( function () {
+Route::prefix("sims")->middleware("force_login")->group( function () {
 	Route::get ("registration", "SIMSRegistrationController@index");
-	Route::post("registration", "SIMSRegistrationController@register");
+	Route::post("registration/{id}", "SIMSRegistrationController@register");
 });
 
 Route::prefix("academic_achievement")->group( function () {

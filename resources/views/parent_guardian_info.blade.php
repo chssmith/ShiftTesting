@@ -185,7 +185,7 @@
 			<div class="btn-toolbar three">
 				<a class="btn btn-lg btn-success pull-right" href="{{action('StudentInformationController@index')}}"><span class="fas fa-save" aria-hidden="true"></span> <span>Save and Continue</span> </a>
 				<a class="btn btn-lg btn-info pull-right"    href="{{action('StudentInformationController@individualGuardian') }} "><span class="far fa-plus" aria-hidden="true"></span> <span>New Parent/Guardian</span></a>
-    		<a class="btn btn-lg btn-danger pull-right"  href="{{action('StudentInformationController@index')}}" ><span class="far fa-times" aria-hidden="true"></span> <span>Cancel</span></a>
+    		<a class="btn btn-lg btn-danger pull-right"  href="{{action('StudentInformationController@index')}}"><span class="far fa-times" aria-hidden="true"></span> <span>Cancel</span></a>
 			</div>
 		</div>
 	</div>

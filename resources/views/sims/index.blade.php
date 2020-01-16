@@ -8,7 +8,13 @@
 @endsection
 
 @section('javascript')
-
+  <script>
+    $(document).on("click", ".registerBTN", function(){
+      const id = $(this).attr("data-sim-id");
+      console.log(id);
+      $("#registerFORM").attr("action", "{{action("SIMSRegistrationController@register", ["id"=>""])}}/"+id);
+    });
+  </script>
 @endsection
 
 @section("stylesheets")
@@ -59,7 +65,7 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title" id="register_modal_title">Register for SIMS</h4>
         </div>
-        <form action="" method="POST">
+        <form action="" method="POST" id="registerFORM">
           {{ csrf_field() }}
           <div class="modal-body">
             <div class="form-group">
@@ -71,12 +77,12 @@
             <div id="guardian_info">
               <div class="form-group">
                 <label for="guardian_name">Guardian Name</label>
-                <input type="text" class="form-control" id="guardian_name" name="guardian_name" />
+                <input type="text" class="form-control" id="guardian_name" name="guardian_name" required/>
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
           </div>
         </form>
       </div>
@@ -93,7 +99,7 @@
         </dates>
         <attendance-cap>100 / {{ $session->registration_limit }}</attendance-cap>
         <buttons>
-          <abutton type="button" class="btn btn-complete" style="width: 100%" data-target="#register_modal" data-toggle="modal" data-sim-id="{{ $session->id }}">Register!</button>
+          <button type="button" class="btn btn-complete registerBTN" style="width: 100%" data-target="#register_modal" data-toggle="modal" data-sim-id="{{ $session->id }}">Register!</button>
         </buttons>
       </div>
     @endforeach
