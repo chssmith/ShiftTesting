@@ -78,7 +78,7 @@
 					<div class="pretty p-default">
 		    		<input type="checkbox" class="hideshowbox" name="US_citizen" value=true id="US_citizen"
 							@php
-								$is_us_citizen = (!empty($citizenship) && $citizenship->us) || (empty($citizenship) && $ods_citizenship->us);
+								$is_us_citizen = (!empty($citizenship) && $citizenship->us) || (empty($citizenship) && !empty($ods_citizenship) && $ods_citizenship->us);
 							@endphp
 							@if ($is_us_citizen) checked @endif />
 		    		<div class="state p-primary">
@@ -182,7 +182,7 @@
 		        <div>
 							<div class="pretty p-default p-round">
 				    		<input type="checkbox" name="GreenCard[]" class="foreignCard" value="GreenCard" id="GreenCard"
-											 @if((!empty($citizenship) && $citizenship->green_card) || (empty($citizenship) && $ods_citizenship->green_card)) checked @endif />
+											 @if((!empty($citizenship) && $citizenship->green_card) || (empty($citizenship) && !empty($ods_citizenship) && $ods_citizenship->green_card)) checked @endif />
 				    		<div class="state p-primary p-round">
 				    			<label>Permanent Residency</label>
 				    		</div>

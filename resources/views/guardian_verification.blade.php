@@ -5,7 +5,7 @@
 
 	<script>
 		function show_hide_relationship_other () {
-			if ($("#relationship").val() == 4) {
+			if ($("#relationship").val() == 'O') {
 				$("#relationship_other").fadeIn();
 			} else {
 				$("#relationship_other").fadeOut();

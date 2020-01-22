@@ -280,7 +280,7 @@ class StudentInformationController extends Controller
 
 		$student->save();
 
-		$completed_sections->residence_information = $student->home_as_local || GenericAddress::fromAddress($local_address)->complete();
+		$completed_sections->residence_information = $student->home_as_local || $request->residence == "hall" || GenericAddress::fromAddress($local_address)->complete();
 		$completed_sections->updated_by            = $user->rcid;
 		$completed_sections->save();
 
@@ -475,7 +475,7 @@ class StudentInformationController extends Controller
 	//*************************************************************************************************************
 	// BEGIN Medical Information FORMS
 	//*************************************************************************************************************
-	public function medicalInfo(Students $student){
+	public function medicalInfo(Students $student, CompletedSections $completed_sections){
 		$user          = RCAuth::user();
 
 		$health_concerns = HealthConcerns::with(['student_concerns' => function($query) use ($user){
@@ -485,7 +485,12 @@ class StudentInformationController extends Controller
 		$other_concern   = OtherConcerns::where('rcid', $user->rcid)->first();
 		$ods_other       = ODSMedicalData::find($user->rcid);
 
-		return view('medical', compact('user', 'health_concerns','other_concern'));
+		$ods_other_concerns = "";
+		if(!empty($ods_other) && !$completed_sections->medical_information) {
+			$ods_other_concerns = $ods_other->pull_data("other");
+		}
+
+		return view('medical', compact('user', 'health_concerns','other_concern', "ods_other_concerns"));
 	}
 
 	public function medicalInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
@@ -556,7 +561,7 @@ class StudentInformationController extends Controller
 	public function missingPersonContactUpdate(Request $request, Students $student, CompletedSections $completed_sections){
 		$user     = RCAuth::user();
 
-		$missing_contact = EmergencyContact::firstOrNew(["student_rcid" => $student->RCID, "created_by" => $student->RCID, "missing_person" => 1]);
+		$missing_contact = EmergencyContact::firstOrNew(["student_rcid" => $student->RCID, "missing_person" => 1, 'deleted_at' => NULL], ["created_by" => $student->RCID]);
 		$missing_contact->name              = $request->contact_name;
 		$missing_contact->relationship      = $request->relationship;
 		$missing_contact->day_phone         = $request->daytime_phone;

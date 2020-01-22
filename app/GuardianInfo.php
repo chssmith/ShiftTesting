@@ -23,7 +23,7 @@ class GuardianInfo extends Model
     }
 
     public function marital_status () {
-      return $this->hasOne("App\MaritalStatuses", "key_maritalStatus", "fkey_marital_status");
+      return $this->hasOne("App\MaritalStatuses", "code", "fkey_marital_status");
     }
 
     public function country () {
