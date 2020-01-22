@@ -52,11 +52,12 @@
 						 Country of birth
 					</label>
 					<select name="BirthCountry" form="CitizenForm" class="form-control" id='BirthCountry'>
-						<option></option>
+						<option hidden></option>
 						@foreach($countries as $country)
 							<option
 								@if(GenericCitizenship::matches_expected ($citizenship, "country_of_birth", $country->key_CountryId) ||
-										(empty($citizenship) && GenericCitizenship::matches_expected ($ods_citizenship, "country_of_birth", $country->key_CountryId)))
+										(empty($citizenship->country_of_birth) && GenericCitizenship::matches_expected ($ods_citizenship, "country_of_birth", $country->key_CountryId)) ||
+										(empty($citizenship->country_of_birth) && empty($ods_citizenship->country_of_birth) && $country->key_CountryId == '273'))
 									selected
 								@endif
 								value="{{$country->key_CountryId}}">
@@ -78,7 +79,7 @@
 					<div class="pretty p-default">
 		    		<input type="checkbox" class="hideshowbox" name="US_citizen" value=true id="US_citizen"
 							@php
-								$is_us_citizen = (!empty($citizenship) && $citizenship->us) || (empty($citizenship) && !empty($ods_citizenship) && $ods_citizenship->us);
+								$is_us_citizen = (!empty($citizenship) && $citizenship->us) || (empty($citizenship) && !empty($ods_citizenship) && ($ods_citizenship->us || !empty($ods_resident->fkey_StateCode) || !empty($ods_resident->fkey_CityCode)));
 							@endphp
 							@if ($is_us_citizen) checked @endif />
 		    		<div class="state p-primary">
@@ -98,7 +99,8 @@
 					    	@foreach($states as $state)
 		  						<option value="{{$state->StateCode}}"
 										@if(GenericCitizenship::matches_expected($us_resident, "fkey_StateCode", $state->StateCode) ||
-											  (empty($us_resident) && GenericCitizenship::matches_expected($ods_resident, "fkey_StateCode", $state->StateCode)))
+											  (empty($us_resident) && GenericCitizenship::matches_expected($ods_resident, "fkey_StateCode", $state->StateCode)) ||
+												(empty($us_resident) && !empty($ods_resident->fkey_CityCode) && $state->StateCode == "VA"))
 											selected
 										@endif>
 										{{ $state->StateName }}
@@ -107,7 +109,7 @@
 				    	</select>
 		        </div>
 					</div>
-			    <div id="VA_span" @if(!GenericCitizenship::matches_expected($us_resident, "fkey_StateCode", "VA") && !(empty($us_resident) && GenericCitizenship::matches_expected($ods_resident, "fkey_StateCode", "VA"))) hidden @endif>
+			    <div id="VA_span" @if(!GenericCitizenship::matches_expected($us_resident, "fkey_StateCode", "VA") && !(empty($us_resident) && (GenericCitizenship::matches_expected($ods_resident, "fkey_StateCode", "VA") || !empty($ods_resident->fkey_CityCode)))) hidden @endif>
 			      <div class="row">
 			      	<div class="col-xs-12 col-md-6 form-group">
 								<label for="counties">

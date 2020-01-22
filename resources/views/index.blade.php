@@ -187,14 +187,14 @@
 							Once you submit these forms, you will not be able to make changes until after the form is fully processed.
 						</p>
 						@php
-							$missing_info = array_reduce($sections, function ($counter, $item) {if ($item['status'] == '0') {$counter++;} return $counter;}, 0) > 0;
+							$missing_info = array_reduce($sections, function ($counter, $item) {if ($item['status'] != '1') {$counter++;} return $counter;}, 0) > 0;
 						@endphp
 						@if ($missing_info)
 							<div class="alert alert-danger light missing_info">
 								There is some missing information:
 								<div class="list-group">
 									@foreach($sections as $section_name => $section)
-										@if($section['status'] == '0')
+										@if(empty($section['status']))
 											<a href="{{ $section['link'] }}" class="list-group-item">
 												{{$section_name}}
 											</a>
