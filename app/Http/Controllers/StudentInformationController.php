@@ -269,17 +269,17 @@ class StudentInformationController extends Controller
 			$local_address = Address::firstOrNew(['RCID' => $user->rcid, 'fkey_AddressTypeId' => 4, 'created_by' => $user->rcid]);
 
 			// updating local address information
-			$local_address->Address1	   = $request->local_Address1;
-			$local_address->Address2	   = $request->local_Address2;
-			$local_address->City     	   = $request->local_city;
-			$local_address->fkey_StateId = $request->local_state;
-			$local_address->PostalCode   = $request->local_zip;
-			$local_address->updated_by   = $user->rcid;
+			$local_address->Address1	     = $request->local_Address1;
+			$local_address->Address2	     = $request->local_Address2;
+			$local_address->City     	     = $request->local_city;
+			$local_address->fkey_StateId   = $request->local_state;
+			$local_address->PostalCode     = $request->local_zip;
+			$local_address->fkey_CountryId = GenericAddress::US_ID;
+			$local_address->updated_by     = $user->rcid;
 			$local_address->save();
 		}
 
 		$student->save();
-
 		$completed_sections->residence_information = $student->home_as_local || $request->residence == "hall" || GenericAddress::fromAddress($local_address)->complete();
 		$completed_sections->updated_by            = $user->rcid;
 		$completed_sections->save();

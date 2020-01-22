@@ -21,9 +21,28 @@ class Students extends Model
 
     public $incrementing  = false;
 
+    public function ods_residence () {
+      return $this->hasOne("\App\ODS\USResidence", "RCID", "RCID");
+    }
+
+    public function ods_citizenship () {
+      return $this->hasOne("\App\ODS\CitizenshipInformation", "fkey_rcid", "RCID");
+    }
 
     public function parents(){
     	return $this->hasMany('App\GuardianInfo', 'student_rcid', 'RCID');
+    }
+
+    public function datamart_home_address () {
+      return $this->hasOne("App\DatamartAddress", "RCID", "RCID")->where("fkey_AddressTypeId", 1);
+    }
+
+    public function datamart_billing_address () {
+      return $this->hasOne("App\DatamartAddress", "RCID", "RCID")->where("fkey_AddressTypeId", 3);
+    }
+
+    public function datamart_local_address () {
+      return $this->hasOne("App\DatamartAddress", "RCID", "RCID")->where("fkey_AddressTypeId", 4);
     }
 
     public function home_address(){
@@ -44,6 +63,16 @@ class Students extends Model
 
     public function citizenship() {
       return $this->hasOne("App\CitizenshipInformation", "fkey_rcid");
+    }
+
+    public function getDatamartAddressAttribute ($value) {
+      $billing = $this->datamart_billing_address;
+      if(!empty($billing)) $billing = $billing->load("state");
+      $local   = $this->datamart_local_address;
+      if(!empty($local)) $local = $local->load("state");
+    	return collect(['Home'=>GenericAddress::fromMixedAddressForReport($this->datamart_home_address->load("state")),
+                      'Billing'=>GenericAddress::fromMixedAddressForReport($billing),
+                      'Local'=>GenericAddress::fromMixedAddressForReport($local)]);
     }
 
     public function getAddressAttribute($value){

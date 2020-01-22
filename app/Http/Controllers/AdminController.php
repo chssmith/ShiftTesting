@@ -50,7 +50,8 @@ class AdminController extends Controller
 	public function changedStudents(){
 		ini_set('max_execution_time', 300);
 		$user = RCAuth::user();
-		$all_changed = Students::with(['visa', 'home_address', 'billing_address', 'local_address', 'datamart_user'])->get()->keyBy("RCID");
+		$all_changed = Students::with(['visa', 'home_address', 'billing_address', 'local_address', 'datamart_user', 'ods_citizenship'])->get()->keyBy("RCID");
+		// dd($all_changed->first()->datamart_address);
 		$storage_path = storage_path();
 
 		$count = 1;
@@ -89,11 +90,19 @@ class AdminController extends Controller
 			$report_string = view()->make("reports.parent_report", ['student'=>$student])->render();
 			$pdf = \PDF::loadHtml($report_string);
 			$new_page = $pdf->output();
-			file_put_contents(storage_path() . '/pdfs/page' . $count, $new_page);
+			\Storage::put('pdfs/page' . $count . '.pdf', $new_page);
 			$count++;
 		}
-		$pdf = \PDF::loadView('reports.parent_report', compact('all_changed'));
-		return $pdf;
+
+		$merger = \PDFMerger::init();
+
+		for($index = 1; $index < $count; $index++){
+			$merger->addPathToPDF(\Storage::path('/pdfs/page'.$index.".pdf"), 'all', 'P');
+		}
+
+		$merger->setFileName('ReportFileName.pdf');
+		$merger->merge();
+		$merger->inline();
 	}
 
 
