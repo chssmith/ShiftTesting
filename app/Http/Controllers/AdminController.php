@@ -83,8 +83,7 @@ class AdminController extends Controller
 
 	public function changedParentInfo(){
 		$user = RCAuth::user();
-		$all_changed = Students::with('parents.employment')->get();
-
+		$all_changed = Students::with(['parents.employment', 'parents.guardian_type', 'parents.country', 'parents.ods_guardian.employment.country', 'parents.ods_guardian.country'])->get();
 		$count = 1;
 		foreach($all_changed as $student){
 			$report_string = view()->make("reports.parent_report", ['student'=>$student])->render();

@@ -82,7 +82,7 @@
 					<select name="marital_status" form="guardian_verification" class="form-control" id='marital_status' required>
 						<option></option>
 						@foreach($marital as $marital_status)
-							<option @if(!empty($guardian) && $guardian->fkey_marital_status == $marital_status->key_maritalStatus) selected @endif value="{{$marital_status->key_maritalStatus}}">
+							<option @if(!empty($guardian) && $guardian->fkey_marital_status == $marital_status->code) selected @endif value="{{$marital_status->code}}">
 								{{ $marital_status->description }}
 							</option>
 						@endforeach
