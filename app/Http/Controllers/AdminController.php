@@ -50,7 +50,11 @@ class AdminController extends Controller
 	public function changedStudents(){
 		ini_set('max_execution_time', 300);
 		$user = RCAuth::user();
-		$all_changed = Students::with(['visa', 'home_address', 'billing_address', 'local_address', 'datamart_user', 'ods_citizenship'])->get()->keyBy("RCID");
+		$all_changed = Students::with(['visa', 'home_address', 'billing_address', 'local_address', 'datamart_user', 'ods_citizenship'])->
+														 whereHas("local_percs", function ($query) {
+															 $query->where("perc", "%RSI%");
+														 })->get()->keyBy("RCID");
+
 		// dd($all_changed->first()->datamart_address);
 		$storage_path = storage_path();
 
@@ -70,10 +74,13 @@ class AdminController extends Controller
 		for($index = 1; $index < $count; $index++){
 			$merger->addPathToPDF(\Storage::path('/pdfs/page'.$index.".pdf"), 'all', 'P');
 		}
-
-		$merger->setFileName('ReportFileName.pdf');
-		$merger->merge();
-		$merger->inline();
+		try {
+			$merger->setFileName('ReportFileName.pdf');
+			$merger->merge();
+			$merger->inline();
+		} catch (\Exception $e) {
+			return "No records to export";
+		}
 
 
 		//Switch to PDF MERGER
@@ -83,7 +90,10 @@ class AdminController extends Controller
 
 	public function changedParentInfo(){
 		$user = RCAuth::user();
-		$all_changed = Students::with(['parents.employment', 'parents.guardian_type', 'parents.country', 'parents.ods_guardian.employment.country', 'parents.ods_guardian.country'])->get();
+		$all_changed = Students::with(['parents.employment', 'parents.guardian_type', 'parents.country', 'parents.ods_guardian.employment.country', 'parents.ods_guardian.country'])->
+													   whereHas("local_percs", function ($query) {
+															 $query->where("perc", "LIKE", "%RSI%");
+														 })->get();
 		$count = 1;
 		foreach($all_changed as $student){
 			$report_string = view()->make("reports.parent_report", ['student'=>$student])->render();
@@ -98,10 +108,13 @@ class AdminController extends Controller
 		for($index = 1; $index < $count; $index++){
 			$merger->addPathToPDF(\Storage::path('/pdfs/page'.$index.".pdf"), 'all', 'P');
 		}
-
-		$merger->setFileName('ReportFileName.pdf');
-		$merger->merge();
-		$merger->inline();
+		try {
+			$merger->setFileName('ReportFileName.pdf');
+			$merger->merge();
+			$merger->inline();
+		} catch (\Exception $e) {
+			return "No records to export";
+		}
 	}
 
 
