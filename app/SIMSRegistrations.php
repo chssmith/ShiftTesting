@@ -9,6 +9,6 @@ class SIMSRegistrations extends Model
 {
   use SoftDeletes;
 
-  protected $table = "student_forms.sims_registrations";
+  protected $table = "sims.registrations";
   protected $primaryKey = 'id';
 }

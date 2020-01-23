@@ -11,8 +11,17 @@
   <script>
     $(document).on("click", ".registerBTN", function(){
       const id = $(this).attr("data-sim-id");
-      console.log(id);
-      $("#registerFORM").attr("action", "{{action("SIMSRegistrationController@register", ["id"=>""])}}/"+id);
+      $.ajax({
+        url: "{{action("SIMSRegistrationController@sessionSelection")}}",
+        type: "POST",
+        data: {
+          _token: "{{csrf_token()}}",
+          id: id
+        },
+        success: function(){
+          window.location.href = "{{action("SIMSRegistrationController@studentInfoPage")}}"
+        }
+      })
     });
   </script>
 @endsection
@@ -56,38 +65,10 @@
 @endsection
 
 @section("content")
-  <h2> Available Sessions </h2>
-
-  <div class="modal fade" id="register_modal" tabindex="-1" role="dialog" aria-labelledby="register_modal_title">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="register_modal_title">Register for SIMS</h4>
-        </div>
-        <form action="" method="POST" id="registerFORM">
-          {{ csrf_field() }}
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="guardian">
-                <input type="checkbox" id="guardian" name="guardian_stay" />
-                My guardian would like to stay on campus
-              </label>
-            </div>
-            <div id="guardian_info">
-              <div class="form-group">
-                <label for="guardian_name">Guardian Name</label>
-                <input type="text" class="form-control" id="guardian_name" name="guardian_name" required/>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Save changes</button>
-          </div>
-        </form>
-      </div>
-    </div>
+  <div class="progress" style="height: 4px;">
+    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
+  <h2> Available Sessions </h2>
 
   <div id="SIMS" class="list-group">
     @foreach($sessions as $session)

@@ -5,31 +5,85 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use RCAuth;
+use App\User;
 use App\Students;
 use App\SIMSSessions;
 use App\SIMSRegistrations;
 
 class SIMSRegistrationController extends Controller
 {
-    public function index (Students $student) {
+    //TYPE:  GET
+    //BLADE: sims.session_selection
+    //POST:  makes the session selection page
+    public function sessionSelectionPage (Students $student) {
       $sessions = SIMSSessions::orderBy("start_date")->get();
 
-      return view()->make("sims.index", compact("sessions"));
+      return view()->make("sims.session_selection", compact("sessions"));
     }
 
     //TYPE: POST
-    //FROM: sims/index
-    //POST: registers the future student for the sim day they selected
-    public function register(Request $request, $id){
-      $rcid = RCAuth::user()->rcid;
-      $registration = new SIMSRegistrations;
-      $registration->rcid = $rcid;
-      $registration->fkey_sims_session_id = $id;
-      $registration->on_campus = $request->has("guardian_stay");
-      $registration->guardian_name = $request->guardian_name;
-      $registration->created_by = $registration->updated_by = $rcid;
-      $registration->save();
+    //FROM: AJAX on sims.session_selection
+    //POST: adds the session id to the session variables
+    public function sessionSelection(Request $request){
+      session(['session_id' => $request->id]);
+      //Set the user info we have in datamart
+      $user = User::find(RCAuth::user()->rcid);
+      if(null !== (session("student_info"))){
+        $student_info = [
+          "first_name"         => $user->FirstName,
+          "last_name"          => $user->LastName,
+          "nick_name"          => $user->NickName,
+          "gender"             => $user->gender,
+          "pronouns"           => "",
+          "cell_phone"         => $user->CellPhone,
+          "city"               => "",
+          "state"              => "",
+          "country"            => "",
+          "has_dietary_needs"  => "",
+          "dietary_needs"      => "",
+          "has_physical_needs" => "",
+          "physical_needs"     => ""
+        ];
+        session(["student_info" => $student_info]);
+      }
+    }
 
-      return redirect()->action("StudentInformationController@index");
+    //TYPE:  GET
+    //BLADE: sims.student_info
+    //POST:  makes the student info page
+    public function studentInfoPage(){
+      $sess = session("student_info");
+      //dd($sess);
+      return view()->make("sims.student_info", compact("sess"));
+    }
+
+    //TYPE: POST
+    //FROM: sims.student_info
+    //POST: saves the student info in session
+    public function studentInfo(Request $request){
+      $student_info = [
+        "first_name"         => $request->first_name,
+        "last_name"          => $request->last_name,
+        "nick_name"          => $request->preferred_name,
+        "gender"             => $request->gender,
+        "pronouns"           => $request->pronouns,
+        "cell_phone"         => $request->phone,
+        "city"               => $request->city,
+        "state"              => $request->state,
+        "country"            => $request->country,
+        "has_dietary_needs"  => $request->has_dietary_needs,
+        "dietary_needs"      => $request->dietary_needs,
+        "has_physical_needs" => $request->has_physical_needs,
+        "physical_needs"     => $request->physical_needs
+      ];
+      session(["student_info" => $student_info]);
+      return redirect()->action("SIMSRegistrationController@parentsGuestsPage");
+    }
+
+    //TYPE:  GET
+    //BLADE: sims.parents_guests
+    //POST:  creates the parents/guardians/guests page
+    public function parentsGuestsPage(){
+      return view()->make("sims.parents_guests");
     }
 }
