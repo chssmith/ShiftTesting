@@ -203,6 +203,7 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<button type = "submit" class = "btn btn-lg btn-success pull-right"> Submit </button>
+    		<a href="{{ url()->previous() }}" class="btn btn-lg btn-danger pull-right">Cancel</a>
 			</div>
 		</div>
 	</form>

@@ -493,7 +493,7 @@ table.gridtable td {
 						@endif
 					</td>
 					<td>
-						@if(!empty($parent->employment) && (empty($parent->ods_guardian->employment) || $parent->employment->fkey_StateCode != $parent->ods_guardian->employment->fkey_StateCod))
+						@if(!empty($parent->employment->fkey_StateCode) && (empty($parent->ods_guardian->employment) || $parent->employment->fkey_StateCode != $parent->ods_guardian->employment->fkey_StateCod))
 							Y
 						@endif
 					</td>

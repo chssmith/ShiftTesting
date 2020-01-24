@@ -45,7 +45,7 @@
 					<label for="business_number">
 						Business Phone Number
 					</label>
-					<input type="text" class="form-control" name="business_number" id="business_number" @if(!empty($employment)) value="{{$employment->employer_name}}" @endif>
+					<input type="text" class="form-control" name="business_number" id="business_number" @if(!empty($employment)) value="{{$employment->business_number}}" @endif>
 				</div>
 			</div>
 

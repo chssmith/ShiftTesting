@@ -219,7 +219,7 @@ class StudentInformationController extends Controller
 
 			// Updating the billing address
 			$billing_address->Address1	            = $billing_addresses[0];
-			$billing_address->Address2	            = $billing_Addresses[1];
+			$billing_address->Address2	            = $billing_addresses[1];
 			$billing_address->City     	            = $request->input("city_billing", NULL);
 			$billing_address->fkey_StateId          = $request->input("state_billing", NULL);
 			$billing_address->PostalCode            = $request->input("zip_billing", NULL);
@@ -743,7 +743,7 @@ class StudentInformationController extends Controller
 
 	public function parentAndGuardianInfo(Students $student){
 		$user      = RCAuth::user();
-		$guardians  = GuardianInfo::where('student_rcid', $user->rcid)->get();
+		$guardians  = GuardianInfo::where('student_rcid', $user->rcid)->with("guardian_type")->get();
 		return view('parent_guardian_info', compact('guardians'));
 	}
 
@@ -808,7 +808,7 @@ class StudentInformationController extends Controller
 
 		self::completedParentInfo($student, $completed_sections);
 
-		return redirect()->action('StudentInformationController@infoRelease', ['id' => $guardian->id]);
+		return redirect()->action('StudentInformationController@employmentInfo', ['id' => $guardian->id]);
 	}
 
 	public function deleteGuardian(Students $student, CompletedSections $completed_sections, $id){ //TODO
