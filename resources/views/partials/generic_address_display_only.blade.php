@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-xs-12 col-md-6">
     <label>
-      Country
+      Country @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
     </label>
     <p id='country{{$postfix}}'>
       {{ $address->country_name }}
@@ -13,7 +13,7 @@
     <div class="col-xs-12">
       <div class="form-group">
         <label>
-            Street
+            Street @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
         </label>
         <p>
           @if(!empty($address)) {{$address->address[0] }} @else &mdash; @endif
@@ -29,7 +29,7 @@
     <div class="col-xs-12 col-md-4">
       <div class="form-group">
         <label>
-          City
+          City @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
         </label>
         <p>{{$address->city}}</p>
       </div>
@@ -38,7 +38,7 @@
     <div class="col-xs-12 col-md-4">
       <div class="form-group address">
         <label>
-          State
+          State @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
         </label>
         <p>
           {{ $address->state_name }}
@@ -49,7 +49,7 @@
     <div class="col-xs-12 col-md-4">
       <div class="form-group">
         <label>
-          Zip Code
+          Zip Code @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
         </label>
         <p>
           {{ $address->zip_code }}
@@ -62,7 +62,7 @@
   <div class="row">
     <div class="col-xs-12 form-group">
       <label for="international_address{{$postfix}}">
-        Address
+        Address @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
       </label>
       <p>
         {{ $address->international_address }}

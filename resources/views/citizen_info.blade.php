@@ -49,7 +49,7 @@
 			<div class="col-sm-12 col-md-6">
 				<div class="form-group">
 					<label for="BirthCountry">
-						 Country of birth
+						 Country of birth <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<select name="BirthCountry" form="CitizenForm" class="form-control" id='BirthCountry'>
 						<option hidden></option>
@@ -92,10 +92,10 @@
 		    	<div class="row">
 		      	<div class="col-xs-12 col-sm-6 form-group">
 							<label for="states">
-			      		State of Residence
+			      		State of Residence <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
 							</label>
 				    	<select name="state" form="CitizenForm" class="form-control" id='states'>
-		 						<option></option>
+		 						<option hidden></option>
 					    	@foreach($states as $state)
 		  						<option value="{{$state->StateCode}}"
 										@if(GenericCitizenship::matches_expected($us_resident, "fkey_StateCode", $state->StateCode) ||
@@ -113,10 +113,10 @@
 			      <div class="row">
 			      	<div class="col-xs-12 col-md-6 form-group">
 								<label for="counties">
-			        		City/County of Residence
+			        		City/County of Residence <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
 								</label>
 						    <select name="county" form="CitizenForm" class="form-control" id='counties'>
-									<option></option>
+									<option hidden></option>
 						    	@foreach($counties as $id => $county)
 										<option value="{{ $id }}"
 											@if(GenericCitizenship::matches_expected($us_resident, "fkey_CityCode", $id) ||
@@ -146,7 +146,7 @@
 						<div class="col-xs-12 col-md-6">
 							<div class="form-group">
 						    <label for="PermanentCountry">
-						      Country of permanent residence or domicile
+						      Country of permanent residence or domicile <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
 						    </label>
 						    <select name="PermanentCountry" form="CitizenForm" class="form-control" id='PermanentCountry'>
 						      <option></option>
@@ -179,7 +179,7 @@
 
 					<div class="col-md-12">
 		        <div>
-							<h3> I am in the U.S on</h3>
+							<h4 style="display: inline-block"> I am in the U.S on <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span></h4>
 						</div>
 		        <div>
 							<div class="pretty p-default p-round">

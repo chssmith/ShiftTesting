@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-xs-12 col-md-6 form-group">
     <label for="country{{$postfix}}">
-      Country
+      Country @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
     </label>
     <select name="country{{$postfix}}" class="form-control" id='country{{$postfix}}'>
       <option hidden></option>
@@ -18,7 +18,7 @@
     <div class="col-xs-12">
       <div class="form-group">
         <label for="address_1{{$postfix}}">
-            Street
+            Street @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
         </label>
         <input type="text" class="form-control" name="address{{$postfix}}[]" id="address_1{{$postfix}}" @if(!empty($address)) value="{{$address->address[0]}}" @endif>
       </div>
@@ -35,7 +35,7 @@
     <div class="col-xs-12 col-md-4">
       <div class="form-group">
         <label for="city{{$postfix}}">
-          City
+          City @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
         </label>
         <input type="text" class="form-control" name="city{{$postfix}}" id="city{{$postfix}}" @if(!empty($address)) value="{{$address->city}}" @endif>
       </div>
@@ -44,7 +44,7 @@
     <div class="col-xs-12 col-md-4">
       <div class="form-group address">
         <label for="state{{$postfix}}">
-          State
+          State @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
         </label>
         <select id="state{{$postfix}}" name="state{{$postfix}}" class="form-control">
           <option hidden></option>
@@ -60,7 +60,7 @@
     <div class="col-xs-12 col-md-4">
       <div class="form-group">
         <label for="zip{{$postfix}}">
-          Zip Code
+          Zip Code @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
         </label>
         <input type="text" class="form-control" name="zip{{$postfix}}" id="zip{{$postfix}}" @if(!empty($address)) value="{{$address->zip_code}}" @endif>
       </div>
@@ -71,7 +71,7 @@
   <div class="row">
     <div class="col-xs-12 form-group">
       <label for="international_address{{$postfix}}">
-        Address
+        Address @if(isset($required) && $required)<span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>@endif
       </label>
       <textarea name="international_address{{$postfix}}" id="international_address{{$postfix}}" rows="5" columns="200" class="form-control">{{ $address->international_address }}</textarea>
     </div>
