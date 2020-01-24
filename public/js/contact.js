@@ -5,7 +5,7 @@ $("form").submit(function(){
 	var contact_name  = $('#contact_name');
 	var relationship  = $('#relationship');
 	var warning       = $('#warning');
-	if(day_phone.val().length === 0 && evening_phone.val().length === 0 && cell_phone.val().length === 0){
+	if(day_phone.val().trim().length === 0 && evening_phone.val().trim().length === 0 && cell_phone.val().trim().length === 0){
 		day_phone.addClass('invalid');
 		evening_phone.addClass('invalid');
 		cell_phone.addClass('invalid');
@@ -17,7 +17,7 @@ $("form").submit(function(){
 		contact_name.addClass('invalid');
 		warning.show();
 		warning.text("Please enter the contact's name ");
-		event.preventDefault();				
+		event.preventDefault();
 	}
 	if(relationship.val().length === 0){
 		relationship.addClass('invalid');
