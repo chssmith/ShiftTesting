@@ -53,21 +53,38 @@
 			</div>
 		</div>
 
+		@php
+			if(!empty($ods_data)) {
+				$ods_medications    = $ods_data->pull_data("medications");
+				$ods_med_allergy    = $ods_data->pull_data("med_allergy");
+				$ods_insect_allergy = $ods_data->pull_data("insect_allergy");
+			} else {
+				$ods_medications    = "";
+				$ods_med_allergy    = "";
+				$ods_insect_allergy = "";
+			}
+
+			$takes_medications        = (!empty($medications) && $medications->take_medications) || (empty($medications) && !empty($ods_medications));
+			$has_medication_allergies = (!empty($med_allergy) && $med_allergy->have_medication_allergies) || (empty($med_allergy) && !empty($ods_med_allergy));
+			$has_insect_allergies     = (!empty($insect_allergy) && $insect_allergy->have_insect_allergies) || (empty($insect_allergy) && !empty($ods_insect_allergy));
+		@endphp
+
 		<div class="row">
    		<div class="col-sm-12 col-md-6">
 				<div class="pretty p-default">
-					<input class="hideshowbox" type="checkbox" name="medications" value="medications" id="medications" @if(!empty($medications) && $medications->take_medications) checked @endif />
+					<input class="hideshowbox" type="checkbox" name="medications" value="medications" id="medications"
+						@if($takes_medications)checked @endif />
 					<div class="state p-primary">
 						<label>I currently take medications.</label>
 					</div>
 				</div>
 
-        <div class="row" class="hidden_box" id="medications_span" @if(empty($medications->take_medications)) style="display:none" @endif>
+        <div class="row" class="hidden_box" id="medications_span" @if(!$takes_medications) style="display:none" @endif>
 					<div class="col-xs-12">
 						<label>
 							Please list all medications you are taking.
 						</label>
-						<textarea name="medications_text" id="medications_text">@if(!empty($medications->medications)){{$medications->medications}}@endif</textarea>
+						<textarea name="medications_text" id="medications_text">@if(!empty($medications->medications)){{$medications->medications}}@elseif(empty($medications) && !empty($ods_medications)){{$ods_medications}}@endif</textarea>
 					</div>
 				</div>
 			</div>
@@ -76,18 +93,19 @@
 		<div class="row">
       <div class="col-sm-12 col-md-6">
  				<div class="pretty p-default">
-					<input class="hideshowbox" type="checkbox" name="med_allergies" value="med_allergies" id="med_allergies" @if(!empty($med_allergy) && $med_allergy->have_medication_allergies)checked @endif />
+					<input class="hideshowbox" type="checkbox" name="med_allergies" value="med_allergies" id="med_allergies"
+						@if($has_medication_allergies)checked @endif />
 					<div class="state p-primary">
 						<label>I have medication allergies.</label>
 					</div>
 				</div>
 
-				<div class="row" class="hidden_box" id="med_allergies_span" @if(empty($med_allergy->have_medication_allergies)) style="display:none" @endif>
+				<div class="row" class="hidden_box" id="med_allergies_span" @if(!$has_medication_allergies) style="display:none" @endif>
 					<div class="col-xs-12 form-group">
 						<label for="med_allergy_text">
 							Please list all medicines you are allergic to.
 						</label>
-   	     		<textarea id="med_allergy_text" name="med_allergy_text">@if(!empty($med_allergy->medication_allergies)){{$med_allergy->medication_allergies}}@endif</textarea>
+   	     		<textarea id="med_allergy_text" name="med_allergy_text">@if(!empty($med_allergy->medication_allergies)){{$med_allergy->medication_allergies}}@elseif(empty($med_allergy) && !empty($ods_med_allergy)){{$ods_med_allergy}}@endif</textarea>
    	     	</div>
    	    </div>
 			</div>
@@ -96,16 +114,17 @@
 		<div class="row">
 			<div class="col-sm-12 col-md-6">
 				<div class="pretty p-default">
-					<input class="hideshowbox" type="checkbox" name="insect_allergies" value="insect_allergies" id="insect_allergies" @if(!empty($insect_allergy) && $insect_allergy->have_insect_allergies)checked @endif />
+					<input class="hideshowbox" type="checkbox" name="insect_allergies" value="insect_allergies" id="insect_allergies"
+						@if($has_insect_allergies)checked @endif />
 					<div class="state p-primary">
 						<label>I have insect and/or food allergies.</label>
 					</div>
 				</div>
 
-        <div class="row" class="hidden_box" id="insect_allergies_span" @if(empty($insect_allergy->have_insect_allergies)) style="display:none" @endif>
+        <div class="row" class="hidden_box" id="insect_allergies_span" @if(!$has_insect_allergies) style="display:none" @endif>
 					<div class="col-xs-12 form-group">
 						<label for="insect_allergy_text">Please list all insects and/or foods that you are allergic too.</label>
- 	     			<textarea id="insect_allergy_text" name="insect_allergy_text">@if(!empty($insect_allergy->insect_allergies)){{$insect_allergy->insect_allergies}}@endif</textarea>
+ 	     			<textarea id="insect_allergy_text" name="insect_allergy_text">@if(!empty($insect_allergy->insect_allergies)){{$insect_allergy->insect_allergies}}@elseif(empty($insect_allergy) && !empty($ods_insect_allergy)){{$ods_insect_allergy}}@endif</textarea>
 					</div>
 				</div>
 			</div>

@@ -62,10 +62,14 @@
 					</div>
 				@endforeach
 
+				@php
+						$has_other_concerns = (!empty($other_concern) || (empty($other_concern) && !empty($ods_other_concerns)));
+				@endphp
+
 				<div>
 					<div class="pretty p-default">
 						<input type="checkbox" name="other" value="other" id="other"
-		    			@if(!empty($other_concern)) checked @endif />
+		    			@if(!empty($has_other_concerns)) checked @endif />
 	    			<div class="state p-primary">
 		    			<label>Other</label>
 		    		</div>
@@ -74,10 +78,10 @@
 			</div>
 		</div>
 
-		<div class="row" id="other_span" @if(empty($other_concern)) style="display:none" @endif>
+		<div class="row" id="other_span" @if(!$has_other_concerns) style="display:none" @endif>
 			<div class="col-xs-12">
 				<label for="other_concerns"> Please list any other health concerns </label>
-				<textarea name="other_concerns" id="other_concerns">@if(!empty($other_concern)){{$other_concern->other_concern}}@endif</textarea>
+				<textarea name="other_concerns" id="other_concerns">@if(!empty($other_concern)){{$other_concern->other_concern}}@elseif($has_other_concerns){{$ods_other_concerns}}@endif</textarea>
 			</div>
 		</div>
 

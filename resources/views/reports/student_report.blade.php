@@ -132,7 +132,7 @@
 						@endif
 					 </td>
 					<td>
-						@if(null != $student->green_card)
+						@if($student->ods_citizenship->green_card != $student->green_card)
 							Y
 						@endif
 					</td>
@@ -191,6 +191,9 @@
 
 			<tbody>
 				@foreach($student->address as $type => $address)
+					@php
+						$ods_address = $student->datamart_address[$type];
+					@endphp
 					<tr>
 						<td> <strong> {{$type}} </strong> </td>
 						<td class="grayed"> </td>
@@ -200,14 +203,18 @@
 
 					<tr>
 						<td> Street 1 </td>
-						<td>  </td>
+						<td>
+							@if(!empty($ods_address))
+								{{ $ods_address->address[0] }}
+							@endif
+						</td>
 						<td>
 							@if(!empty($address))
 								{{ $address->Address1 }}
 							@endif
 						</td>
 						<td>
-							@if(!empty($address) && null != $address->Address1)
+							@if(!empty($address) && (empty($ods_address) || $ods_address->address[0] != $address->Address1))
 								Y
 							@endif
 						</td>
@@ -215,14 +222,18 @@
 
 					<tr>
 						<td> Street 2 </td>
-						<td>  </td>
+						<td>
+							@if(!empty($ods_address))
+								{{ $ods_address->address[1] }}
+							@endif
+						</td>
 						<td>
 							@if(!empty($address))
 								{{ $address->Address2 }}
 							@endif
 						</td>
 						<td>
-							@if(!empty($address) && null != $address->Address2)
+							@if(!empty($address) && (empty($ods_address) || $ods_address->address[1] != $address->Address2))
 								Y
 							@endif
 						</td>
@@ -230,13 +241,17 @@
 
 					<tr>
 						<td> City </td>
-						<td>  </td>
+						<td>
+							@if(!empty($ods_address))
+								{{ $ods_address->city }}
+							@endif
+						</td>
 						<td>
 							@if(!empty($address))
 								{{ $address->City }} </td>
 							@endif
 						<td>
-							@if(!empty($address) && null != $address->City)
+							@if(!empty($address) && (empty($ods_address) || $ods_address->city != $address->City))
 								Y
 							@endif
 						</td>
@@ -244,13 +259,17 @@
 
 					<tr>
 						<td> State </td>
-						<td>  </td>
+						<td>
+							@if(!empty($ods_address))
+								{{ $ods_address->state }}
+							@endif
+						</td>
 						<td>
 							@if(!empty($address))
 								{{ $address->fkey_StateId }} </td>
 							@endif
 						<td>
-							@if(!empty($address) && null != $address->fkey_StateId)
+							@if(!empty($address) && (empty($ods_address) || $ods_address->state != $address->fkey_StateId))
 								Y
 							@endif
 						</td>
@@ -258,14 +277,18 @@
 
 					<tr>
 						<td> Zip Code </td>
-						<td>  </td>
+						<td>
+							@if(!empty($ods_address))
+								{{ $ods_address->zip_code }}
+							@endif
+						</td>
 						<td>
 							@if(!empty($address))
 								{{ $address->PostalCode }}
 							@endif
 						</td>
 						<td>
-							@if(!empty($address) &&null != $address->PostalCode)
+							@if(!empty($address) && (empty($ods_address) || $ods_address->zip_code != $address->PostalCode))
 								Y
 							@endif
 						</td>
@@ -273,7 +296,11 @@
 
 					<tr>
 						<td> Country </td>
-						<td>  </td>
+						<td>
+							@if(!empty($ods_address))
+								{{ $ods_address->country_id }}
+							@endif
+						</td>
 						<td>
 							@if(!empty($address->country_details))
 								{{ $address->country_details->CountryCode }}
@@ -281,7 +308,7 @@
 						</td>
 						<td>
 
-							@if(!empty($address) && null != $address->fkey_CountryId)
+							@if(!empty($address) && (empty($ods_address) || $ods_address->country_id != $address->country_details->CountryCode))
 								Y
 							@endif
 						</td>

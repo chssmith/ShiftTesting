@@ -65,7 +65,9 @@
         Marital Status
       </label>
       <p>
-        {{ $guardian->marital_status->description }}
+        @if(!empty($guardian->marital_status))
+          {{ $guardian->marital_status->description }}
+        @endif
       </p>
     </div>
   </div>
@@ -154,7 +156,7 @@
       @if ($guardian->reside_with)
         <span class="far fa-check-square" aria-label="check"></span>
       @else
-        <span class="far fa-square" aria-label="no check"></span>        
+        <span class="far fa-square" aria-label="no check"></span>
       @endif
     </div>
     <div>
