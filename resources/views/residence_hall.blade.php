@@ -53,7 +53,7 @@
 
    		<div class="row">
 	   		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-		   		<h4 style="display: inline-block"> Where do you plan to live? <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span> </h4>
+		   		<h4 style="display: inline-block"> Where do you plan to live? <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span> </h4>
 			    <div class = "form-group" id="living">
 			    	<div>
 	     				<div class="pretty p-default p-round">
@@ -118,7 +118,7 @@
 				<div class = "row">
 		   	     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 			        	<div class = "form-group">
-					       	<label for="local_Address1">Street <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span></label>
+					       	<label for="local_Address1">Street <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></label>
 									<input type= "text" class = "form-control" name = "local_Address1" id = "local_Address1"
 					        				@if(!empty($local_address)) value="{{$local_address->Address1}}" @endif>
 						</div>
@@ -136,13 +136,13 @@
 		   		<div class="row">
 			   		<div class="col-xs-12 col-md-4">
 			        	<div class = "form-group">
-			   					<label for="local_city">City <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span></label> <input type="text" class="form-control" name="local_city" id="local_city"
+			   					<label for="local_city">City <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></label> <input type="text" class="form-control" name="local_city" id="local_city"
 			   						@if(!empty($local_address)) value="{{$local_address->City}}" @endif>
 			   			</div>
 			   		</div>
 			   		<div class="col-xs-12 col-md-4">
 			        	<div class = "form-group address">
-			   					<label for="local_state">State <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span></label>
+			   					<label for="local_state">State <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></label>
 			   				<select id="local_state" name="local_state" class="form-control">
 			   					<option hidden></option>
 				   				@foreach($states as $state)
@@ -154,7 +154,7 @@
 			   		</div>
 			   		<div class="col-xs-12 col-md-4">
 			        	<div class = "form-group">
-			   				<label for="local_zip">Zip Code <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span></label>
+			   				<label for="local_zip">Zip Code <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></label>
 								<input type="text" class="form-control" name="local_zip" id="local_zip"
 			   						@if(!empty($local_address)) value="{{$local_address->PostalCode}}" @endif>
 			   			</div>

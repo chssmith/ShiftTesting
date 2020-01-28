@@ -27,7 +27,7 @@
 			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 				<div class="form-group">
 					<label for="first_name">
-						First Name <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+						First Name <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<input type= "text" class="form-control" name="first_name" id="first_name"
 							@if (!empty($datamart_student)) value="{{$datamart_student->FirstName}}"
@@ -53,7 +53,7 @@
     	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
       	<div class="form-group">
 					<label for="last_name">
-						Last Name <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+						Last Name <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<input type= "text" class="form-control" name="last_name" id="last_name"
 			    		@if (!empty($datamart_student)) value="{{$datamart_student->LastName}}"
@@ -77,7 +77,7 @@
 
 		<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-				<label for="SSN">Social Security Number <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span></label>
+				<label for="SSN">Social Security Number <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></label>
 				<p id="SSN">
 					@if(!empty($datamart_student) && !empty($datamart_student->ssn))
 						We have your number on file.  If you would like to double check this information, please call <phone-number>(540) 375 - 2211</phone-number> to securely verify your Social Security Number.
@@ -123,7 +123,7 @@
 			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 				<div class="form-group">
 					<label for="MaritalStatuses">
-						Marital Status <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+						Marital Status <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 			    <select name="MaritalStatus" form="PersonalInfoForm" class="form-control" id='MaritalStatuses'>
 						@foreach ($marital_statuses as $marital_status)
@@ -139,7 +139,7 @@
 			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 				<div class="form-group">
 					<label for="MilitaryStatuses">
-						Military Status <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+						Military Status <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<select name="MilitaryStatus" form="PersonalInfoForm" class="form-control" id='MilitaryStatuses'>
 						@foreach ($military_options as $military_option)
@@ -157,7 +157,7 @@
     	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 				<div class="form-group">
 	    		<label>
-						Are you Hispanic or Latino? <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+						Are you Hispanic or Latino? <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<div>
 	   				<div class="pretty p-default p-round">
@@ -176,7 +176,7 @@
 
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 				<div class="form-group">
-					<label>Select one or more of the following races <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span></label>
+					<label>Select one or more of the following races <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></label>
 	    		@foreach($all_races as $race)
 	  				<div>
 							<div class="pretty p-default">

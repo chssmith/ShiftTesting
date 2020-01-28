@@ -3,7 +3,7 @@
   <div class="col-xs-12 col-sm-6">
     <div class="form-group">
       <label for="first_name">
-        First Name <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+        First Name <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
       </label>
       <p>
         {{$guardian->first_name}}
@@ -38,7 +38,7 @@
   <div class="col-xs-12 col-sm-6">
     <div class="form-group">
       <label for="last_name">
-        Last Name <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+        Last Name <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
       </label>
       <p>
         {{$guardian->last_name}}
@@ -51,7 +51,7 @@
   <div class="col-xs-12 col-sm-6">
     <div class="form-group">
       <label for="relationship">
-        Relationship  <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+        Relationship  <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
       </label>
       <p>
         {{$guardian->relationship}}
@@ -62,7 +62,7 @@
   <div class="col-xs-12 col-sm-6">
     <div class="form-group">
       <label for="marital_status">
-        Marital Status <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+        Marital Status <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
       </label>
       <p>
         @if(!empty($guardian->marital_status))
@@ -136,7 +136,7 @@
   <div class="col-xs-12 col-md-6">
     <div class="form-group">
       <label>
-        Highest Education <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+        Highest Education <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
       </label>
       <p style="margin-left: 20px">
         @if (isset($guardian->education))

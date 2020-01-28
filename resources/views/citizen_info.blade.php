@@ -49,7 +49,7 @@
 			<div class="col-sm-12 col-md-6">
 				<div class="form-group">
 					<label for="BirthCountry">
-						 Country of birth <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+						 Country of birth <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<select name="BirthCountry" form="CitizenForm" class="form-control" id='BirthCountry'>
 						<option hidden></option>
@@ -92,7 +92,7 @@
 		    	<div class="row">
 		      	<div class="col-xs-12 col-sm-6 form-group">
 							<label for="states">
-			      		State of Residence <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+			      		State of Residence <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 							</label>
 				    	<select name="state" form="CitizenForm" class="form-control" id='states'>
 		 						<option hidden></option>
@@ -113,7 +113,7 @@
 			      <div class="row">
 			      	<div class="col-xs-12 col-md-6 form-group">
 								<label for="counties">
-			        		City/County of Residence <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+			        		City/County of Residence <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 								</label>
 						    <select name="county" form="CitizenForm" class="form-control" id='counties'>
 									<option hidden></option>
@@ -146,7 +146,7 @@
 						<div class="col-xs-12 col-md-6">
 							<div class="form-group">
 						    <label for="PermanentCountry">
-						      Country of permanent residence or domicile <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span>
+						      Country of permanent residence or domicile <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 						    </label>
 						    <select name="PermanentCountry" form="CitizenForm" class="form-control" id='PermanentCountry'>
 						      <option></option>
@@ -179,7 +179,7 @@
 
 					<div class="col-md-12">
 		        <div>
-							<h4 style="display: inline-block"> I am in the U.S on <span class="fas fa-star fa-xs fa-pull-right" aria-hidden="true"></span></h4>
+							<h4 style="display: inline-block"> I am in the U.S on <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></h4>
 						</div>
 		        <div>
 							<div class="pretty p-default p-round">
