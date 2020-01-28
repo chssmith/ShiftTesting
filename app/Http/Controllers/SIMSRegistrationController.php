@@ -28,7 +28,8 @@ class SIMSRegistrationController extends Controller
       session(['session_id' => $request->id]);
       //Set the user info we have in datamart
       $user = User::find(RCAuth::user()->rcid);
-      if(null !== (session("student_info"))){
+      $sess = session("student_info");
+      if(!isset($sess)){
         $student_info = [
           "first_name"         => $user->FirstName,
           "last_name"          => $user->LastName,
@@ -86,4 +87,23 @@ class SIMSRegistrationController extends Controller
     public function parentsGuestsPage(){
       return view()->make("sims.parents_guests");
     }
+
+    //TYPE: POST
+    //FROM: sims.parents_guests
+    //POST: saves the parent info in session
+    public function parentsGuests(Request $request){
+      $parents_guests = [];
+      for($i = 0; $i < 5; $i++){
+        $parents_guests["g".$i."_first_name"] = $request["g".$i."_first_name"];
+        $parents_guests["g".$i."_last_name"] = $request["g".$i."_last_name"];
+        $parents_guests["g".$i."_email"] = $request["g".$i."_email"];
+        $parents_guests["g".$i."_relationship"] = $request["g".$i."_relationship"];
+        $parents_guests["g".$i."_on_campus"] = $request["g".$i."_on_campus"];
+      }
+
+      session(["parents_guests" => $parents_guests]);
+      
+    }
+
+
 }

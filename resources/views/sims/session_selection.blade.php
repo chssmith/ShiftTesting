@@ -18,7 +18,8 @@
           _token: "{{csrf_token()}}",
           id: id
         },
-        success: function(){
+        success: function($sess){
+          // console.log($sess);
           window.location.href = "{{action("SIMSRegistrationController@studentInfoPage")}}"
         }
       })

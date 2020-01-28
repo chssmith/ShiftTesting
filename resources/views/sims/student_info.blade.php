@@ -41,9 +41,6 @@
 @endsection
 
 @section("content")
-  <div class="progress" style="height: 4px;">
-    <div class="progress-bar" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-  </div>
   <h2> Student Information </h2>
   <form action="{{action("SIMSRegistrationController@studentInfo")}}" method="POST">
     {{csrf_field()}}
@@ -113,7 +110,7 @@
         </div>
         <div class="col-md-12" id="dietary-needs-describe" hidden>
           <label name="dietary_needs">Please Describe</label>
-          <textarea name="dietary_needs" class="form-control" required >{{$sess["dietary_needs"]}}</textarea>
+          <textarea name="dietary_needs" class="form-control" >{{$sess["dietary_needs"]}}</textarea>
         </div>
       </div>
     </div>
@@ -126,7 +123,7 @@
         </div>
         <div class="col-md-12" id="physical-needs-describe" hidden>
           <label name="physical_needs">Please Describe</label>
-          <textarea name="physical_needs" class="form-control" required >{{$sess["physical_needs"]}}</textarea>
+          <textarea name="physical_needs" class="form-control" >{{$sess["physical_needs"]}}</textarea>
         </div>
       </div>
     </div>
