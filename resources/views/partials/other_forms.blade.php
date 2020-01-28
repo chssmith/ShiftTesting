@@ -6,10 +6,18 @@
       @endphp
       <a @if(!$completed)href="{{ ($additional_form->internal ? action($additional_form->link) : $additional_form->link) }}"@endif class="list-group-item">
         <link-title>{{ $additional_form->title }}</link-title>
-        <due-date>{{ $additional_form->due_date->format("n/j/Y") }}</due-date>
+        <due-date>Due: {{ $additional_form->due_date->format("n/j/Y") }}</due-date>
         <badge>
           @if ($completed)
             @include("partials.complete_badge")
+          @elseif($submitted)
+            <span style="background-color:#FCBF06; color:black" class="badge">
+              Submitted
+            </span>
+          @else
+            <span style="background-color:#CB0D0B" class="badge">
+              Incomplete
+            </span>
           @endif
         </badge>
       </a>

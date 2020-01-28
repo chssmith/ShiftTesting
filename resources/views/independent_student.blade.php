@@ -16,7 +16,7 @@
 		}
 
 		ul{
-			list-style-type:disc;
+			list-style-type:square;
 			padding-left:25px;
 		}
 
