@@ -10,14 +10,6 @@
         <badge>
           @if ($completed)
             @include("partials.complete_badge")
-          @elseif($submitted)
-            <span style="background-color:#FCBF06; color:black" class="badge">
-              Submitted
-            </span>
-          @else
-            <span style="background-color:#CB0D0B" class="badge">
-              Incomplete
-            </span>
           @endif
         </badge>
       </a>
