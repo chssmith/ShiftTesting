@@ -11,7 +11,7 @@
 	@parent
   <style>
     ul {
-      list-style: circle;
+      list-style: square;
       margin-left: 30px;
     }
     ul > li {
@@ -118,7 +118,7 @@
         obligation of handling it responsibly.  Students are expected to behave
         responsibly and will be held accountable for their actions.
       </p>
-
+      <hr>
     </div>
     <div class="panel-footer" style="background-color: white">
       <form action="{{ action ("StudentInformationController@completeAcademicIntegrityStatement") }}" method="POST">
