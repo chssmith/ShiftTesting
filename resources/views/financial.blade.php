@@ -9,35 +9,7 @@
 
 @section("stylesheets")
 	@parent
-  <style>
-    .list-group {
-      display: grid;
-      grid-template-rows: repeat(6, 1fr);
-    }
-    .pretty label {
-      white-space: normal;
-    }
-    @media(max-width: 1000px) {
-      .pretty {
-        width: 100%;
-      }
-      .pretty .state label {
-        display: grid;
-        grid-template-areas: "checkbox label";
-        grid-template-columns: 40px 1fr;
-      }
-      .pretty .state label:before {
-        grid-area: checkbox;
-        position: initial;
-      }
-      .pretty .state label > span {
-        grid-area: label;
-        text-indent: 0px;
-      }
-    }
-
-
-  </style>
+  <link rel="stylesheet" type="text/css" href="{{ asset("css/checkbox_form.css") }}" />
 @endsection
 
 @section("content")
@@ -78,24 +50,28 @@
           addresses on record with the College.
         </p>
       </div>
+    </div>
 
-
-      <form action="{{ action("StudentInformationController@completeFinancialAcceptance") }}" method="POST">
-        {{ csrf_field() }}
-        <div>
-          <div class="pretty p-default">
-            <input type="checkbox" name="acknowledge" value=true id="acknowledge" @if($student->financial_acceptance) checked @endif />
-            <div class="state p-primary">
-              <label>
-                <span>By checking this box, I acknowledge, understand, and accept these terms.</span>
-              </label>
+    <div class="panel-footer" style="background-color: white">
+      <div class="row" style="margin-bottom: 10px;">
+        <div class="col-xs-12">
+          <form action="{{ action ("StudentInformationController@completeFinancialAcceptance") }}" method="POST">
+            {{ csrf_field() }}
+            <div>
+              <div class='cb'>
+                <input type="checkbox" name="acknowledge" value=true id="acknowledge" @if($student->financial_acceptance) checked @endif />
+                <label for='acknowledge'>
+                    By checking this box, I acknowledge, understand, and accept these terms.
+                    <span class="far fa-asterisk" aria-hidden="true"></span>
+                </label>
+              </div>
             </div>
-          </div>
+            <div style="text-align: right">
+      		    <button type="submit" class="btn btn-lg btn-success pull-right"> Accept </button>
+            </div>
+          </form>
         </div>
-        <div style="text-align: right">
-          <button type="submit" class="btn btn-secondary">Accept</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 @endsection
