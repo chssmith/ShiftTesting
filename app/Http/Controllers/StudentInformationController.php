@@ -345,7 +345,7 @@ class StudentInformationController extends Controller
 		$us_resident       = USResidence::firstOrNew(['RCID' => $student->RCID, 'created_by' => $user->rcid], ['updated_by' => $user->rcid]);
 
 		$citizenship                      = CitizenshipInformation::firstOrNew(["fkey_rcid" => $student->RCID], ["created_by" => $user->rcid]);//$student->load("citizenship");
-		dd($citizenship);
+
 		$citizenship->country_of_birth    = $request->input("BirthCountry", NULL);
 		$citizenship->updated_by          = $user->rcid;
 
