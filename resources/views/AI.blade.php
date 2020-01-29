@@ -81,7 +81,7 @@
         obligation of handling it responsibly.  Students are expected to behave
         responsibly and will be held accountable for their actions.
       </p>
-
+      <hr>
     </div>
     <div class="panel-footer" style="background-color: white">
       <div class="row" style="margin-bottom: 10px;">

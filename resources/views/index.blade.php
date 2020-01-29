@@ -79,7 +79,15 @@
 					grid-row-gap: 30px;
 				}
 			}
-
+			h3 {
+				font-family: sans-serif;
+				font-weight: bold;
+				font-size: 1.4em;
+				margin-top: 10px;
+			}
+			.panel-body {
+				color: rgba(0,0,0,.6);
+			}
 		</style>
 @endsection
 
@@ -91,7 +99,7 @@
 					<h3 style="margin-top; 0px">Welcome	to the RC Community!</h3>
 
 					<p>
-						<ul style="list-style: circle; margin-bottom: 10px; padding-left: 40px;">
+						<ul style="list-style: square; margin-bottom: 10px; padding-left: 40px;">
 							<li>
 								You must go through each section.
 							</li>
@@ -100,7 +108,7 @@
 							</li>
 							<li>
 								Make sure you hit the submit button when you are finished.  Make
-								sure you recieve a confirmation email.
+								sure you receive a confirmation email.
 							</li>
 						</ul>
 

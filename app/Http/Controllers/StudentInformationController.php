@@ -77,7 +77,7 @@ class StudentInformationController extends Controller
 		$sections['Medical Information']   	   	 = ['status' => $completed_sections->medical_information,			        'link' => action("StudentInformationController@medicalInfo")];
 		$sections['Missing Person']			 	       = ['status' => $completed_sections->missing_person,				          'link' => action("StudentInformationController@missingPersonContact")];
 		$sections['Emergency Contact']		 	     = ['status' => $completed_sections->emergency_information,			      'link' => action("StudentInformationController@emergencyContact")];
-		$sections['Non Emergency Contact']   	   = ['status' => $completed_sections->non_emergency_contact,			      'link' => action("StudentInformationController@nonEmergency")];
+		$sections['Non-Emergency Contact']   	   = ['status' => $completed_sections->non_emergency_contact,			      'link' => action("StudentInformationController@nonEmergency")];
 		$sections['Independent Student']     	   = ['status' => $completed_sections->independent_student,			        'link' => action("StudentInformationController@independentStudent")];
 		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => action("StudentInformationController@parentAndGuardianInfo")];
 
@@ -340,10 +340,12 @@ class StudentInformationController extends Controller
 
 	public function citizenInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
 		$user              = RCAuth::user();
+
 		$green_card_input  = $request->input("GreenCard", []);
 		$us_resident       = USResidence::firstOrNew(['RCID' => $student->RCID, 'created_by' => $user->rcid], ['updated_by' => $user->rcid]);
 
 		$citizenship                      = CitizenshipInformation::firstOrNew(["fkey_rcid" => $student->RCID], ["created_by" => $user->rcid]);//$student->load("citizenship");
+		dd($citizenship);
 		$citizenship->country_of_birth    = $request->input("BirthCountry", NULL);
 		$citizenship->updated_by          = $user->rcid;
 

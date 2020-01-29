@@ -107,7 +107,6 @@ label {
   background-color: #649103;
   *background-color: #003bb3;
 }
-
 .far.fa-asterisk {
   color: #ff0033
 }
@@ -138,3 +137,6 @@ badge {
     grid-template-columns: 3fr 1fr;
   }
 }
+ ul {
+   list-style: square;
+ }
