@@ -45,7 +45,7 @@
         I acknowledge that students have a responsibility to ensure the integrity of their own work, and ignorance of the academic integrity system is not an acceptable excuse for violations.
       </p>
       <p>
-        I acknowledge that those persons dire affected by my behavior may be notified regarding the outcome of any disciplinary action taken against me.
+        I acknowledge that those persons directly affected by my behavior may be notified regarding the outcome of any disciplinary action taken against me.
       </p>
       <p>
         I acknowledge that continued enrollment at Roanoke College indicates my willingness to follow the rules of the academic integrity system.
