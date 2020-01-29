@@ -107,6 +107,36 @@ label {
   background-color: #649103;
   *background-color: #003bb3;
 }
+.far.fa-asterisk {
+  color: #ff0033
+}
+
+#grid-container {
+  display: grid;
+  grid-auto-rows: auto auto;
+  min-height: 650px;
+}
+#grid-container #bottom {
+  align-self: end;
+}
+
+.form-item {
+  display: grid;
+  grid-template-columns: 10fr 1fr;
+}
+
+badge {
+  justify-self: end;
+  align-self: center;
+  margin-right: 10px;
+  padding-left: 10px;
+}
+
+@media (min-width: 1200px) {
+  .form-item {
+    grid-template-columns: 3fr 1fr;
+  }
+}
  ul {
    list-style: square;
  }

@@ -158,17 +158,21 @@
 	   		<div class="panel panel-default">
 			    <div class="list-group">
 			    	@foreach($sections as $section_name => $section_completion)
-		        	<a @if(!$submitted)href="{{$section_completion['link']}}"@endif class="list-group-item">
-								{{$section_name}}
-								<span class="badge pull-right @if(is_null($section_completion['status'])) not-started @elseif($section_completion['status']) complete @else incomplete @endif">
-									@if (is_null($section_completion['status']))
-										Not Started
-									@elseif($section_completion['status'])
-										<span class="fas fa-check" aria-hidden="true"></span>
-									@else
-										Incomplete
-									@endif
-								</span>
+		        	<a @if(!$submitted)href="{{$section_completion['link']}}"@endif class="list-group-item form-item">
+								<name>
+									{{$section_name}}
+								</name>
+								<badge>
+									<span class="badge pull-right @if(is_null($section_completion['status'])) not-started @elseif($section_completion['status']) complete @else incomplete @endif">
+										@if (is_null($section_completion['status']))
+											Not Started
+										@elseif($section_completion['status'])
+											<span class="fas fa-check" aria-hidden="true"></span>
+										@else
+											Incomplete
+										@endif
+									</span>
+								</badge>
 		        	</a>
 		        @endforeach
 			    </div>

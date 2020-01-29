@@ -4,49 +4,12 @@
 @endsection
 
 @section('heading')
-  Financial Acceptance Statement
+  Academic Integrity and Student Conduct
 @endsection
 
 @section("stylesheets")
 	@parent
-  <style>
-    ul {
-      list-style: square;
-      margin-left: 30px;
-    }
-    ul > li {
-      margin: 15px;
-    }
-    .panel-body {
-      font-size: 14pt;
-    }
-    .list-group {
-      display: grid;
-      grid-template-rows: repeat(6, 1fr);
-    }
-    .pretty label {
-      white-space: normal;
-    }
-    .pretty {
-      width: 90%;
-    }
-    .pretty .state label {
-      display: grid;
-      grid-template-areas: "checkbox label";
-      grid-template-columns: 40px 1fr;
-    }
-    .pretty .state label:before {
-      grid-area: checkbox;
-    }
-    .pretty .state label > span {
-      grid-area: label;
-      text-indent: 0px;
-    }
-    a {
-      text-decoration: underline;
-    }
-
-  </style>
+  <link rel="stylesheet" type="text/css" href="{{ asset("css/checkbox_form.css") }}" />
 @endsection
 
 @section("content")
@@ -121,26 +84,27 @@
       <hr>
     </div>
     <div class="panel-footer" style="background-color: white">
-      <form action="{{ action ("StudentInformationController@completeAcademicIntegrityStatement") }}" method="POST">
-        {{ csrf_field() }}
-        <div>
-          <div class="pretty p-default">
-            <input type="checkbox" name="acknowledge" value=true id="acknowledge" @if($student->ai_and_student_conduct) checked @endif />
-            <div class="state p-primary">
-              <label>
-                <span>
-                  By checking this box, I acknowledge that I have read and
-                  understand the information, policies, and procedures for Academic
-                  Integrity and Student Conduct.
-                </span>
-              </label>
+      <div class="row" style="margin-bottom: 10px;">
+        <div class="col-xs-12">
+          <form action="{{ action ("StudentInformationController@completeAcademicIntegrityStatement") }}" method="POST">
+            {{ csrf_field() }}
+            <div>
+              <div class='cb'>
+                <input type="checkbox" name="acknowledge" value=true id="acknowledge" @if($student->ai_and_student_conduct) checked @endif />
+                <label for='acknowledge'>
+                    By checking this box, I acknowledge that I have read and
+                    understand the information, policies, and procedures for Academic
+                    Integrity and Student Conduct.
+                    <span class="far fa-asterisk" aria-hidden="true"></span>
+                </label>
+              </div>
             </div>
-          </div>
+            <div style="text-align: right">
+      		    <button type="submit" class="btn btn-lg btn-success pull-right"> Accept </button>
+            </div>
+          </form>
         </div>
-        <div style="text-align: right">
-          <button type="submit" class="btn btn-secondary">Accept</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 

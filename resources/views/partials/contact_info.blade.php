@@ -2,7 +2,7 @@
 	<div class="col-xs-12 col-md-6">
 		<div class="form-group">
 			<label for="contact_name">
-				Contact Name
+				Contact Name <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 			</label>
 			<input type="text" class="form-control" name="contact_name" id="contact_name" @if(!empty($contact)) value="{{$contact->name}}" @endif>
 		</div>
@@ -11,7 +11,7 @@
 	<div class="col-xs-12 col-md-6">
 		<div class="form-group">
 			<label for="relationship">
-				Relationship
+				Relationship <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 			</label>
 			<input type="text" class="form-control" name="relationship" id="relationship" @if(!empty($contact)) value="{{$contact->relationship}}" @endif>
 		</div>
