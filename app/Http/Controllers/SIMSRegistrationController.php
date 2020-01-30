@@ -57,7 +57,7 @@ class SIMSRegistrationController extends Controller
                                                     "Summer Orientation Registration Confirmation",
                                                     view()->make("sims.stage1.partials.confirmation_body", ["registered_session" => $new_reg->load("session_dates")])->render());
             } catch (\Exception $e) {
-              $redirect = $redirect->with("message", "We were unable to locate your email address.  Please contact <a href='mailto:orientation@roanoke.edu'>orientation@roanoke.edu</a> to confirm your registration. " . $e->getMessage());
+              $redirect = $redirect->with("message", "We were unable to locate your email address.  Please contact <a href='mailto:orientation@roanoke.edu'>orientation@roanoke.edu</a> to confirm your registration. ");
             }
           } else {
             $redirect = redirect()->action("SIMSRegistrationController@stage1Confirmation")->with("message", "You have already registered for the dates listed below.");

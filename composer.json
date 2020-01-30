@@ -14,7 +14,8 @@
         "laravel/tinker": "~1.0",
         "rcwebdevelopers/FormBuilder": "*",
         "rcwebdevelopers/authentication": "*",
-        "rcwebdevelopers/mustangbuilder": "*"
+        "rcwebdevelopers/mustangbuilder": "*",
+        "rollbar/rollbar-laravel": "2.*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",
