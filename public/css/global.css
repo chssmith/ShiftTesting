@@ -140,3 +140,7 @@ badge {
  ul {
    list-style: square;
  }
+
+ a {
+   text-decoration: underline;
+ }

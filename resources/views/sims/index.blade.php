@@ -1,7 +1,7 @@
 @extends('forms_template')
 
 @section('heading')
-  SIMS Registration
+  Summer Orientation Registration
 @endsection
 
 @section("header")
@@ -36,6 +36,10 @@
     buttons {
       grid-area: buttons;
     }
+    .list-group-item {
+      border: solid 2px green;
+      border-radius: 5px;
+    }
     @media (max-width: 1919px) {
       #SIMS {
         grid-template-columns: 1fr 1fr;
@@ -50,52 +54,74 @@
 @endsection
 
 @section("content")
-  <h2> Available Sessions </h2>
+  @if ($messages->count() > 0)
+    <div style="margin-bottom:15px" id="warning" class="alert alert-danger no-margin">
+      <h3 style="margin-top: 5px"> Sorry! </h3>
+      @foreach($messages as $message)
+        <p> {{ $message }} </p>
+      @endforeach
+    </div>
+  @endif
 
-  <div class="modal fade" id="register_modal" tabindex="-1" role="dialog" aria-labelledby="register_modal_title">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="register_modal_title">Register for SIMS</h4>
-        </div>
-        <form action="" method="POST">
-          {{ csrf_field() }}
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="guardian">
-                <input type="checkbox" id="guardian" name="guardian_stay" />
-                My guardian would like to stay on campus
-              </label>
-            </div>
-            <div id="guardian_info">
-              <div class="form-group">
-                <label for="guardian_name">Guardian Name</label>
-                <input type="text" class="form-control" id="guardian_name" name="guardian_name" />
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Save changes</button>
-          </div>
-        </form>
-      </div>
+  <div class="panel">
+    <div class="panel-body">
+      <p>
+        Once you have registered for a session, it is difficult to make scheduling
+        changes. Therefore, please be as certain as possible that the session you
+        select is the one you want to attend. Sessions begin filling up in February,
+        so register as early as possible and as accurately as possible.
+      </p>
+
+      <p>
+        If you have additional questions, please refer to the orientation website.
+      </p>
+
+      <p>
+        If a session is listed as "0 remaining," please register for another session
+        AND email orientation@roanoke.edu to get on a waitlist if one of these
+        sessions is your only option.  Session spots will fill on a first
+        come-first-served basis.  If spots become available students will be
+        contacted through their RC email.
+      </p>
     </div>
   </div>
 
-  <div id="SIMS" class="list-group">
-    @foreach($sessions as $session)
-      <div class="list-group-item">
-        <dates>
-          <start-date>{{ $session->start_date->format("F jS") }}</start-date>
-          &ndash;
-          <end-date>{{ $session->end_date->format("F jS Y") }}</end-date>
-        </dates>
-        <attendance-cap>100 / {{ $session->registration_limit }}</attendance-cap>
-        <buttons>
-          <abutton type="button" class="btn btn-complete" style="width: 100%" data-target="#register_modal" data-toggle="modal" data-sim-id="{{ $session->id }}">Register!</button>
-        </buttons>
+
+  <h2> Available Sessions </h2>
+
+  <form action="{{ action("SIMSRegistrationController@store") }}" method="POST">
+    {{ csrf_field() }}
+    <div class="row">
+      <div class="col-xs-12">
+        <div id="SIMS" class="list-group">
+          @foreach($sessions as $session)
+            @php
+              $num_remaining = $session->registration_limit - $registrations[$session->id]->num_registrations;
+            @endphp
+            <div class="list-group-item">
+              <dates>
+                <start-date>{{ $session->start_date->format("F jS") }}</start-date>
+                &ndash;
+                <end-date>{{ $session->end_date->format("jS") }}</end-date>
+              </dates>
+              <attendance-cap> {{ $num_remaining }} / {{ $session->registration_limit }}</attendance-cap>
+              <buttons>
+                <label>
+                  <input type="radio" name="orientation_session" value="{{ $session->id }}" @if($num_remaining <= 0) disabled @endif class="orientation_session" required/>
+                  I want to attend this session
+                </label>
+              </buttons>
+            </div>
+          @endforeach
+        </div>
       </div>
-    @endforeach
-  </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="form-group" style="text-align: right">
+          <button type="submit" class="btn btn-primary">Reserve My Spot</button>
+        </div>
+      </div>
+    </div>
+  </form>
 @endsection
