@@ -60,9 +60,11 @@ Route::prefix("admin")->middleware("force_login")->group( function () {
 	Route::get("academic_achievement/export", "AdminController@exportAcademicAchievementCSV");
 });
 
-Route::prefix("sims")->group( function () {
+Route::prefix("orientation")->middleware(["force_login", 'populate_dependencies'])->group( function () {
 	Route::get ("registration", "SIMSRegistrationController@index");
-	Route::post("registration", "SIMSRegistrationController@register");
+	Route::post("registration", "SIMSRegistrationController@store");
+
+	Route::get ("confirm",      "SIMSRegistrationController@stage1Confirmation");
 });
 
 Route::prefix("academic_achievement")->group( function () {

@@ -33,9 +33,6 @@ ul > li {
   align-self: center;
   margin-bottom: 0px;
 }
-a {
-  text-decoration: underline;
-}
 .small {
   line-height: 1.3 !important;
 }
