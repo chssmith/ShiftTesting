@@ -41,3 +41,6 @@ ul > li {
     display: block;
   }
 }
+a {
+  text-decoration: underline;
+}
