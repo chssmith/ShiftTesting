@@ -30,7 +30,7 @@ class SIMSRegistrationController extends Controller
       ]);
 
 
-      $file = fopen("reg_lock", "w");
+      $file = fopen(storage_path("reg_lock"), "w");
       if(flock($file, LOCK_EX)) {
         $session_id             = $request->input("orientation_session");
         $potential_registration = SIMSSessions::find($session_id);

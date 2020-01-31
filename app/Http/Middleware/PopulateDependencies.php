@@ -34,7 +34,7 @@ class PopulateDependencies
         \DB::statement("EXEC copy_ods_health_concerns_to_student_forms ?", [$rcid]);
 
         //Locking FTW
-        $file = fopen("lock", "w");
+        $file = fopen(storage_path("lock"), "w");
         if(flock($file, LOCK_EX)) {
           \DB::statement("EXEC copy_ods_guardian_to_student_forms ?", [$rcid]);
           \DB::statement("EXEC copy_ods_employment_to_student_forms ?", [$rcid]);
