@@ -14,6 +14,7 @@
 @section("stylesheets")
   @parent
 	<link type="text/css" rel="stylesheet" href="{{ asset("css/global.css") }}" />
+  <link rel="stylesheet" type="text/css" href="{{ asset("css/checkbox_form.css") }}" ></link>
   <style>
     .panel-body p {
       line-height: 1.3;

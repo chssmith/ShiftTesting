@@ -1,0 +1,35 @@
+#SIMS {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px;
+}
+.list-group-item {
+  display: grid;
+  grid-template-areas: "dates attendance-cap" "buttons buttons";
+  grid-template-columns: 1fr 100px;
+  grid-gap: 20px;
+}
+attendance-cap {
+  justify-self: end;
+}
+dates {
+  font-size: 18pt;
+  line-height: 1.2em;
+}
+buttons {
+  grid-area: buttons;
+}
+.list-group-item {
+  border: solid 2px green;
+  border-radius: 5px;
+}
+@media (max-width: 1919px) {
+  #SIMS {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 787px) {
+  #SIMS {
+    grid-template-columns: 1fr;
+  }
+}

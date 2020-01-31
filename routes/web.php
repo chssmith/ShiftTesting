@@ -57,7 +57,7 @@ Route::prefix("admin")->middleware("force_login")->group( function () {
 	Route::get('create_student_snap', 'AdminController@createStudentSnap');
 	Route::get('create_parent_snap', 'AdminController@createParentSnap');
 
-	Route::get("academic_achievement/export", "AdminController@exportAcademicAchievementCSV");
+	// Route::get("academic_achievement/export", "AdminController@exportAcademicAchievementCSV"); - Deprecated
 });
 
 Route::prefix("orientation")->middleware(["force_login", 'populate_dependencies'])->group( function () {
@@ -65,6 +65,14 @@ Route::prefix("orientation")->middleware(["force_login", 'populate_dependencies'
 	Route::post("registration", "SIMSRegistrationController@store");
 
 	Route::get ("confirm",      "SIMSRegistrationController@stage1Confirmation");
+
+	Route::prefix("admin")->middleware(["sims_admin"])->group( function () {
+		Route::get ("/",                     "SIMSRegistrationController@adminIndex");
+		Route::get ("student/lookup",        "SIMSRegistrationController@adminRegistrationLookup");
+		Route::get ("student/lookup/search", "SIMSRegistrationController@adminRegistrationTypeahead");
+		Route::post("student/edit", 				 "SIMSRegistrationController@adminRegistrationPullRegistration");
+		Route::post("student/edit/save",     "SIMSRegistrationController@adminRegistrationStore");
+	});
 });
 
 Route::prefix("academic_achievement")->group( function () {

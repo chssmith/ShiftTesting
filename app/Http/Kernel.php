@@ -58,6 +58,7 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'force_login' => \App\Http\Middleware\ForceLogin::class,
+        'sims_admin' => \App\Http\Middleware\SIMSAdmin::class,
         "populate_dependencies" => \App\Http\Middleware\PopulateDependencies::class
     ];
 }
