@@ -110,7 +110,7 @@
 		</div>
 
 
-		<h3> Contact Information </h3>
+		<h3> Contact Information <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></h3>
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="form-group">

@@ -11,8 +11,7 @@ class Countries extends Model
      *
      * @var  string
      */
-    protected $table      = 'dbo.Countries';
+    protected $table      = 'DataMart.dbo.Countries';
     protected $primaryKey = 'key_CountryId';
-    protected $connection = 'DataMart';
 
 }

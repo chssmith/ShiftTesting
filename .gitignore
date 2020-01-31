@@ -14,3 +14,5 @@ yarn-error.log
 storage/pdfs/
 
 composer.lock
+storage/lock
+storage/reg_lock
