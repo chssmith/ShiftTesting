@@ -14,43 +14,7 @@
 @section("stylesheets")
   @parent
 	<link type="text/css" rel="stylesheet" href="{{ asset("css/global.css") }}" />
-  <style>
-    #SIMS {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-gap: 20px;
-    }
-    .list-group-item {
-      display: grid;
-      grid-template-areas: "dates attendance-cap" "buttons buttons";
-      grid-template-columns: 1fr 100px;
-      grid-gap: 20px;
-    }
-    attendance-cap {
-      justify-self: end;
-    }
-    dates {
-      font-size: 18pt;
-      line-height: 1.2em;
-    }
-    buttons {
-      grid-area: buttons;
-    }
-    .list-group-item {
-      border: solid 2px green;
-      border-radius: 5px;
-    }
-    @media (max-width: 1919px) {
-      #SIMS {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-    @media (max-width: 787px) {
-      #SIMS {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+	<link type="text/css" rel="stylesheet" href="{{ asset("css/sims_registration.css") }}" />
 @endsection
 
 @section("content")
@@ -91,31 +55,9 @@
 
   <form action="{{ action("SIMSRegistrationController@store") }}" method="POST">
     {{ csrf_field() }}
-    <div class="row">
-      <div class="col-xs-12">
-        <div id="SIMS" class="list-group">
-          @foreach($sessions as $session)
-            @php
-              $num_remaining = $session->registration_limit - $registrations[$session->id]->num_registrations;
-            @endphp
-            <div class="list-group-item">
-              <dates>
-                <start-date>{{ $session->start_date->format("F jS") }}</start-date>
-                &ndash;
-                <end-date>{{ $session->end_date->format("jS") }}</end-date>
-              </dates>
-              <attendance-cap> {{ $num_remaining }} / {{ $session->registration_limit }}</attendance-cap>
-              <buttons>
-                <label>
-                  <input type="radio" name="orientation_session" value="{{ $session->id }}" @if($num_remaining <= 0) disabled @endif class="orientation_session" required/>
-                  I want to attend this session
-                </label>
-              </buttons>
-            </div>
-          @endforeach
-        </div>
-      </div>
-    </div>
+
+    @include("sims.admin.partials.sessions_panel")
+
     <div class="row">
       <div class="col-xs-12">
         <div class="form-group" style="text-align: right">
