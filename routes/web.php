@@ -32,11 +32,15 @@ Route::middleware('force_login')->group( function (){
 	Route::get("ap", "StudentInformationController@getAPExams");
 	Route::get("ib", "StudentInformationController@getIBCourses");
 
-	Route::get("academic_integrity", "StudentInformationController@showAcademicIntegrityStatement");
+	Route::get ("academic_integrity", "StudentInformationController@showAcademicIntegrityStatement");
 	Route::post("academic_integrity", "StudentInformationController@completeAcademicIntegrityStatement");
 
-	Route::get("financial", "StudentInformationController@showFinancialAcceptance");
+	Route::get ("financial", "StudentInformationController@showFinancialAcceptance");
 	Route::post("financial", "StudentInformationController@completeFinancialAcceptance");
+
+	Route::get ("sexual_misconduct_policy", "StudentInformationController@showTitleIXAcceptance");
+	Route::post("sexual_misconduct_policy", "StudentInformationController@completeTitleIXAcceptance");
+
 });
 
 
