@@ -66,6 +66,11 @@ Route::prefix("sims")->middleware("force_login")->group( function () {
 	Route::get ("registration/studentinfo", "SIMSRegistrationController@studentInfoPage");
 	Route::post("registration/studentinfo/store", "SIMSRegistrationController@studentInfo");
 	Route::get ("registration/parentsguests", "SIMSRegistrationController@parentsGuestsPage");
+	Route::post("registration/parentsguests/store", "SIMSRegistrationController@parentsGuests");
+	Route::get ("registration/modeoftravel", "SIMSRegistrationController@modeOfTravelPage");
+	Route::post("registration/modeoftravel/store", "SIMSRegistrationController@modeOfTravel");
+	Route::get ("registration/confirmation", "SIMSRegistrationController@confirmationPage");
+	Route::post("registration/confirmation/store", "SIMSRegistrationController@confirmation");
 });
 
 Route::prefix("academic_achievement")->group( function () {

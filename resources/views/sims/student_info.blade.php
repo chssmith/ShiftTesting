@@ -41,45 +41,17 @@
 @endsection
 
 @section("content")
+  @include("sims.partials.tabs")
   <h2> Student Information </h2>
   <form action="{{action("SIMSRegistrationController@studentInfo")}}" method="POST">
     {{csrf_field()}}
     <div class="form-group">
       <div class="row">
-        <div class="col-md-4">
-          <label name="first_name">First Name</label>
-          <input name="first_name" class="form-control" type="text" value="{{$sess["first_name"]}}" required />
-        </div>
-        <div class="col-md-4">
-          <label name="last_name">Last Name</label>
-          <input name="last_name" class="form-control" type="text" value="{{$sess["last_name"]}}" required />
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <label name="preferred_name">Preferred First Name</label>
           <input name="preferred_name" class="form-control" type="text" value="{{$sess["nick_name"]}}" required />
         </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="row">
         <div class="col-md-6">
-          <label name="gender">Gender Identity</label>
-          <select name="gender" class="form-control" value="{{$sess["gender"]}}" required >
-            <option disabled hidden value="">-Please Select an Option-</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Beyond the Binary/Transgender</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label name="pronouns">Student's Preferred Pronouns</label>
-          <input name="pronouns" class="form-control" type="text" length="256" value="{{$sess["pronouns"]}}" required />
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="row">
-        <div class="col-md-12">
           <label name="phone">Cell Phone</label>
           <input name="phone" class="form-control" type="phone" value="{{$sess["cell_phone"]}}" required />
         </div>
@@ -87,17 +59,14 @@
     </div>
     <div class="form-group">
       <div class="row">
-        <div class="col-md-4">
-          <label name="city">City</label>
-          <input name="city" class="form-control" type="text" value="{{$sess["city"]}}" />
-        </div>
-        <div class="col-md-4">
-          <label name="state">State/Province/Region</label>
-          <input name="state" class="form-control" type="text" value="{{$sess["state"]}}" />
-        </div>
-        <div class="col-md-4">
-          <label name="country">Country</label>
-          <input name="country" class="form-control" type="text" value="{{$sess["country"]}}" />
+        <div class="col-md-12">
+          <label name="gender">For purposes of overnight roommate assignments, please indicate gender</label>
+          <select name="gender" class="form-control" value="{{$sess["gender"]}}" required >
+            <option disabled hidden value="">-Please Select an Option-</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
       </div>
     </div>
@@ -135,6 +104,4 @@
       </div>
     </div>
   </form>
-
-  </div>
 @endsection

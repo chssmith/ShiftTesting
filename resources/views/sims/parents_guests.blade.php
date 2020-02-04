@@ -12,58 +12,68 @@
     function update(box_selector, describe_selector){
       //return a function so parameters can be passed on call
       return function(){
-        if($(box_selector+":checked").val() == "yes"){
-          $(describe_selector).attr("hidden", false);
-        }else{
-          $(describe_selector).attr("hidden", true);
-        }
+        no_box = $("#"+box_selector);
+        desc = $(describe_selector);
+        no_box.prop("checked", !no_box.prop("checked"));
+        desc.prop("hidden", !desc.prop("hidden"));
       }
     }
 
-    $(document).ready(function(){
-      selectors = [
-                    ["input[name='g0_has_dietary_needs']", "#g0_dietary_needs"],
-                    ["input[name='g1_has_dietary_needs']", "#g1_dietary_needs"],
-                    ["input[name='g2_has_dietary_needs']", "#g2_dietary_needs"],
-                    ["input[name='g3_has_dietary_needs']", "#g3_dietary_needs"],
-                    ["input[name='g4_has_dietary_needs']", "#g4_dietary_needs"],
-                    ["input[name='g0_has_physical_needs']", "#g0_physical_needs"],
-                    ["input[name='g1_has_physical_needs']", "#g1_physical_needs"],
-                    ["input[name='g2_has_physical_needs']", "#g2_physical_needs"],
-                    ["input[name='g3_has_physical_needs']", "#g3_physical_needs"],
-                    ["input[name='g4_has_physical_needs']", "#g4_physical_needs"]
-                  ];
-      for(i = 0; i < selectors.length; i++){
-        $(selectors[i][0]).change(update(selectors[i][0], selectors[i][1]));
-        update(selectors[i][0], selectors[i][1])
+    function on_campus_update(selector){
+      //return a function so parameter can be passed on call
+      return function(){
+        box = $(`#${selector}`);
+        box.prop("checked", !box.prop("checked"));
       }
-    });
+    }
 
-    let guests = [false, false, false, false, false];
-    let num_guests = 0;
-    $(document).on("click", "#add-guest", function(){
-      if(num_guests < guests.length){
-        num_guests += 1;
-        let using = 0;
-        while(using < guests.length-1 && guests[using]){
-          using += 1;
-        }
-        $("#guests").append(String($("#guest_temp").html()).replace(/n\*/g, "g"+using));
-        guests[using] = true;
-        if(num_guests == guests.length){
-          $(this).attr("disabled", true);
-        }
-      }
-    });
+    let i = 0;
 
+    function add(){
+      $("#guests").append(String($("#guest_temp").html()).replace(/n\*/g, "g"+i));
+      //dietary needs
+      let selector = [`g${i}_has_dietary_needs`, `#g${i}_dietary_needs`];
+      $("."+selector[0]).change(update(selector[0], selector[1]));
+      //physical needs
+      selector = [`g${i}_has_physical_needs`, `#g${i}_physical_needs`];
+      $(`.${selector[0]}`).change(update(selector[0], selector[1]));
+      //on campus
+      selector = `g${i}_on_campus`;
+      $(`.${selector}`).change(on_campus_update(selector));
+      i += 1;
+    }
+
+    $(document).on("click", "#add-guest", add);
 
     $(document).on("click", ".remove", function(){
       $("#"+$(this).attr("data")).remove();
-      num_guests -= 1;
-      guests[parseInt($(this).attr("data").substring(1))] = false;
-      $("#add-guest").attr("disabled", false);
     });
 
+    $(document).ready(function(){
+      @if(count($sess) == 9)
+        @for($i = 0; $i < count($sess["relationship"]); $i++)
+          add();
+          $(`#g${i-1}_relationship`).val("{{$sess["relationship"][$i]}}");
+          $(`#g${i-1}_first_name`).val("{{$sess["first_name"][$i]}}");
+          $(`#g${i-1}_last_name`).val("{{$sess["last_name"][$i]}}");
+          $(`#g${i-1}_email`).val("{{$sess["email"][$i]}}");
+          @if($sess["has_dietary_needs"][$i] == "yes")
+            $(`.g${i-1}_has_dietary_needs`).prop("checked", true);
+            $(`#g${i-1}_dietary_needs`).find("textarea").val("{{$sess["dietary_needs"][$i]}}");
+            (update(`g${i-1}_has_dietary_needs`, `#g${i-1}_dietary_needs`))();
+          @endif
+          @if($sess["has_physical_needs"][$i] == "yes")
+            $(`.g${i-1}_has_physical_needs`).prop("checked", true);
+            $(`#g${i-1}_physical_needs`).find("textarea").val("{{$sess["physical_needs"][$i]}}");
+            (update(`g${i-1}_has_physical_needs`, `#g${i-1}_physical_needs`))();
+          @endif
+          @if($sess["on_campus"][$i] == "yes")
+            $(`.g${i-1}_on_campus`).prop("checked", true);
+            (on_campus_update(`g${i-1}_on_campus`))()
+          @endif
+        @endfor
+      @endif
+    });
 
   </script>
 @endsection
@@ -75,26 +85,39 @@
 
 
 @section("content")
+  @include("sims.partials.tabs")
   <h2> Parents, Guardians, Family, and Guests Attendance </h2>
-  <p>We encourage you to attend as there is programming especially for parents, guardians, family and adult guests.  Lunch will be provided on both days of orientation.  In addition, if guests would like the college experience by staying on campus at no additional cost, have your New Maroon indicate this on their registration.  Lodging is limited to two guests per new student. Guests must be over the age of 16, unless accompanied by an adult.  Bring a sleeping bag, pillow and towel, as they will not be provided.  Guests will be housed in an on-campus residence hall separate from students.  Depending on the number of lodging requests, rooms may have a shared bathroom with another new student’s family.</p>
-  <form action="{{action("SIMSRegistrationController@parentsGuests")}}" method="POST">
+  <p>We encourage you to attend as there is programming especially for parents, guardians, family and adult guests.  Lunch will be provided on both days of orientation.  In addition, if guests would like the college experience by staying on campus at no additional cost, have your New Maroon indicate this on their registration.  Lodging is limited to two guests per new student. Guests must be over the age of 16, unless accompanied by an adult.  Request for more than two guest need to be made by emailing orientation@roanoke.edu.  Bring a sleeping bag, pillow and towel, as they will not be provided.  Guests will be housed in an on-campus residence hall separate from students.  Depending on the number of lodging requests, rooms may have a shared bathroom with another new student’s family.</p>
+  <br>
+  <p>If a parent/guardian prefers to lodge off campus, please visit Virginia’s Blue Ridge page for information about local lodging & restaurants.</p>
+  <br>
+  <p>We also understand that some cannot be away from other obligations at that time of year.</p>
+
+
+  @include("sims.partials.guest")
+
+  <form action="{{action("SIMSRegistrationController@parentsGuests")}}" method="POST" id="guest_form">
     {{csrf_field()}}
     <h3> Guests </h3>
-    @include("sims.partials.guest")
+
     <div id="guests">
+      {{-- This is where guests are added to the page --}}
     </div>
+
+    {{-- Add Guest Button --}}
     <div class="form-group">
       <div class="row">
         <div class="col-md-12">
-          <button type="button" class="btn btn-md btn-info" id="add-guest"><span class="fas fa-user-plus"></span> Add Guest</button>
+          <button type="button" class="btn btn-md btn-success" id="add-guest"><span class="fas fa-user-plus"></span> Add Guest</button>
         </div>
       </div>
     </div>
 
+    {{-- Next Button --}}
     <div class="form-group">
       <div class="row">
         <div class="col-md-12">
-          <button type="submit" class="btn btn-md btn-info pull-right"><span class="fas fa-arrow-right"></span> Next</button>
+          <button type="submit" class="btn btn-md btn-info pull-right">Next <span class="fas fa-arrow-right"></span></button>
         </div>
       </div>
     </div>

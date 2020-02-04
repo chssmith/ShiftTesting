@@ -8,31 +8,24 @@
       <div class="form-group">
         <div class="row">
           <div class="col-md-12">
-            <label name="relationship">Relationship to new maroon</label>
-            <select name="relationship" class="form-control">
-              <option value="" disabled hidden selected>-Please select an option-</option>
-              <option value="0">Parent/Guardian</option>
-              <option value="1">Sibling</option>
-              <option value="2">Grandparent</option>
-              <option value="3">Friend</option>
-              <option value="4">Other</option>
-            </select>
+            <label name="relationship[]">Relationship to new maroon</label>
+            <input name="relationship[]" type="text" class="form-control" id="n*_relationship" required />
           </div>
         </div>
       </div>
       <div class="form-group">
         <div class="row">
           <div class="col-md-4">
-            <label name="n*_first_name">First Name</label>
-            <input name="n*_first_name" type="text" class="form-control" />
+            <label name="first_name[]">First Name</label>
+            <input name="first_name[]" type="text" class="form-control" id="n*_first_name" required />
           </div>
           <div class="col-md-4">
-            <label name="n*_last_name">Last Name</label>
-            <input name="n*_last_name" type="text" class="form-control"  />
+            <label name="last_name[]">Last Name</label>
+            <input name="last_name[]" type="text" class="form-control" id="n*_last_name" required />
           </div>
           <div class="col-md-4">
-            <label name="n*_email">Email</label>
-            <input name="n*_email" type="text" class="form-control"  />
+            <label name="email[]">Email</label>
+            <input name="email[]" type="email" class="form-control" id="n*_email" required />
           </div>
         </div>
       </div>
@@ -40,13 +33,13 @@
       <div class="form-group">
         <div class="row">
           <div class="col-md-6">
-            <label name="n*_has_dietary_needs">Do they have any special dietary needs (vegetarian, allergies, vegan, etc.)?</label><br>
-            <input type="radio" name="n*_has_dietary_needs" value="yes" required>&nbsp;<label>Yes</label>&nbsp;
-            <input type="radio" name="n*_has_dietary_needs" value="no">&nbsp;<label>No</label>
+            <label name="has_dietary_needs[]">Do they have any special dietary needs (vegetarian, allergies, vegan, etc.)?</label><br>
+            <label><input name="has_dietary_needs[]" type="checkbox" class="n*_has_dietary_needs" value="yes">&nbsp;Yes</label>&nbsp;
+            <input name="has_dietary_needs[]" type="checkbox" id="n*_has_dietary_needs" value="no" checked hidden>
           </div>
           <div class="col-md-6" id="n*_dietary_needs" hidden>
-            <label name="n*_dietary_needs">Please describe dietary needs.</label>
-            <textarea name="n*_dietary_needs" class="form-control" ></textarea>
+            <label name="dietary_needs[]">Please describe dietary needs.</label>
+            <textarea name="dietary_needs[]" class="form-control" ></textarea>
           </div>
         </div>
       </div>
@@ -54,13 +47,13 @@
       <div class="form-group">
         <div class="row">
           <div class="col-md-6">
-            <label name="n*_has_physical_needs">Do they have any physical needs which need accommodating?</label><br>
-            <input type="radio" name="n*_has_physical_needs" value="yes" required>&nbsp;<label>Yes</label>&nbsp;
-            <input type="radio" name="n*_has_physical_needs" value="no">&nbsp;<label>No</label>
+            <label name="has_physical_needs[]">Do they have any physical needs which need accommodating?</label><br>
+            <label><input name="has_physical_needs[]" type="checkbox" class="n*_has_physical_needs" value="yes">&nbsp;Yes</label>&nbsp;
+            <input name="has_physical_needs[]" type="checkbox" id="n*_has_physical_needs" value="no" checked hidden>
           </div>
           <div class="col-md-6" id="n*_physical_needs" hidden>
-            <label name="n*_physical_needs">Please describe physical needs</label>
-            <textarea name="n*_physical_needs" class="form-control" ></textarea>
+            <label name="physical_needs[]">Please describe physical needs</label>
+            <textarea name="physical_needs[]" class="form-control" ></textarea>
           </div>
         </div>
       </div>
@@ -68,9 +61,9 @@
       <div class="form-group">
         <div class="row">
           <div class="col-md-12">
-            <label name="n*_on_campus" >Do they wish to stay on campus?</label><br>
-            <input type="radio" name="n*_on_campus" value="yes" required>&nbsp;<label>Yes</label>&nbsp;
-            <input type="radio" name="n*_on_campus" value="no">&nbsp;<label>No</label>
+            <label name="on_campus[]" >Do they wish to stay on campus?</label><br>
+            <label><input name="on_campus[]" type="checkbox" class="n*_on_campus" value="yes">&nbsp;Yes</label>&nbsp;
+            <input name="on_campus[]" type="checkbox" id="n*_on_campus" value="no" checked hidden>
           </div>
         </div>
       </div>
