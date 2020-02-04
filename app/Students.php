@@ -21,6 +21,10 @@ class Students extends Model
 
     public $incrementing  = false;
 
+    public function admit_status () {
+      return $this->hasOne("\App\ODS\AdmitStatus", "rcid");
+    }
+
     public function local_percs () {
       return $this->hasMany("App\PERC", "rcid", "RCID");
     }
