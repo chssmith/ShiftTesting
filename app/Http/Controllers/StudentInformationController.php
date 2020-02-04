@@ -61,10 +61,10 @@ class StudentInformationController extends Controller
 
 	public function index(Students $student, CompletedSections $completed_sections){
 		$user              = RCAuth::user();
-		$student           = $student->load("prospect_status");
+		$student           = $student->load("admit_status");
 
-		$returning_student = \App\Semesters::where("EndDate", ">=", Carbon::parse())->where("key_SemesterId", (!empty($student->prospect_status) ? $student->prospect_status->StartTerm : ""))->get()->isEmpty();
-		$student_type      = ((!$returning_student && !empty($student->prospect_status)) ? $student->prospect_status->fkey_AdmitStatusCode : "other");
+		$returning_student = !empty($student->admit_status) && $student->admit_status->X_APP_NEW != "NEW";
+		$student_type      = ((!$returning_student && !empty($student->admit_status)) ? $student->admit_status->X_APP_ADMIT_STATUS : "other");
 
 		$percs             = PERC::where("rcid", $student->RCID)->get();
 		$submitted         = !$percs->where("perc", sprintf("RSI%s", \Carbon\Carbon::now()->format("y")))->isEmpty();
