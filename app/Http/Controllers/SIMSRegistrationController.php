@@ -127,7 +127,7 @@ class SIMSRegistrationController extends Controller
         $response_entry                 = [];
         $response_entry['id']           = $student->RCID;
         $response_entry['display_data'] = view()->make("sims.admin.partials.typeahead", ['person' => $student])->render();
-        $response_entry['input_data']   = $student->natural_name;//Because that's what it was in the old typeahead
+        $response_entry['input_data']   = $student->display_name;
         $response[]                     = $response_entry;
       }
 

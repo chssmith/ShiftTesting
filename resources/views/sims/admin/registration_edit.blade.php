@@ -18,7 +18,7 @@
 @endsection
 
 @section("content")
-  <h2>{{$student->PreferredName}} - Reservation Details</h2>
+  <h2>{{$student->display_name}} - Reservation Details</h2>
 
   <form action="{{ action("SIMSRegistrationController@adminRegistrationStore") }}" method="POST">
     {{ csrf_field() }}
