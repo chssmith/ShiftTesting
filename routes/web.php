@@ -71,6 +71,7 @@ Route::prefix("sims")->middleware("force_login")->group( function () {
 	Route::post("registration/modeoftravel/store", "SIMSRegistrationController@modeOfTravel");
 	Route::get ("registration/confirmation", "SIMSRegistrationController@confirmationPage");
 	Route::post("registration/confirmation/store", "SIMSRegistrationController@confirmation");
+	Route::get ("registration/success/{id}", "SIMSRegistrationController@endingPage");
 });
 
 Route::prefix("academic_achievement")->group( function () {

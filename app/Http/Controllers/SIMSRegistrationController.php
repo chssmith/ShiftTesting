@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use RCAuth;
+use Carbon\Carbon;
+
 use App\User;
 use App\Students;
+use App\EmailQueue;
 use App\SIMSSessions;
 use App\SIMSGuestInfo;
 use App\SIMSStudentInfo;
@@ -195,6 +198,42 @@ class SIMSRegistrationController extends Controller
         }
       }
 
-      //Add Redirect to confirmation page
+      $session = SIMSSessions::find($registration->fkey_sims_session_id);
+
+      $s_date = new Carbon($session->start_date);
+      $e_date = new Carbon($session->end_date);
+      $session_dates = $s_date->format("F jS")." - ".$e_date->format("jS");
+
+      $guests = SIMSGuestInfo::where("fkey_registration_id", $registration->id)->get();
+      $mot = SIMSModeOfTravel::find($registration->fkey_mode_of_travel_id)->travel_type;
+      $shuttle = $registration->shuttle;
+
+      //Send Email
+      $email = new EmailQueue;
+      $email->to_email   = User::find($rcid)->CampusEmail;
+      $email->from_email = "orientation@roanoke.edu";
+      $email->subject    = "Summer Orientation Registration";
+      $email->body       = view()->make("sims.partials.complete", compact("session_dates", "student_info", "guests", "mot", "shuttle"))->render();
+      $email->template   = "campusmailer.official";
+      $email->created_by = $email->updated_by = "0000001";
+      $email->save();
+
+      //Redirect to ending page
+      return redirect()->action("SIMSRegistrationController@endingPage", ["id"=>$registration->id]);
+    }
+
+    public function endingPage($id){
+      $registration = SIMSRegistrations::find($id);
+      $student_info = SIMSStudentInfo::where("fkey_registration_id", $id)->first();
+      $guests = SIMSGuestInfo::where("fkey_registration_id", $id)->get();
+      $session = SIMSSessions::find($registration->fkey_sims_session_id);
+
+      $s_date = new Carbon($session->start_date);
+      $e_date = new Carbon($session->end_date);
+      $session_dates = $s_date->format("F jS")." - ".$e_date->format("jS");
+
+      $mot = SIMSModeOfTravel::find($registration->fkey_mode_of_travel_id)->travel_type;
+      $shuttle = $registration->shuttle;
+      return view()->make("sims.ending", compact("session_dates", "student_info", "guests", "mot", "shuttle"));
     }
 }
