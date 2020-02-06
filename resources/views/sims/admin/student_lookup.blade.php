@@ -31,7 +31,7 @@
       <label for="student_name">Student Name or RCID</label>
       {!!
         MustangBuilder::typeaheadAjax("student_name", action("SIMSRegistrationController@adminRegistrationTypeahead"), '',
-                                      array("input_data_name"=>"input_data", "display_data_name"=>"display_data"), array("class"=>"typeahead", "autocomplete" => "Off"),
+                                      array("input_data_name"=>"input_data", "display_data_name"=>"display_data"), array("class"=>"typeahead"),
                                       "student_rcid", true)
       !!}
       <input type="hidden" name="student_rcid" id="student_rcid" />

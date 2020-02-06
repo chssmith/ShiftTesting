@@ -26,5 +26,6 @@
 
   <div class="list-group">
     <a href="{{ action("SIMSRegistrationController@adminRegistrationLookup") }}" class="list-group-item">Alter Student Reservation</a>
+    <a href="{{ action("SIMSRegistrationController@adminRegistrationReport") }}" class="list-group-item">Student Reservation Report</a>    
   </div>
 @endsection

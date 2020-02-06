@@ -186,6 +186,17 @@ class SIMSRegistrationController extends Controller
 
         return view()->make("sims.stage1.confirm", ["registered_session" => $new_reg->load("session_dates"), "messages" => collect()]);
       }
+
+      public function adminRegistrationReport (Request $request) {
+        $all_registrations = SIMSRegistrations::with(["session_dates", "student"])->get();
+
+        return view()->make("sims.admin.stage1.report", compact("all_registrations"));
+      }
+
+      public function adminRegistrationReportExcel (Request $request) {
+        return \Excel::download(new \App\Exports\SIMSRegistrationExport, "sims_registrations.xlsx");
+      }
+
     //********************************
     // END Administrative Functions
     //********************************
