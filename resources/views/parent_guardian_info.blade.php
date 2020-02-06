@@ -41,7 +41,7 @@
 		}
 
 		ul{
-			list-style-type:disc;
+			list-style-type:square;
 			padding-left:25px;
 		}
 
@@ -123,7 +123,13 @@
 				@foreach($guardians as $guardian)
 					<tr>
 						<td>{{ $guardian->display_name }}</td>
-						<td class="hidden-xs hidden-sm">{{$guardian->relationship}}</td>
+						<td class="hidden-xs hidden-sm">
+							@if(!empty($guardian->guardian_type) && $guardian->guardian_type->id != "O")
+								{{$guardian->guardian_type->type}}
+							@else
+								{{$guardian->relationship_other}}
+							@endif
+						</td>
 						<td>
 							<div class="row-buttons">
 								<a href="{{action('StudentInformationController@individualGuardian', ['id'=>$guardian->id])}}" class="btn btn-primary"><span class="far fa-edit" aria-hidden="true"></span> Edit</a>

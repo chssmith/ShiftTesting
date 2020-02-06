@@ -11,7 +11,7 @@ class User extends Model
      *
      * @var  string
      */
-    protected $table      = 'DataMart.dbo.view_PersonBasic';
+    protected $table      = 'DataMart.dbo.view_personbasic_username';
     protected $primaryKey = 'RCID';
     protected $connection = 'SAO';
     protected $appends    = ['display_name'];

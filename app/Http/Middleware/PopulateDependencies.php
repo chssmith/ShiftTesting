@@ -21,22 +21,26 @@ class PopulateDependencies
     public function handle($request, Closure $next)
     {
       $rcid    = RCAuth::user()->rcid;
-      $student = Students::firstOrNew(["RCID" => $rcid]);
+      $student = Students::find($rcid);
 
       if (empty($student->created_by)) {
         // ASSERT: Student does not currently exist
         // Creating the student
-        $student->created_by = $rcid;
-        $student->updated_by = $rcid;
-        $student->save();
+        \DB::statement("EXEC copy_ods_student_and_race_to_student_forms ?", [$rcid]);
+        $student = Students::find($rcid);
 
         // COPY: ODS emergency => Local Emergency
         \DB::statement("EXEC copy_ods_emergency_to_student_forms ?", [$rcid]);
+        \DB::statement("EXEC copy_ods_health_concerns_to_student_forms ?", [$rcid]);
 
-        Cache::lock("copy_guardians")->get(function () {
+        //Locking FTW
+        $file = fopen(storage_path("lock"), "w");
+        if(flock($file, LOCK_EX)) {
           \DB::statement("EXEC copy_ods_guardian_to_student_forms ?", [$rcid]);
-          \DB::statement("EXEC copy_ods_employment_to_student_forms ?", [$rcid]);          
-        });
+          \DB::statement("EXEC copy_ods_employment_to_student_forms ?", [$rcid]);
+          flock($file, LOCK_UN);
+        }
+        fclose($file);
       }
 
       $new_completion = CompletedSections::firstOrNew(["fkey_rcid" => $rcid]);

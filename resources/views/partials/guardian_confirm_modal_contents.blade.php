@@ -3,7 +3,7 @@
   <div class="col-xs-12 col-sm-6">
     <div class="form-group">
       <label for="first_name">
-        First Name
+        First Name <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
       </label>
       <p>
         {{$guardian->first_name}}
@@ -38,7 +38,7 @@
   <div class="col-xs-12 col-sm-6">
     <div class="form-group">
       <label for="last_name">
-        Last Name
+        Last Name <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
       </label>
       <p>
         {{$guardian->last_name}}
@@ -51,7 +51,7 @@
   <div class="col-xs-12 col-sm-6">
     <div class="form-group">
       <label for="relationship">
-        Relationship
+        Relationship  <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
       </label>
       <p>
         {{$guardian->relationship}}
@@ -62,10 +62,12 @@
   <div class="col-xs-12 col-sm-6">
     <div class="form-group">
       <label for="marital_status">
-        Marital Status
+        Marital Status <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
       </label>
       <p>
-        {{ $guardian->marital_status->description }}
+        @if(!empty($guardian->marital_status))
+          {{ $guardian->marital_status->description }}
+        @endif
       </p>
     </div>
   </div>
@@ -111,7 +113,7 @@
 </div>
 
 <h4> Home Address</h4>
-@include("partials.generic_address_display_only", ['address' => $guardian_address, "postfix" => ""])
+@include("partials.generic_address_display_only", ['address' => $guardian_address, "postfix" => "", 'required' => true])
 
 <div class="form-group">
   <h4> Joint mailing address</h4>
@@ -134,7 +136,7 @@
   <div class="col-xs-12 col-md-6">
     <div class="form-group">
       <label>
-        Highest Education
+        Highest Education <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
       </label>
       <p style="margin-left: 20px">
         @if (isset($guardian->education))
@@ -154,7 +156,7 @@
       @if ($guardian->reside_with)
         <span class="far fa-check-square" aria-label="check"></span>
       @else
-        <span class="far fa-square" aria-label="no check"></span>        
+        <span class="far fa-square" aria-label="no check"></span>
       @endif
     </div>
     <div>

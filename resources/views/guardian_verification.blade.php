@@ -5,7 +5,7 @@
 
 	<script>
 		function show_hide_relationship_other () {
-			if ($("#relationship").val() == 4) {
+			if ($("#relationship").val() == 'O') {
 				$("#relationship_other").fadeIn();
 			} else {
 				$("#relationship_other").fadeOut();
@@ -37,7 +37,7 @@
 			<div class="col-xs-12 col-sm-6">
 				<div class="form-group">
 					<label for="first_name">
-						First Name
+						First Name <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<input type="text" class="form-control" name="first_name" id="first_name" @if(!empty($guardian)) value="{{$guardian->first_name}}" @endif required>
 				</div>
@@ -66,7 +66,7 @@
 			<div class="col-xs-12 col-sm-6">
 				<div class="form-group">
 					<label for="last_name">
-						Last Name
+						Last Name <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<input type="text" class="form-control" name="last_name" id="last_name" @if(!empty($guardian)) value="{{$guardian->last_name}}" @endif required>
 				</div>
@@ -77,12 +77,12 @@
 			<div class="col-xs-12 col-sm-6">
 				<div class="form-group">
 					<label for="marital_status">
-						Marital Status
+						Marital Status <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<select name="marital_status" form="guardian_verification" class="form-control" id='marital_status' required>
 						<option></option>
 						@foreach($marital as $marital_status)
-							<option @if(!empty($guardian) && $guardian->fkey_marital_status == $marital_status->key_maritalStatus) selected @endif value="{{$marital_status->key_maritalStatus}}">
+							<option @if(!empty($guardian) && $guardian->fkey_marital_status == $marital_status->code) selected @endif value="{{$marital_status->code}}">
 								{{ $marital_status->description }}
 							</option>
 						@endforeach
@@ -93,7 +93,7 @@
 			<div class="col-xs-12 col-sm-6">
 				<div class="form-group">
 					<label for="relationship">
-						Relationship
+						Relationship <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<select name="relationship" id="relationship" class="form-control">
 						<option hidden>-- Please Select a Relationship Type --</option>
@@ -110,7 +110,7 @@
 		</div>
 
 
-		<h3> Contact Information </h3>
+		<h3> Contact Information <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></h3>
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="form-group">
@@ -143,7 +143,7 @@
 		</div>
 
 		<h3> Home Address</h3>
-		@include("partials.address", ['postfix' => ''])
+		@include("partials.address", ['postfix' => '', 'required' => true])
 
 		<div class="form-group">
 			<h3> Please address joint postal mailings to this household as follows:</h3>
@@ -167,7 +167,7 @@
 			<div class="col-xs-12 col-md-6">
 				<div class="form-group address">
 					<label for="education">
-						Highest Education
+						Highest Education <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<select id="education" name="education" class="form-control">
 						<option></option>
@@ -201,8 +201,9 @@
 		</div>
 
 		<div class="row">
-			<div class="col-xs-12">
-				<button type = "submit" class = "btn btn-lg btn-success pull-right"> Submit </button>
+			<div class="col-xs-12" style="text-align: right">
+				<a href="{{ url()->previous() }}" class="btn btn-lg btn-danger">Cancel</a>
+				<button type = "submit" class = "btn btn-lg btn-success"> Save and Continue </button>
 			</div>
 		</div>
 	</form>

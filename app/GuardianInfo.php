@@ -23,7 +23,7 @@ class GuardianInfo extends Model
     }
 
     public function marital_status () {
-      return $this->hasOne("App\MaritalStatuses", "key_maritalStatus", "fkey_marital_status");
+      return $this->hasOne("App\MaritalStatuses", "code", "fkey_marital_status");
     }
 
     public function country () {
@@ -38,6 +38,14 @@ class GuardianInfo extends Model
       return $this->hasOne("App\Education", "id", "fkey_education_id");
     }
 
+    public function guardian_type () {
+      return $this->hasOne("App\GuardianRelationshipTypes", "id", "relationship");
+    }
+
+    public function ods_guardian () {
+      return $this->hasOne("\App\ODS\GuardianInfo", "fkey_parent_rcid", "fkey_parent_rcid");
+    }
+
     public function getDisplayNameAttribute () {
       $name = $this->first_name;
       if (!empty($this->nick_name)) {
@@ -46,11 +54,14 @@ class GuardianInfo extends Model
       return sprintf("%s %s", $name, $this->last_name);
     }
 
+    public function home_address () {
+    	return $this->hasOne('App\Address','RCID', 'RCID')->where('fkey_AddressTypeId', 1);
+    }
+
     public function complete () {
       return !empty($this->first_name) && !empty($this->last_name) &&
              !empty($this->fkey_marital_status) && !empty($this->relationship) &&
              (!empty($this->email) || !empty($this->home_phone) || !empty($this->cell_phone)) &&
-             !empty($this->fkey_CountryId) && GenericAddress::fromGuardianInfo($this)->complete() &&
-             !is_null($this->info_release);
+             !empty($this->fkey_CountryId) && GenericAddress::fromGuardianInfo($this)->complete();
     }
 }

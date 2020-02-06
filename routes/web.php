@@ -57,10 +57,10 @@ Route::prefix("admin")->middleware("force_login")->group( function () {
 	Route::get('create_student_snap', 'AdminController@createStudentSnap');
 	Route::get('create_parent_snap', 'AdminController@createParentSnap');
 
-	Route::get("academic_achievement/export", "AdminController@exportAcademicAchievementCSV");
+	// Route::get("academic_achievement/export", "AdminController@exportAcademicAchievementCSV"); - Deprecated
 });
 
-Route::prefix("sims")->middleware("force_login")->group( function () {
+Route::prefix("orientation")->middleware(["force_login", 'populate_dependencies'])->group( function () {
 	Route::get ("registration", "SIMSRegistrationController@sessionSelectionPage");
 	Route::post("registration/submit", "SIMSRegistrationController@sessionSelection");
 	Route::get ("registration/studentinfo", "SIMSRegistrationController@studentInfoPage");
@@ -72,6 +72,17 @@ Route::prefix("sims")->middleware("force_login")->group( function () {
 	Route::get ("registration/confirmation", "SIMSRegistrationController@confirmationPage");
 	Route::post("registration/confirmation/store", "SIMSRegistrationController@confirmation");
 	Route::get ("registration/success/{id}", "SIMSRegistrationController@endingPage");
+	Route::post("registration", "SIMSRegistrationController@store");
+	Route::get ("confirm",      "SIMSRegistrationController@stage1Confirmation");
+	Route::prefix("admin")->middleware(["sims_admin"])->group( function () {
+		Route::get ("/",                     "SIMSRegistrationController@adminIndex");
+		Route::get ("student/lookup",        "SIMSRegistrationController@adminRegistrationLookup");
+		Route::get ("student/lookup/search", "SIMSRegistrationController@adminRegistrationTypeahead");
+		Route::post("student/edit", 				 "SIMSRegistrationController@adminRegistrationPullRegistration");
+		Route::post("student/edit/save",     "SIMSRegistrationController@adminRegistrationStore");
+		Route::get("report",                 "SIMSRegistrationController@adminRegistrationReport");
+		Route::get("report/xls",             "SIMSRegistrationController@adminRegistrationReportExcel");
+	});
 });
 
 Route::prefix("academic_achievement")->group( function () {

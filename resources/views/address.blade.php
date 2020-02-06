@@ -39,7 +39,7 @@
 		{{ csrf_field() }}
 
 		<h4> Home Address </h4>
-		@include("partials.address", ['postfix' => "_home", "address" => $home_address])
+		@include("partials.address", ['postfix' => "_home", "address" => $home_address, "required" => true])
 
  		<h4> Billing Address </h4>
 		<div class="row">
@@ -56,7 +56,7 @@
 		</div>
 
 		<span id="billing" @if($student->home_as_billing) style="display:none" @endif>
-			@include("partials.address", ['postfix' => "_billing", "address" => $billing_address])
+			@include("partials.address", ['postfix' => "_billing", "address" => $billing_address, "required" => true])
    	</span>
 
     <div class="row">

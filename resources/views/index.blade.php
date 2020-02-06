@@ -79,7 +79,15 @@
 					grid-row-gap: 30px;
 				}
 			}
-
+			h3 {
+				font-family: sans-serif;
+				font-weight: bold;
+				font-size: 1.4em;
+				margin-top: 10px;
+			}
+			.panel-body {
+				color: rgba(0,0,0,.6);
+			}
 		</style>
 @endsection
 
@@ -91,7 +99,7 @@
 					<h3 style="margin-top; 0px">Welcome	to the RC Community!</h3>
 
 					<p>
-						<ul style="list-style: circle; margin-bottom: 10px; padding-left: 40px;">
+						<ul style="list-style: square; margin-bottom: 10px; padding-left: 40px;">
 							<li>
 								You must go through each section.
 							</li>
@@ -100,7 +108,7 @@
 							</li>
 							<li>
 								Make sure you hit the submit button when you are finished.  Make
-								sure you recieve a confirmation email.
+								sure you receive a confirmation email.
 							</li>
 						</ul>
 
@@ -150,17 +158,21 @@
 	   		<div class="panel panel-default">
 			    <div class="list-group">
 			    	@foreach($sections as $section_name => $section_completion)
-		        	<a @if(!$submitted)href="{{$section_completion['link']}}"@endif class="list-group-item">
-								{{$section_name}}
-								<span class="badge pull-right @if(is_null($section_completion['status'])) not-started @elseif($section_completion['status']) complete @else incomplete @endif">
-									@if (is_null($section_completion['status']))
-										Not Started
-									@elseif($section_completion['status'])
-										<span class="fas fa-check" aria-hidden="true"></span>
-									@else
-										Incomplete
-									@endif
-								</span>
+		        	<a @if(!$submitted)href="{{$section_completion['link']}}"@endif class="list-group-item form-item">
+								<name>
+									{{$section_name}}
+								</name>
+								<badge>
+									<span class="badge pull-right @if(is_null($section_completion['status'])) not-started @elseif($section_completion['status']) complete @else incomplete @endif">
+										@if (is_null($section_completion['status']))
+											Not Started
+										@elseif($section_completion['status'])
+											<span class="fas fa-check" aria-hidden="true"></span>
+										@else
+											Incomplete
+										@endif
+									</span>
+								</badge>
 		        	</a>
 		        @endforeach
 			    </div>
@@ -187,14 +199,14 @@
 							Once you submit these forms, you will not be able to make changes until after the form is fully processed.
 						</p>
 						@php
-							$missing_info = array_reduce($sections, function ($counter, $item) {if ($item['status'] == '0') {$counter++;} return $counter;}, 0) > 0;
+							$missing_info = array_reduce($sections, function ($counter, $item) {if ($item['status'] != '1') {$counter++;} return $counter;}, 0) > 0;
 						@endphp
 						@if ($missing_info)
 							<div class="alert alert-danger light missing_info">
 								There is some missing information:
 								<div class="list-group">
 									@foreach($sections as $section_name => $section)
-										@if($section['status'] == '0')
+										@if(empty($section['status']))
 											<a href="{{ $section['link'] }}" class="list-group-item">
 												{{$section_name}}
 											</a>

@@ -20,6 +20,35 @@ class GenericAddress {
     $this->address = ["", ""];
   }
 
+  public static function fromMixedAddressForReport ($address) {
+    $new_address = new GenericAddress;
+    if(!empty($address)) {
+      $new_address->address[0]            = $address->Address1;
+      $new_address->address[1]            = $address->Address2;
+      $new_address->city                  = $address->City;
+      $new_address->state                 = $address->fkey_StateId;
+      if (isset($address->state)) {
+        $new_address->state               = $address->state->StateCode;
+        $new_address->state_name          = $address->state->StateName;
+      }
+      $new_address->zip_code              = $address->PostalCode;
+      $new_address->country_id            = $address->fkey_CountryId;
+      if (isset($address->country)) {
+        $new_address->country_id          = $address->country->CountryCode;
+        $new_address->country_name        = $address->country->CountryName;
+      }
+      if(empty($new_address->country_id)) {
+        $new_address->country_id = "US";
+      }
+      if( !empty($address->international_address) ) {
+        $new_address->international_address = $address->international_address;
+      }
+    } else {
+
+    }
+    return $new_address;
+  }
+
   public static function fromMixedAddress ($address) {
     $new_address = new GenericAddress;
     if(!empty($address)) {
@@ -106,7 +135,7 @@ class GenericAddress {
 
     if(empty($this->country_id)) {
       $messages[] = "is missing Country information.  Please enter all necessary address information.";
-    } else if ($this->country_id == \App\GenericAddress::US_UD) {
+    } else if ($this->country_id == \App\GenericAddress::US_ID) {
       if (empty($this->address[0])) {
         $messages[] = "must have the first address line populated.";
       }
