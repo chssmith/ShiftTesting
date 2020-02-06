@@ -72,6 +72,8 @@ Route::prefix("orientation")->middleware(["force_login", 'populate_dependencies'
 		Route::get ("student/lookup/search", "SIMSRegistrationController@adminRegistrationTypeahead");
 		Route::post("student/edit", 				 "SIMSRegistrationController@adminRegistrationPullRegistration");
 		Route::post("student/edit/save",     "SIMSRegistrationController@adminRegistrationStore");
+		Route::get("report",                 "SIMSRegistrationController@adminRegistrationReport");
+		Route::get("report/xls",             "SIMSRegistrationController@adminRegistrationReportExcel");
 	});
 });
 

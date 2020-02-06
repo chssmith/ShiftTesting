@@ -1,0 +1,17 @@
+.dark_table th {
+  color: white;
+  background: #666;
+}
+
+.dark_table td {
+  background: white;
+}
+
+.dark_table table {
+  border-collapse: collapse;
+  border-bottom: 0px !important;
+}
+
+.table.dataTable.no-footer {
+  border-bottom: 0px !important;
+}

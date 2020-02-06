@@ -12,4 +12,8 @@ class SIMSRegistrations extends Model
     public function session_dates () {
       return $this->hasOne("\App\SIMSSessions", "id", "fkey_sims_session_id");
     }
+
+    public function student () {
+      return $this->belongsTo("\App\User", "rcid", "RCID");
+    }
 }
