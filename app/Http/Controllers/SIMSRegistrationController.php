@@ -15,43 +15,73 @@ use App\SIMSGuestInfo;
 use App\SIMSStudentInfo;
 use App\SIMSModeOfTravel;
 use App\SIMSRegistrations;
-use Carbon\Carbon;
 
 class SIMSRegistrationController extends Controller
 {
     public function index (Students $student) {
       $messages      = collect();
       $sessions      = SIMSSessions::orderBy("start_date")->get();
-      $registrations = SIMSRegistrations::select(\DB::raw("sims_sessions.id AS id"), \DB::raw("COUNT(rcid) AS num_registrations"))
-                                        ->rightJoin("student_forms.sims_sessions", "sims_sessions.id", "fkey_sims_session_id")
-                                        ->groupBy("sims_sessions.id")
+      $registrations = SIMSRegistrations::select(\DB::raw("sessions.id AS id"), \DB::raw("COUNT(rcid) AS num_registrations"))
+                                        ->rightJoin("sims.sessions", "sessions.id", "fkey_sims_session_id")
+                                        ->groupBy("sessions.id")
                                         ->get()
                                         ->keyBy("id");
 
       return view()->make("sims.index", compact("sessions", "registrations", "messages"));
     }
-      
+
     //TYPE:  GET
     //BLADE: sims.session_selection
     //POST:  makes the session selection page
-    public function sessionSelectionPage (Students $student) {
-      $sessions = SIMSSessions::orderBy("start_date")->get();
-    
-
-      return view()->make("sims.session_selection", compact("sessions"));
-      
-    }
+    // public function sessionSelectionPage (Students $student) {
+    //   $sessions = SIMSSessions::orderBy("start_date")->get();
+    //
+    //
+    //   return view()->make("sims.session_selection", compact("sessions"));
+    //
+    // }
 
     //TYPE: POST
     //FROM: AJAX on sims.session_selection
     //POST: adds the session id to the session variables
-    public function sessionSelection(Request $request){
-      session(['session_id' => $request->id]);
-      //Set the user info we have in datamart
-      $user = User::find(RCAuth::user()->rcid);
+    // public function sessionSelection(Request $request){
+    //   session(['session_id' => $request->id]);
+    //   //Set the user info we have in datamart
+    //   $user = User::find(RCAuth::user()->rcid);
+    //   $sess = session("student_info");
+    //   if(!isset($sess)){
+    //     $student_info = [
+    //       "nick_name"          => $user->NickName,
+    //       "gender"             => $user->gender,
+    //       "cell_phone"         => $user->CellPhone,
+    //       "has_dietary_needs"  => "",
+    //       "dietary_needs"      => "",
+    //       "has_physical_needs" => "",
+    //       "physical_needs"     => ""
+    //     ];
+    //     session(["student_info" => $student_info]);
+    //   }
+    // }
+
+    //TYPE:  GET
+    //BLADE: sims.student_info
+    //POST:  makes the student info page
+    public function studentInfoPage(){
+      $rcid = RCAuth::user()->rcid;
+      $info = SIMSStudentInfo::where("rcid", $rcid)->first();
+      $registration = SIMSRegistrations::where("rcid", $rcid)->first();
+      if(!isset($registration)){
+        return  redirect()->action("SIMSRegistrationController@index");
+      }
+
+      if(isset($info)){
+        $id = $registration->id;
+        return redirect()->action("SIMSRegistrationController@endingPage", ["id"=>$id, "err"=>1]);
+      }
+      $user = User::find($rcid);
       $sess = session("student_info");
       if(!isset($sess)){
-        $student_info = [
+        $sess = [
           "nick_name"          => $user->NickName,
           "gender"             => $user->gender,
           "cell_phone"         => $user->CellPhone,
@@ -60,17 +90,13 @@ class SIMSRegistrationController extends Controller
           "has_physical_needs" => "",
           "physical_needs"     => ""
         ];
-        session(["student_info" => $student_info]);
+        session(["student_info" => $sess]);
       }
-    }
-
-    //TYPE:  GET
-    //BLADE: sims.student_info
-    //POST:  makes the student info page
-    public function studentInfoPage(){
-      $sess = session("student_info");
       //dd($sess);
-      return view()->make("sims.student_info", compact("sess"));
+
+      $session_dates = $registration->session_dates->date_string;
+
+      return view()->make("sims.student_info", compact("sess", "session_dates"));
     }
 
     //TYPE: POST
@@ -97,9 +123,12 @@ class SIMSRegistrationController extends Controller
       $sess = $request->session()->get("parents_guests", []);
 
       session(["v_pg"=>true]);
-      //ASSET: set v_pg in case they don't have any guests and don't fill out the page
+      //ASSERT: set v_pg in case they don't have any guests and don't fill out the page
 
-      return view()->make("sims.parents_guests", compact("sess"));
+      $registration = SIMSRegistrations::where("rcid", RCAuth::user()->rcid)->with("session_dates")->first();
+      $session_dates = $registration->session_dates->date_string;
+
+      return view()->make("sims.parents_guests", compact("sess", "session_dates"));
     }
 
     //TYPE: POST
@@ -121,7 +150,10 @@ class SIMSRegistrationController extends Controller
       $MOT = SIMSModeOfTravel::get();
       $sess = $request->session()->get("mode_of_travel", []);
 
-      return view()->make("sims.mode_of_travel", compact("MOT", "sess"));
+      $registration = SIMSRegistrations::where("rcid", RCAuth::user()->rcid)->with("session_dates")->first();
+      $session_dates = $registration->session_dates->date_string;
+
+      return view()->make("sims.mode_of_travel", compact("MOT", "sess", "session_dates"));
     }
 
     //TYPE: POST
@@ -152,7 +184,10 @@ class SIMSRegistrationController extends Controller
         $num_guests = count($guests["relationship"]);
       }
 
-      return view()->make("sims.confirmation", ["student_info"=>(count($si)>0), "guests"=>($pg), "mode_of_travel"=>(count($mot)>0), "stop"=>(!$all), "num_guests"=>($num_guests)]);
+      $registration = SIMSRegistrations::where("rcid", RCAuth::user()->rcid)->with("session_dates")->first();
+      $session_dates = $registration->session_dates->date_string;
+
+      return view()->make("sims.confirmation", ["student_info"=>(count($si)>0), "guests"=>($pg), "mode_of_travel"=>(count($mot)>0), "stop"=>(!$all), "num_guests"=>($num_guests), "session_dates"=>($session_dates)]);
     }
 
     //TYPE: POST
@@ -166,9 +201,8 @@ class SIMSRegistrationController extends Controller
       $si = $request->session()->get("student_info", []);
       $pg = $request->session()->get("v_pg", false);
       $mot = $request->session()->get("mode_of_travel", []);
-      $sid = $request->session()->get("session_id", "");
 
-      if(!((count($si)>0) && ($pg) && (count($mot)>0) && ($sid != ""))){
+      if(!((count($si)>0) && ($pg) && (count($mot)>0))){
         return redirect()->action("SIMSRegistrationController@confirmationPage");
       }
 
@@ -177,16 +211,13 @@ class SIMSRegistrationController extends Controller
       // dd($pg);
 
       //Registration
-      $registration = new SIMSRegistrations;
-      $registration->fkey_sims_session_id = $sid;
+      $registration = SIMSRegistrations::where("rcid", $rcid)->first();
       $registration->shuttle = ($mot["shuttle"] == "yes");
       $registration->fkey_mode_of_travel_id = $mot["mode_of_travel"];
-      $registration->created_by = $registration->updated_by = $rcid;
       $registration->save();
 
       //Student Info
       $student_info = new SIMSStudentInfo;
-      $student_info->fkey_registration_id = $registration->id;
       $student_info->rcid = $rcid;
       $student_info->nick_name = $si["nick_name"];
       $student_info->gender = $si["gender"];
@@ -215,9 +246,7 @@ class SIMSRegistrationController extends Controller
 
       $session = SIMSSessions::find($registration->fkey_sims_session_id);
 
-      $s_date = new Carbon($session->start_date);
-      $e_date = new Carbon($session->end_date);
-      $session_dates = $s_date->format("F jS")." - ".$e_date->format("jS");
+      $session_dates = $session->date_string;
 
       $guests = SIMSGuestInfo::where("fkey_registration_id", $registration->id)->get();
       $mot = SIMSModeOfTravel::find($registration->fkey_mode_of_travel_id)->travel_type;
@@ -237,20 +266,20 @@ class SIMSRegistrationController extends Controller
       return redirect()->action("SIMSRegistrationController@endingPage", ["id"=>$registration->id]);
     }
 
-    public function endingPage($id){
+    public function endingPage($id, $err=0){
       $registration = SIMSRegistrations::find($id);
-      $student_info = SIMSStudentInfo::where("fkey_registration_id", $id)->first();
+      $student_info = SIMSStudentInfo::where("rcid", $registration->rcid)->first();
       $guests = SIMSGuestInfo::where("fkey_registration_id", $id)->get();
       $session = SIMSSessions::find($registration->fkey_sims_session_id);
 
-      $s_date = new Carbon($session->start_date);
-      $e_date = new Carbon($session->end_date);
-      $session_dates = $s_date->format("F jS")." - ".$e_date->format("jS");
+      $session_dates = $session->date_string;
 
       $mot = SIMSModeOfTravel::find($registration->fkey_mode_of_travel_id)->travel_type;
       $shuttle = $registration->shuttle;
-      return view()->make("sims.ending", compact("session_dates", "student_info", "guests", "mot", "shuttle"));
+      return view()->make("sims.ending", compact("session_dates", "student_info", "guests", "mot", "shuttle", "err"));
     }
+
+    //Scottys Functions
 
     public function store (Students $student, Request $request) {
       $request->validate([
@@ -263,10 +292,10 @@ class SIMSRegistrationController extends Controller
         $session_id             = $request->input("orientation_session");
         $potential_registration = SIMSSessions::find($session_id);
 
-        $registrations          = SIMSRegistrations::select(\DB::raw("sims_sessions.id AS id"), \DB::raw("COUNT(rcid) AS num_registrations"))
-                                                     ->rightJoin("student_forms.sims_sessions", "sims_sessions.id", "fkey_sims_session_id")
-                                                     ->where("sims_sessions.id", $session_id)
-                                                     ->groupBy("sims_sessions.id")
+        $registrations          = SIMSRegistrations::select(\DB::raw("sessions.id AS id"), \DB::raw("COUNT(rcid) AS num_registrations"))
+                                                     ->rightJoin("sims.sessions", "sessions.id", "fkey_sims_session_id")
+                                                     ->where("sessions.id", $session_id)
+                                                     ->groupBy("sessions.id")
                                                      ->first();
 
         if ($potential_registration->registration_limit - $registrations->num_registrations > 0) {
@@ -370,9 +399,9 @@ class SIMSRegistrationController extends Controller
       $student       = \App\User::find($student_id);
       $registration  = SIMSRegistrations::where("rcid", $student_id)->first();
       $sessions      = SIMSSessions::orderBy("start_date")->get();
-      $registrations = SIMSRegistrations::select(\DB::raw("sims_sessions.id AS id"), \DB::raw("COUNT(rcid) AS num_registrations"))
-                                        ->rightJoin("student_forms.sims_sessions", "sims_sessions.id", "fkey_sims_session_id")
-                                        ->groupBy("sims_sessions.id")
+      $registrations = SIMSRegistrations::select(\DB::raw("sessions.id AS id"), \DB::raw("COUNT(rcid) AS num_registrations"))
+                                        ->rightJoin("sims.sessions", "sessions.id", "fkey_sims_session_id")
+                                        ->groupBy("sessions.id")
                                         ->get()
                                         ->keyBy("id");
 

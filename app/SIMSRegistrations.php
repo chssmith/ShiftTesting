@@ -11,11 +11,14 @@ class SIMSRegistrations extends Model
 
   protected $table = "sims.registrations";
   protected $primaryKey = 'id';
-    public function session_dates () {
-      return $this->hasOne("\App\SIMSSessions", "id", "fkey_sims_session_id");
-    }
+  protected $fillable = ["rcid", "created_by", "updated_by"];
 
-    public function student () {
-      return $this->belongsTo("\App\User", "rcid", "RCID");
-    }
+  public function session_dates () {
+    return $this->hasOne("\App\SIMSSessions", "id", "fkey_sims_session_id");
+  }
+
+  public function student () {
+    return $this->belongsTo("\App\User", "rcid", "RCID");
+  }
+
 }

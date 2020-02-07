@@ -2,7 +2,12 @@
   <h3>You have successfully registered for the {{$session_dates}} summer orientation.</h3>
 </div>
 <div>
-  <h3>What was submitted</h3>
+  <p>
+    Thank you for completing the full Summer Orientation Registration.  As we begin to plan for your arrival, we understand that unforeseen circumstance may occur requiring a change to these details.  Should this apply to you, please let us know as soon as possible in order for us to accommodate your need and others effected.  <a href="orientation@roanoke.edu">orientation@roanoke.edu</a>
+  </p>
+  <p>
+    If you have additional questions, please refer to the First Year Experience Summer Orientation <a href="https://www.roanoke.edu/admissions/first_year_experience/summer_orientation">Frequently Asked Questions</a> website.
+  </p>
   <h4>Student Info:</h4>
   <p>Preferred Name: {{$student_info->nick_name}}</p>
   <p>Gender (for room assignment purposes): {{$student_info->gender}}</p>
