@@ -97,7 +97,7 @@ class StudentInformationController extends Controller
 		$cell_phone = $phones->get(3);
 		$home_phone = $phones->get(1);
 		$user_races = RaceMap::where('fkey_rcid', $user->rcid)->pluck('fkey_race_code')->toArray();
-		$datamart_student = DatamartStudent::where('rcid', $user->rcid)->with("ssn")->first();
+		$student     = $student->load("ssn");
 
 		if (empty($cell_phone) && empty($home_phone) && empty($user_races) && is_null($student->first_name) &&
 			  is_null($student->middle_name) && is_null($student->last_name) && is_null($student->maiden_name) &&
@@ -112,7 +112,7 @@ class StudentInformationController extends Controller
 		$military_options = MilitaryOptions::all();
 		$marital_statuses = MaritalStatuses::all();
 
-		return view('personal', compact('user', 'student','cell_phone','home_phone', 'user_races', 'all_races','marital_statuses','military_options', 'datamart_student', 'vpb_user'));
+		return view('personal', compact('user', 'student','cell_phone','home_phone', 'user_races', 'all_races','marital_statuses','military_options', 'vpb_user'));
 	}
 
 	public function personalInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){

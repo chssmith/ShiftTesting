@@ -132,6 +132,22 @@
 		</div>
 	@endif
 
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="alert alert-danger light">
+				<div class="row">
+					<div class="col-sm-2 col-xs-12">
+						<span class="fas fa-exclamation-triangle fa-4x" style="padding-top: 15px"></span>
+					</div>
+					<div class="col-xs-12 col-sm-8" style="font-size: 20pt; line-height: 1.2">
+						This form will go down for routine maintenance on February 11<sup>th</sup>, 2020 at 10:00 PM EST &mdash; February 12<sup>th</sup>, 2020 at 02:00 AM EST.
+						Any data input before the maintenance window will be saved and the forms can be completed after the end of the maintenance window.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div id="accordion" class="panel panel-default">
  		<div class="panel-heading" role="tab" id="headingForms">
     	<h4 class="panel-title">
