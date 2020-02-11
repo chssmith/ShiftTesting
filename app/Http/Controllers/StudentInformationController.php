@@ -117,7 +117,7 @@ class StudentInformationController extends Controller
 
 	public function personalInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
 		$user    = RCAuth::user();
-		$datamart_student = DatamartStudent::where('rcid', $user->rcid)->with("ssn")->first();
+		$student = $student->load('ssn');
 
 		// Updating all the student information
 		$student->first_name 		      = $request->first_name;
@@ -153,12 +153,11 @@ class StudentInformationController extends Controller
 			$new_race->save();
 		}
 
-		$datamart_student   = DatamartStudent::where('rcid', $user->rcid)->with("ssn")->first();
 		$personal_completed = !empty($student->first_name) && !empty($student->last_name) &&
 													!empty($student->fkey_marital_status) && !is_null($student->fkey_military_id) &&
 													!is_null($student->ethnics) && !empty($races) &&
 													!(empty($cell_phone->PhoneNumber) && empty($home_phone->PhoneNumber)) &&
-													!empty($datamart_student->ssn);
+													!empty($student->ssn);
 
 		$completed_sections->personal_information = $personal_completed;
 		$completed_sections->updated_by = $user->rcid;
