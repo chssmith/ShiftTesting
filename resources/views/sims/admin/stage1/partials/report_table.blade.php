@@ -18,7 +18,9 @@
           {{ $registration->student->display_name }}
         </td>
         <td>
-          {{ $registration->session_dates->start_date->format("F jS") }} - {{ $registration->session_dates->end_date->format("jS") }}
+          @if (!empty($registration->session_dates))
+            {{ $registration->session_dates->start_date->format("F jS") }} - {{ $registration->session_dates->end_date->format("jS") }}
+          @endif
         </td>
         <td>
           {{ $registration->created_at->format('n/j/Y g:i a') }}
