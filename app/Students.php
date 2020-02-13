@@ -122,4 +122,9 @@ class Students extends Model
     public function datamart_user () {
       return $this->hasOne("\App\DatamartStudent", "RCID", "RCID");
     }
+
+    public function ssn () {
+      return $this->hasOne("App\HaveSSN", "ID", "RCID");
+    }
+
 }

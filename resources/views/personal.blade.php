@@ -79,7 +79,7 @@
     	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 				<label for="SSN">Social Security Number <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></label>
 				<p id="SSN">
-					@if(!empty($datamart_student) && !empty($datamart_student->ssn))
+					@if(!empty($student) && !empty($student->ssn))
 						We have your number on file.  If you would like to double check this information, please call <phone-number>(540) 375 - 2211</phone-number> to securely verify your Social Security Number.
 					@else
 						We do not have your Social Security Number on file.  Please call <phone-number>(540) 375 - 2211</phone-number> to securely provide your Social Security Number to us.

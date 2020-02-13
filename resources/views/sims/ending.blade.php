@@ -24,7 +24,7 @@
       <div class="col-md-12">
         <div style="margin-bottom:15px" id="warning" class="alert alert-warning light no-margin">
           <h3 style="margin-top: 5px"> Sorry! </h3>
-          <p>You have already registered for summer orientation.  If any information is incorrect, please email orientation@roanoke.edu.</p>
+          <p>You have already registered for summer orientation.  If any information is incorrect, please email <a href="mailto:orientation@roanoke.edu">orientation@roanoke.edu</a>.</p>
         </div>
       </div>
     </div>

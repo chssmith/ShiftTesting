@@ -1,13 +1,13 @@
 <?php
 
-namespace App;
+namespace App\Orientation;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class SIMSSessions extends Model
+class Sessions extends Model
 {
-    protected $table = "sims.sessions";
+    protected $table = "orientation.sessions";
 
     protected $dates = ["start_date", "end_date"];
     protected $appends = ["date_string"];
@@ -16,6 +16,6 @@ class SIMSSessions extends Model
     public function getDateStringAttribute(){
       $s_date = new Carbon($this->start_date);
       $e_date = new Carbon($this->end_date);
-      return $s_date->format("F jS")." - ".$e_date->format("jS");
+      return $s_date->format("F jS")." &ndash; ".$e_date->format("jS");
     }
 }
