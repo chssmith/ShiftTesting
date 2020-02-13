@@ -5,4 +5,4 @@
   <a href="{{action("SIMSRegistrationController@modeOfTravelPage")}}" class="btn btn-primary">Mode of Travel</a>
   <a href="{{action("SIMSRegistrationController@confirmationPage")}}" class="btn btn-primary">Confirmation</a>
 </div>
-<h4 class="pull-right">{{$session_dates}}</h4>
+<h4 class="pull-right">{!! $session_dates !!}</h4>

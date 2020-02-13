@@ -16,6 +16,14 @@
 @section("stylesheets")
   @parent
 	<link type="text/css" rel="stylesheet" href="{{ asset("css/global.css") }}" />
+  <style>
+    .fa-times {
+      color: #CB0D0B;
+    }
+    .fa-check {
+      color: #70A204;
+    }
+  </style>
 @endsection
 
 @section("content")

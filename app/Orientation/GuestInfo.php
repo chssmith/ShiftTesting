@@ -1,14 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Orientation;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class SIMSModeOfTravel extends Model
+class GuestInfo extends Model
 {
   use SoftDeletes;
 
-  protected $table = "sims.mode_of_travel";
+  protected $table = "orientation.guest_info";
   protected $primaryKey = 'id';
 }
