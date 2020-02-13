@@ -31,39 +31,6 @@ class SIMSRegistrationController extends Controller
     }
 
     //TYPE:  GET
-    //BLADE: sims.session_selection
-    //POST:  makes the session selection page
-    // public function sessionSelectionPage (Students $student) {
-    //   $sessions = SIMSSessions::orderBy("start_date")->get();
-    //
-    //
-    //   return view()->make("sims.session_selection", compact("sessions"));
-    //
-    // }
-
-    //TYPE: POST
-    //FROM: AJAX on sims.session_selection
-    //POST: adds the session id to the session variables
-    // public function sessionSelection(Request $request){
-    //   session(['session_id' => $request->id]);
-    //   //Set the user info we have in datamart
-    //   $user = User::find(RCAuth::user()->rcid);
-    //   $sess = session("student_info");
-    //   if(!isset($sess)){
-    //     $student_info = [
-    //       "nick_name"          => $user->NickName,
-    //       "gender"             => $user->gender,
-    //       "cell_phone"         => $user->CellPhone,
-    //       "has_dietary_needs"  => "",
-    //       "dietary_needs"      => "",
-    //       "has_physical_needs" => "",
-    //       "physical_needs"     => ""
-    //     ];
-    //     session(["student_info" => $student_info]);
-    //   }
-    // }
-
-    //TYPE:  GET
     //BLADE: sims.student_info
     //POST:  makes the student info page
     public function studentInfoPage(){
@@ -215,6 +182,12 @@ class SIMSRegistrationController extends Controller
       $registration->shuttle = ($mot["shuttle"] == "yes");
       $registration->fkey_mode_of_travel_id = $mot["mode_of_travel"];
       $registration->save();
+
+      //check if they have already submitted it
+      $student_info = SIMSStudentInfo::where("rcid", $rcid)->first();
+      if(isset($student_info)){
+        return redirect()->action("SIMSRegistrationController@endingPage", ["id"=>$registration->id]);
+      }
 
       //Student Info
       $student_info = new SIMSStudentInfo;

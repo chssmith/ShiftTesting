@@ -61,8 +61,6 @@ Route::prefix("admin")->middleware("force_login")->group( function () {
 });
 
 Route::prefix("orientation")->middleware(["force_login", 'populate_dependencies'])->group( function () {
-	// Route::get ("registration", "SIMSRegistrationController@sessionSelectionPage");
-	// Route::post("registration/submit", "SIMSRegistrationController@sessionSelection");
 	Route::get ("registration/studentinfo", "SIMSRegistrationController@studentInfoPage");
 	Route::post("registration/studentinfo/store", "SIMSRegistrationController@studentInfo");
 	Route::get ("registration/parentsguests", "SIMSRegistrationController@parentsGuestsPage");
