@@ -46,7 +46,7 @@ return [
 
         'DataMart' => [
           'driver'   => 'sqlsrv',
-          'host'     => env('DB_HOST', 'sandbox.roanoke.edu'),
+          'host'     => env('DB_HOST'),
           'database' => 'DataMart',
           'username' => env('SAO_USERNAME', false),
           'password' => env('SAO_PASSWORD', false),
@@ -57,7 +57,7 @@ return [
 
         'SAO' => [
             'driver'   => 'sqlsrv', //=> set to def
-            'host'     => env('DB_HOST', 'sandbox.roanoke.edu'),
+            'host'     => env('DB_HOST'),
             'database' => env('DB_DATABASE', 'StudentAffairsOperations'),
             'username' => env('SAO_USERNAME', false),
             'password' => env('SAO_PASSWORD', false),

@@ -97,7 +97,7 @@ class StudentInformationController extends Controller
 		$cell_phone = $phones->get(3);
 		$home_phone = $phones->get(1);
 		$user_races = RaceMap::where('fkey_rcid', $user->rcid)->pluck('fkey_race_code')->toArray();
-		$datamart_student = DatamartStudent::where('rcid', $user->rcid)->with("ssn")->first();
+		$student     = $student->load("ssn");
 
 		if (empty($cell_phone) && empty($home_phone) && empty($user_races) && is_null($student->first_name) &&
 			  is_null($student->middle_name) && is_null($student->last_name) && is_null($student->maiden_name) &&
@@ -112,12 +112,12 @@ class StudentInformationController extends Controller
 		$military_options = MilitaryOptions::all();
 		$marital_statuses = MaritalStatuses::all();
 
-		return view('personal', compact('user', 'student','cell_phone','home_phone', 'user_races', 'all_races','marital_statuses','military_options', 'datamart_student', 'vpb_user'));
+		return view('personal', compact('user', 'student','cell_phone','home_phone', 'user_races', 'all_races','marital_statuses','military_options', 'vpb_user'));
 	}
 
 	public function personalInfoUpdate(Request $request, Students $student, CompletedSections $completed_sections){
 		$user    = RCAuth::user();
-		$datamart_student = DatamartStudent::where('rcid', $user->rcid)->with("ssn")->first();
+		$student = $student->load('ssn');
 
 		// Updating all the student information
 		$student->first_name 		      = $request->first_name;
@@ -153,12 +153,11 @@ class StudentInformationController extends Controller
 			$new_race->save();
 		}
 
-		$datamart_student   = DatamartStudent::where('rcid', $user->rcid)->with("ssn")->first();
 		$personal_completed = !empty($student->first_name) && !empty($student->last_name) &&
 													!empty($student->fkey_marital_status) && !is_null($student->fkey_military_id) &&
 													!is_null($student->ethnics) && !empty($races) &&
 													!(empty($cell_phone->PhoneNumber) && empty($home_phone->PhoneNumber)) &&
-													!empty($datamart_student->ssn);
+													!empty($student->ssn);
 
 		$completed_sections->personal_information = $personal_completed;
 		$completed_sections->updated_by = $user->rcid;
