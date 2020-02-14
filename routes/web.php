@@ -77,12 +77,16 @@ Route::prefix("orientation")->middleware(["force_login", 'populate_dependencies'
 
 	Route::prefix("admin")->middleware(["sims_admin"])->group( function () {
 		Route::get ("/",                     "SIMSRegistrationController@adminIndex");
+		//Reservation
 		Route::get ("student/lookup",        "SIMSRegistrationController@adminRegistrationLookup");
 		Route::get ("student/lookup/search", "SIMSRegistrationController@adminRegistrationTypeahead");
 		Route::post("student/edit", 				 "SIMSRegistrationController@adminRegistrationPullRegistration");
 		Route::post("student/edit/save",     "SIMSRegistrationController@adminRegistrationStore");
-		Route::get("report",                 "SIMSRegistrationController@adminRegistrationReport");
-		Route::get("report/xls",             "SIMSRegistrationController@adminRegistrationReportExcel");
+		Route::get ("report",                "SIMSRegistrationController@adminRegistrationReport");
+		Route::get ("report/xls",            "SIMSRegistrationController@adminRegistrationReportExcel");
+		//Registration
+		Route::get ("registration/student/lookup", "SIMSRegistrationController@adminRegistrationPage");
+		Route::post("registration/student/edit",   "SIMSRegistrationController@adminRegistrationProcess");
 	});
 });
 

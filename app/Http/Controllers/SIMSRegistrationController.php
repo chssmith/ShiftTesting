@@ -35,7 +35,11 @@ class SIMSRegistrationController extends Controller
     //BLADE: sims.student_info
     //POST:  makes the student info page
     public function studentInfoPage(){
-      $rcid = RCAuth::user()->rcid;
+      $rcid = session("student_rcid");
+      if(!isset($rcid)){
+        $rcid = RCAuth::user()->rcid;
+      }
+
       $info = StudentInfo::where("rcid", $rcid)->first();
       $registration = Registrations::where("rcid", $rcid)->first();
       if(!isset($registration)){
@@ -60,7 +64,6 @@ class SIMSRegistrationController extends Controller
         ];
         session(["student_info" => $sess]);
       }
-      //dd($sess);
 
       $session_dates = $registration->session_dates->date_string;
 
@@ -105,7 +108,7 @@ class SIMSRegistrationController extends Controller
     public function parentsGuests(Request $request){
       $parents_guests = $request->all();
       unset($parents_guests["_token"]);
-      // dd($parents_guests);
+      dd($parents_guests);
       session(["parents_guests" => $parents_guests]);
 
       return redirect()->action("SIMSRegistrationController@modeOfTravelPage");
@@ -152,7 +155,12 @@ class SIMSRegistrationController extends Controller
         $num_guests = count($guests["relationship"]);
       }
 
-      $registration = Registrations::where("rcid", RCAuth::user()->rcid)->with("session_dates")->first();
+      $rcid = session("rcid");
+      if(!isset($rcid)){
+        $rcid = RCAuth::user()->rcid;
+      }
+
+      $registration = Registrations::where("rcid", $rcid)->with("session_dates")->first();
       $session_dates = $registration->session_dates->date_string;
 
       return view()->make("sims.confirmation", ["student_info"=>(count($si)>0), "guests"=>($pg), "mode_of_travel"=>(count($mot)>0), "stop"=>(!$all), "num_guests"=>($num_guests), "session_dates"=>($session_dates)]);
@@ -163,13 +171,15 @@ class SIMSRegistrationController extends Controller
     //POST: saves all information pertaining to sims registration to the database
     public function confirmation(Request $request){
 
-      $rcid = RCAuth::user()->rcid;
+      $rcid = session("rcid");
+      if(!isset($rcid)){
+        $rcid = RCAuth::user()->rcid;
+      }
 
       //Double check to make sure they have actually filled out everthing
       $si = $request->session()->get("student_info", []);
       $pg = $request->session()->get("v_pg", false);
       $mot = $request->session()->get("mode_of_travel", []);
-
       if(!((count($si)>0) && ($pg) && (count($mot)>0))){
         return redirect()->action("SIMSRegistrationController@confirmationPage");
       }
@@ -184,9 +194,9 @@ class SIMSRegistrationController extends Controller
       $registration->fkey_mode_of_travel_id = $mot["mode_of_travel"];
       $registration->save();
 
-      //check if they have already submitted it
+      //check if they have already submitted it and they're not an admin
       $student_info = SIMSStudentInfo::where("rcid", $rcid)->first();
-      if(isset($student_info)){
+      if(isset($student_info) && !\Session::get("admin", false)){
         return redirect()->action("SIMSRegistrationController@endingPage", ["id"=>$registration->id]);
       }
 
@@ -327,7 +337,7 @@ class SIMSRegistrationController extends Controller
     }
 
     public function adminRegistrationLookup () {
-      return view()->make("sims.admin.student_lookup");
+      return view()->make("sims.admin.student_lookup", ["action", "adminRegistrationStore", "type"=>"Reservation"]);
     }
 
     public function adminRegistrationTypeahead (Request $request) {
@@ -383,50 +393,143 @@ class SIMSRegistrationController extends Controller
     }
 
     public function adminRegistrationStore (Request $request) {
-        $request->validate([
-          "orientation_session" => "required|numeric",
-          "student_rcid"        => "required"
-        ]);
+      $request->validate([
+        "orientation_session" => "required|numeric",
+        "student_rcid"        => "required"
+      ]);
 
-        $student_rcid = $request->input("student_rcid");
-        $admin_rcid   = \RCAuth::user()->rcid;
+      $student_rcid = $request->input("student_rcid");
+      $admin_rcid   = \RCAuth::user()->rcid;
 
-        $file = fopen(storage_path("reg_lock"), "w");
-        if(flock($file, LOCK_EX)) {
-          $session_id = $request->input("orientation_session");
-          $new_reg    = Registrations::firstOrNew(["rcid" => $student_rcid],
-                                                      ['created_by' => $admin_rcid]);
+      $file = fopen(storage_path("reg_lock"), "w");
+      if(flock($file, LOCK_EX)) {
+        $session_id = $request->input("orientation_session");
+        $new_reg    = Registrations::firstOrNew(["rcid" => $student_rcid],
+                                                    ['created_by' => $admin_rcid]);
 
-          $new_reg->updated_by           = $admin_rcid;
-          if ($session_id != -1) {
-            $new_reg->fkey_sims_session_id = $session_id;
-          } else {
-            $new_reg->fkey_sims_session_id = -1;
-            $new_reg->cannot_attend = 1;
-          }
-          $new_reg->save();
-
-          $vpb_student = \App\User::find($student_rcid);
-          \App\EmailQueue::sendEmailOrientation($vpb_student->CampusEmail,
-                                                "Summer Orientation Registration Confirmation",
-                                                view()->make("sims.stage1.partials.confirmation_body", ["registered_session" => $new_reg->load("session_dates")])->render());
-
-          flock($file, LOCK_UN);
+        $new_reg->updated_by           = $admin_rcid;
+        if ($session_id != -1) {
+          $new_reg->fkey_sims_session_id = $session_id;
+        } else {
+          $new_reg->fkey_sims_session_id = -1;
+          $new_reg->cannot_attend = 1;
         }
-        fclose($file);
+        $new_reg->save();
 
-        return view()->make("sims.stage1.confirm", ["registered_session" => $new_reg->load("session_dates"), "messages" => collect()]);
+        $vpb_student = \App\User::find($student_rcid);
+        \App\EmailQueue::sendEmailOrientation($vpb_student->CampusEmail,
+                                              "Summer Orientation Registration Confirmation",
+                                              view()->make("sims.stage1.partials.confirmation_body", ["registered_session" => $new_reg->load("session_dates")])->render());
+
+        flock($file, LOCK_UN);
+      }
+      fclose($file);
+
+      return view()->make("sims.stage1.confirm", ["registered_session" => $new_reg->load("session_dates"), "messages" => collect()]);
+    }
+
+    public function adminRegistrationReport (Request $request) {
+      $all_registrations = Registrations::with(["session_dates", "student"])->get();
+
+      return view()->make("sims.admin.stage1.report", compact("all_registrations"));
+    }
+
+    public function adminRegistrationReportExcel (Request $request) {
+      return \Excel::download(new \App\Exports\RegistrationExport, "sims_registrations.xlsx");
+    }
+
+    //TYPE:  GET
+    //BLADE: sims.admin.registration
+    //POST:  Creates the admin page
+    public function adminRegistrationPage(){
+      return view()->make("sims.admin.student_lookup", ["action"=>"adminRegistrationProcess", "type"=>"Registration"]);
+    }
+
+    //TYPE: POST
+    //FROM: sims.admin.registration
+    //POST: sets the session variables to what's in the database and redirects to the student info page
+    public function adminRegistrationProcess(Request $request){
+      $request->validate(["student_rcid" => "required"]);
+
+      $rcid = $request->student_rcid;
+
+      //Database
+      $registration = Registrations::where("rcid", $rcid)->first();
+      if(!isset($registration)){
+        $user = User::find($rcid);
+        // dd($rcid);
+        \Session::flash("message", "$user->display_name ($rcid) does not have a reservation.");
+        return redirect()->action("SIMSRegistrationController@adminIndex");
       }
 
-      public function adminRegistrationReport (Request $request) {
-        $all_registrations = Registrations::with(["session_dates", "student"])->get();
+      session(["rcid"=>$rcid]);
+      session(["admin"=>true]);
 
-        return view()->make("sims.admin.stage1.report", compact("all_registrations"));
+      $student_info = StudentInfo::where("rcid", $rcid)->first();
+      $guests = GuestInfo::where("fkey_registration_id", $registration->id)->get();
+
+      //Student Info Session
+      if(isset($student_info)){
+        $student_info = [
+          "nick_name"          => $student_info->nick_name,
+          "gender"             => $student_info->gender,
+          "cell_phone"         => $student_info->cell_phone,
+          "has_dietary_needs"  => isset($student_info->dietary_needs),
+          "dietary_needs"      => $student_info->dietary_needs,
+          "has_physical_needs" => isset($student_info->physical_needs),
+          "physical_needs"     => $student_info->physical_needs
+        ];
+        session(["student_info"=>$student_info]);
       }
 
-      public function adminRegistrationReportExcel (Request $request) {
-        return \Excel::download(new \App\Exports\RegistrationExport, "sims_registrations.xlsx");
+      //Guests Session
+      if(isset($guests)){
+        $relationships = [];
+        $first_names = [];
+        $last_names = [];
+        $emails = [];
+        $has_dietary_needs = [];
+        $dietary_needs = [];
+        $has_physical_needs = [];
+        $physical_needs = [];
+        $on_campuses = [];
+        foreach($guests as $guest){
+          $relationships.append($guest->relationship);
+          $first_names.append($guest->first_name);
+          $last_names.append($guest->last_name);
+          $emails.append($guest->email);
+          $has_dietary_needs.append(isset($guest->dietary_needs)?"yes":"no");
+          $dietary_needs.append($guest->dietary_needs);
+          $has_physical_needs.append(isset($guest->physical_needs)?"yes":"no");
+          $physical_needs.append($guest->physical_needs);
+          $on_campuses.append($guest->on_campus?"yes":"no");
+        }
+        $guest_info = [
+          "relationship" => $relationships,
+          "first_name" => $first_names,
+          "last_name" => $last_names,
+          "email" => $last_names,
+          "has_dietary_needs" => $has_dietary_needs,
+          "dietary_needs" => $dietary_needs,
+          "has_physical_needs" => $has_physical_needs,
+          "physical_needs" => $physical_needs,
+          "on_campus" => $on_campuses
+        ];
+        session(["parents_guests"=>$guest_info]);
+        session(["v_pg"=>true]);
       }
+
+      //Mode Of Travel Session
+      if(isset($registration->shuttle) && isset($registration->fkey_mode_of_travel_id)){
+        $mot = [
+          "shuttle" => $registration->shuttle?"yes":"no",
+          "mode_of_travel" => $registration->fkey_mode_of_travel_id
+        ];
+        session(["mode_of_travel"=>$mot]);
+      }
+
+      return redirect()->action("SIMSRegistrationController@studentInfoPage");
+    }
 
     //********************************
     // END Administrative Functions

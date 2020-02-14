@@ -122,15 +122,7 @@
 		</div>
 	</div>
 
-	@if(\Session::has("message"))
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="alert alert-warning light">
-					{{ \Session::get("message") }}
-				</div>
-			</div>
-		</div>
-	@endif
+	@include("partials.warning")
 
 	@if(\Carbon\Carbon::parse() <= \Carbon\Carbon::parse('2020-02-12 12:01:00 AM'))
 		<div class="row">
