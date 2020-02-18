@@ -35,7 +35,9 @@ class SIMSRegistrationController extends Controller
     //BLADE: sims.student_info
     //POST:  makes the student info page
     public function studentInfoPage(){
-      $rcid = session("student_rcid");
+      $admin = \Session::get("admin", false);
+
+      $rcid = session("rcid");
       if(!isset($rcid)){
         $rcid = RCAuth::user()->rcid;
       }
@@ -46,12 +48,13 @@ class SIMSRegistrationController extends Controller
         return  redirect()->action("SIMSRegistrationController@index");
       }
 
-      if(isset($info)){
+      if(isset($info) && !$admin){
         $id = $registration->id;
         return redirect()->action("SIMSRegistrationController@endingPage", ["id"=>$id, "err"=>1]);
       }
       $user = User::find($rcid);
       $sess = session("student_info");
+
       if(!isset($sess)){
         $sess = [
           "nick_name"          => $user->NickName,
@@ -99,6 +102,8 @@ class SIMSRegistrationController extends Controller
       $registration = Registrations::where("rcid", RCAuth::user()->rcid)->with("session_dates")->first();
       $session_dates = $registration->session_dates->date_string;
 
+      // dd($sess);
+
       return view()->make("sims.parents_guests", compact("sess", "session_dates"));
     }
 
@@ -108,7 +113,7 @@ class SIMSRegistrationController extends Controller
     public function parentsGuests(Request $request){
       $parents_guests = $request->all();
       unset($parents_guests["_token"]);
-      dd($parents_guests);
+      // dd($parents_guests);
       session(["parents_guests" => $parents_guests]);
 
       return redirect()->action("SIMSRegistrationController@modeOfTravelPage");
@@ -188,30 +193,42 @@ class SIMSRegistrationController extends Controller
       $pg = $request->session()->get("parents_guests", []);
       // dd($pg);
 
-      //Registration
       $registration = Registrations::where("rcid", $rcid)->first();
-      $registration->shuttle = ($mot["shuttle"] == "yes");
-      $registration->fkey_mode_of_travel_id = $mot["mode_of_travel"];
-      $registration->save();
 
       //check if they have already submitted it and they're not an admin
-      $student_info = SIMSStudentInfo::where("rcid", $rcid)->first();
+      $student_info = StudentInfo::where("rcid", $rcid)->first();
       if(isset($student_info) && !\Session::get("admin", false)){
         return redirect()->action("SIMSRegistrationController@endingPage", ["id"=>$registration->id]);
       }
 
+      //Mode of Travel
+      $registration->shuttle = ($mot["shuttle"] == "yes");
+      $registration->fkey_mode_of_travel_id = $mot["mode_of_travel"];
+      $registration->updated_by = $rcid;
+      $registration->save();
+
+
       //Student Info
-      $student_info = new StudentInfo;
+      if(!isset($student_info)){
+        $student_info = new StudentInfo;
+        $student_info->created_by = $rcid;
+      }
       $student_info->rcid = $rcid;
       $student_info->nick_name = $si["nick_name"];
       $student_info->gender = $si["gender"];
       $student_info->cell_phone = $si["cell_phone"];
       $student_info->dietary_needs = $si["dietary_needs"];
       $student_info->physical_needs = $si["physical_needs"];
-      $student_info->created_by = $student_info->updated_by = $rcid;
+      $student_info->updated_by = $rcid;
       $student_info->save();
 
       //Guests
+      $guests = GuestInfo::where("fkey_registration_id", $registration->id)->get();
+      foreach($guests as $guest) {
+        $guest->deleted_by = $rcid;
+        $guest->save();
+        $guest->delete();
+      }
       if(count($pg) > 0){
         for($i = 0; $i < count($pg["relationship"]); $i++){
           $guest = new GuestInfo;
@@ -222,7 +239,7 @@ class SIMSRegistrationController extends Controller
           $guest->email = $pg["email"][$i];
           $guest->dietary_needs = $pg["dietary_needs"][$i];
           $guest->physical_needs = $pg["physical_needs"][$i];
-          $guest->on_campus = ($pg["on_campus"]=="yes");
+          $guest->on_campus = ($pg["on_campus"][$i]=="yes");
           $guest->created_by = $guest->updated_by = $rcid;
           $guest->save();
         }
@@ -428,13 +445,33 @@ class SIMSRegistrationController extends Controller
       return view()->make("sims.stage1.confirm", ["registered_session" => $new_reg->load("session_dates"), "messages" => collect()]);
     }
 
-    public function adminRegistrationReport (Request $request) {
+    public function adminReservationReport (Request $request) {
       $all_registrations = Registrations::with(["session_dates", "student"])->get();
 
       return view()->make("sims.admin.stage1.report", compact("all_registrations"));
     }
 
-    public function adminRegistrationReportExcel (Request $request) {
+    public function adminReservationReportExcel (Request $request) {
+      return \Excel::download(new \App\Exports\ReservationExport, "sims_reservations.xlsx");
+    }
+
+    //TYPE:  GET
+    //BLADE: sims.admin.stage2.report
+    //POST:  creates a report page for registrations
+    public function adminRegistrationReport(){
+      $all_registrations = Registrations::with(["session_dates", "student", "student_info", "guests", "mode_of_travel"])->whereNotNull("fkey_mode_of_travel_id")->get();
+      $max_guests = \DB::select(\DB::raw("SELECT MAX(guests) AS max_guests FROM (SELECT count(id) AS guests FROM orientation.guest_info GROUP BY fkey_registration_id) sub_query"));
+      $max_guests = $max_guests[0]->max_guests;
+
+      // dd($all_registrations);
+
+      return view()->make("sims.admin.stage2.report", compact("all_registrations", "max_guests"));
+    }
+
+    //TYPE: DOWNLOAD
+    //FROM: sims.admin.stage2.report
+    //POST: downloads excel of all registrations
+    public function adminRegistrationReportExcel(){
       return \Excel::download(new \App\Exports\RegistrationExport, "sims_registrations.xlsx");
     }
 
@@ -474,9 +511,9 @@ class SIMSRegistrationController extends Controller
           "nick_name"          => $student_info->nick_name,
           "gender"             => $student_info->gender,
           "cell_phone"         => $student_info->cell_phone,
-          "has_dietary_needs"  => isset($student_info->dietary_needs),
+          "has_dietary_needs"  => isset($student_info->dietary_needs)?"yes":"no",
           "dietary_needs"      => $student_info->dietary_needs,
-          "has_physical_needs" => isset($student_info->physical_needs),
+          "has_physical_needs" => isset($student_info->physical_needs)?"yes":"no",
           "physical_needs"     => $student_info->physical_needs
         ];
         session(["student_info"=>$student_info]);
@@ -494,21 +531,21 @@ class SIMSRegistrationController extends Controller
         $physical_needs = [];
         $on_campuses = [];
         foreach($guests as $guest){
-          $relationships.append($guest->relationship);
-          $first_names.append($guest->first_name);
-          $last_names.append($guest->last_name);
-          $emails.append($guest->email);
-          $has_dietary_needs.append(isset($guest->dietary_needs)?"yes":"no");
-          $dietary_needs.append($guest->dietary_needs);
-          $has_physical_needs.append(isset($guest->physical_needs)?"yes":"no");
-          $physical_needs.append($guest->physical_needs);
-          $on_campuses.append($guest->on_campus?"yes":"no");
+          $relationships[] = $guest->relationship;
+          $first_names[] = $guest->first_name;
+          $last_names[] = $guest->last_name;
+          $emails[] = $guest->email;
+          $has_dietary_needs[] = isset($guest->dietary_needs)?"yes":"no";
+          $dietary_needs[] = $guest->dietary_needs;
+          $has_physical_needs[] = isset($guest->physical_needs)?"yes":"no";
+          $physical_needs[] = $guest->physical_needs;
+          $on_campuses[] = $guest->on_campus?"yes":"no";
         }
         $guest_info = [
           "relationship" => $relationships,
           "first_name" => $first_names,
           "last_name" => $last_names,
-          "email" => $last_names,
+          "email" => $emails,
           "has_dietary_needs" => $has_dietary_needs,
           "dietary_needs" => $dietary_needs,
           "has_physical_needs" => $has_physical_needs,

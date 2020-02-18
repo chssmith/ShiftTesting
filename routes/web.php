@@ -82,11 +82,13 @@ Route::prefix("orientation")->middleware(["force_login", 'populate_dependencies'
 		Route::get ("student/lookup/search", "SIMSRegistrationController@adminRegistrationTypeahead");
 		Route::post("student/edit", 				 "SIMSRegistrationController@adminRegistrationPullRegistration");
 		Route::post("student/edit/save",     "SIMSRegistrationController@adminRegistrationStore");
-		Route::get ("report",                "SIMSRegistrationController@adminRegistrationReport");
-		Route::get ("report/xls",            "SIMSRegistrationController@adminRegistrationReportExcel");
+		Route::get ("report",                "SIMSRegistrationController@adminReservationReport");
+		Route::get ("report/xls",            "SIMSRegistrationController@adminReservationReportExcel");
 		//Registration
 		Route::get ("registration/student/lookup", "SIMSRegistrationController@adminRegistrationPage");
 		Route::post("registration/student/edit",   "SIMSRegistrationController@adminRegistrationProcess");
+		Route::get ("registration/report",         "SIMSRegistrationController@adminRegistrationReport");
+		Route::get ("registration/report/xls",     "SIMSRegistrationController@adminRegistrationReportExcel");
 	});
 });
 

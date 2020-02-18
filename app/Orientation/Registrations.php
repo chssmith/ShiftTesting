@@ -21,4 +21,16 @@ class Registrations extends Model
     return $this->belongsTo("\App\User", "rcid", "RCID");
   }
 
+  public function student_info() {
+    return $this->hasOne("\App\Orientation\StudentInfo", "rcid", "rcid");
+  }
+
+  public function guests(){
+    return $this->hasMany("\App\Orientation\GuestInfo", "fkey_registration_id", "id");
+  }
+
+  public function mode_of_travel(){
+    return $this->hasOne("\App\Orientation\ModeOfTravel", "id", "fkey_mode_of_travel_id");
+  }
+
 }
