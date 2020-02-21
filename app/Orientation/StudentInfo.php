@@ -9,6 +9,7 @@ class StudentInfo extends Model
 {
   use SoftDeletes;
 
-  protected $table = "orientation.student_info";
+  protected $table      = "orientation.student_info";
   protected $primaryKey = 'id';
+  public $fillable      = ['rcid', 'created_by'];
 }

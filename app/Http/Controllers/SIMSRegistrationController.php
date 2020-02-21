@@ -175,44 +175,31 @@ class SIMSRegistrationController extends Controller
     //FROM: sims.confirmation
     //POST: saves all information pertaining to sims registration to the database
     public function confirmation(Request $request){
-
-      $rcid = session("rcid");
-      if(!isset($rcid)){
-        $rcid = RCAuth::user()->rcid;
-      }
+      $rcid = session()->get("rcid", RCAuth::user()->rcid);
 
       //Double check to make sure they have actually filled out everthing
-      $si = $request->session()->get("student_info", []);
-      $pg = $request->session()->get("v_pg", false);
+      $si  = $request->session()->get("student_info", []);
+      $pg  = $request->session()->get("v_pg", false);
       $mot = $request->session()->get("mode_of_travel", []);
       if(!((count($si)>0) && ($pg) && (count($mot)>0))){
         return redirect()->action("SIMSRegistrationController@confirmationPage");
       }
 
       //Store info in Database
-      $pg = $request->session()->get("parents_guests", []);
-      // dd($pg);
-
-      $registration = Registrations::where("rcid", $rcid)->first();
-
       //check if they have already submitted it and they're not an admin
-      $student_info = StudentInfo::where("rcid", $rcid)->first();
-      if(isset($student_info) && !\Session::get("admin", false)){
+      $student_info = StudentInfo::firstOrNew(["rcid" => $rcid], ["created_by" => $rcid]);
+      if(!empty($student_info->updated_By) && !\Session::get("admin", false)){
         return redirect()->action("SIMSRegistrationController@endingPage", ["id"=>$registration->id]);
       }
 
       //Mode of Travel
+      $registration = Registrations::where("rcid", $rcid)->first();
       $registration->shuttle = ($mot["shuttle"] == "yes");
       $registration->fkey_mode_of_travel_id = $mot["mode_of_travel"];
       $registration->updated_by = $rcid;
       $registration->save();
 
-
       //Student Info
-      if(!isset($student_info)){
-        $student_info = new StudentInfo;
-        $student_info->created_by = $rcid;
-      }
       $student_info->rcid = $rcid;
       $student_info->nick_name = $si["nick_name"];
       $student_info->gender = $si["gender"];
@@ -223,12 +210,9 @@ class SIMSRegistrationController extends Controller
       $student_info->save();
 
       //Guests
-      $guests = GuestInfo::where("fkey_registration_id", $registration->id)->get();
-      foreach($guests as $guest) {
-        $guest->deleted_by = $rcid;
-        $guest->save();
-        $guest->delete();
-      }
+      GuestInfo::where("fkey_registration_id", $registration->id)->update(["deleted_by" => $rcid, "deleted_at" => \Carbon\Carbon::now()]);
+      $pg = $request->session()->get("parents_guests", []);
+      $guests = collect();
       if(count($pg) > 0){
         for($i = 0; $i < count($pg["relationship"]); $i++){
           $guest = new GuestInfo;
@@ -242,14 +226,12 @@ class SIMSRegistrationController extends Controller
           $guest->on_campus = ($pg["on_campus"][$i]=="yes");
           $guest->created_by = $guest->updated_by = $rcid;
           $guest->save();
+          $guests[] = $guest;
         }
       }
 
       $session = Sessions::find($registration->fkey_sims_session_id);
-
       $session_dates = $session->date_string;
-
-      $guests = GuestInfo::where("fkey_registration_id", $registration->id)->get();
       $mot = ModeOfTravel::find($registration->fkey_mode_of_travel_id)->travel_type;
       $shuttle = $registration->shuttle;
 
