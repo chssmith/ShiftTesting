@@ -169,7 +169,7 @@
 					<label for="education">
 						Highest Education <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
-					<select id="education" name="education" class="form-control">
+					<select id="education" name="education" class="form-control" required>
 						<option></option>
 						@foreach($education as $education_level)
 							<option value='{{$education_level->id}}' @if(!empty($guardian) && ($guardian->fkey_education_id == $education_level->id)) selected @endif>
