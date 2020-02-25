@@ -66,8 +66,15 @@ class StudentInformationController extends Controller
 		$returning_student = !empty($student->admit_status) && $student->admit_status->X_APP_NEW != "NEW";
 		$student_type      = ((!$returning_student && !empty($student->admit_status)) ? $student->admit_status->X_APP_ADMIT_STATUS : "other");
 
+		$form_perc         = sprintf("RSI%s", \Carbon\Carbon::now()->format("y"));
+
 		$percs             = PERC::where("rcid", $student->RCID)->get();
-		$submitted         = !$percs->where("perc", sprintf("RSI%s", \Carbon\Carbon::now()->format("y")))->isEmpty();
+		$ods_percs         = \App\ODS\PERC::where("fkey_rcid", $student->RCID)->get();
+
+		$submitted         = !$percs->where("perc", $form_perc)->isEmpty() && $ods_percs->where("perc", $form_perc)->isEmpty();
+		$completed         = !$ods_percs->where("perc", $form_perc)->isEmpty();
+
+		$percs             = $percs->pluck("perc")->union($ods_percs->pluck("perc"))->unique();
 
 		$sections['Personal Information']     	 = ['status' => $completed_sections->personal_information,			      'link' => action("StudentInformationController@personalInfo")];
 		$sections['Address Information']      	 = ['status' => $completed_sections->address_information,			        'link' => action("StudentInformationController@addressInfo")];
@@ -85,7 +92,7 @@ class StudentInformationController extends Controller
 			return $item->$student_type;
 		});
 
-		return view('index', compact('sections', "student", "completed_sections", "additional_forms", "percs", "submitted"));
+		return view('index', compact('sections', "student", "completed_sections", "additional_forms", "percs", "submitted", "completed"));
 	}
 
 	//*************************************************************************************************************

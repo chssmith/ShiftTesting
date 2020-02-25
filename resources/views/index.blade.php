@@ -148,7 +148,11 @@
 		    <a role="button" target="Forms" class="accordian-button" style="color:black;" data-toggle="collapse" data-parent="#accordion" href="#collapseForms" aria-expanded="false" aria-controls="collapseForms">
 		    	<div>
 			        Student Information Forms
-							@if($submitted)
+							@if($completed)
+								<span style="background-color:#70A204" class="badge">
+									<span class="far fa-check" aria-hidden="true"></span> Completed
+								</span>
+							@elseif($submitted)
 		        		<span style="background-color:#FCBF06; color:black" class="badge">
 		        			Submitted
 								</span>
