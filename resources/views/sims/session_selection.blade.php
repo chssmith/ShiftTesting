@@ -1,7 +1,7 @@
 @extends('forms_template')
 
 @section('heading')
-  SIMS Registration
+  Summer Orientation Registration
 @endsection
 
 @section("header")
