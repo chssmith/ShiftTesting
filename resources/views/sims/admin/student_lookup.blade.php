@@ -25,7 +25,7 @@
 
 @section("content")
   <h3 >Alter Student {{$type}} </h3>
-  <form action="{{ action("SIMSRegistrationController@$action") }}" method="POST">
+  <form action="{{ action($action) }}" method="POST">
     {{ csrf_field() }}
     <div class="form-group">
       <label for="student_name">Student Name or RCID</label>

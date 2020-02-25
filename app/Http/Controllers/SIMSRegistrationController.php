@@ -336,7 +336,7 @@ class SIMSRegistrationController extends Controller
     }
 
     public function adminRegistrationLookup () {
-      return view()->make("sims.admin.student_lookup", ["action", "adminRegistrationStore", "type"=>"Reservation"]);
+      return view()->make("sims.admin.student_lookup", ["action" => "SIMSRegistrationController@adminRegistrationPullRegistration", "type"=>"Reservation"]);
     }
 
     public function adminRegistrationTypeahead (Request $request) {
@@ -383,7 +383,7 @@ class SIMSRegistrationController extends Controller
       $registration  = Registrations::where("rcid", $student_id)->first();
       $sessions      = Sessions::orderBy("start_date")->get();
       $registrations = Registrations::select(\DB::raw("sessions.id AS id"), \DB::raw("COUNT(rcid) AS num_registrations"))
-                                        ->rightJoin("sims.sessions", "sessions.id", "fkey_sims_session_id")
+                                        ->rightJoin("orientation.sessions", "sessions.id", "fkey_sims_session_id")
                                         ->groupBy("sessions.id")
                                         ->get()
                                         ->keyBy("id");
@@ -442,7 +442,7 @@ class SIMSRegistrationController extends Controller
     //POST:  creates a report page for registrations
     public function adminRegistrationReport(){
       $all_registrations = Registrations::with(["session_dates", "student", "student_info", "guests", "mode_of_travel"])->whereNotNull("fkey_mode_of_travel_id")->get();
-      $max_guests = \DB::select(\DB::raw("SELECT MAX(guests) AS max_guests FROM (SELECT count(id) AS guests FROM orientation.guest_info GROUP BY fkey_registration_id) sub_query"));
+      $max_guests = \DB::select(\DB::raw("SELECT MAX(guests) AS max_guests FROM (SELECT count(id) AS guests FROM orientation.guest_info WHERE deleted_at IS NULL GROUP BY fkey_registration_id) sub_query"));
       $max_guests = $max_guests[0]->max_guests;
 
       // dd($all_registrations);
@@ -461,7 +461,7 @@ class SIMSRegistrationController extends Controller
     //BLADE: sims.admin.registration
     //POST:  Creates the admin page
     public function adminRegistrationPage(){
-      return view()->make("sims.admin.student_lookup", ["action"=>"adminRegistrationProcess", "type"=>"Registration"]);
+      return view()->make("sims.admin.student_lookup", ["action" => "SIMSRegistrationController@adminRegistrationProcess", "type" => "Registration"]);
     }
 
     //TYPE: POST
