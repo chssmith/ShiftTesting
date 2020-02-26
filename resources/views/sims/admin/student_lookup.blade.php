@@ -24,8 +24,10 @@
 @endsection
 
 @section("content")
-  <h3 >Alter Student Reservation </h3>
-  <form action="{{ action("SIMSRegistrationController@adminRegistrationPullRegistration") }}" method="POST">
+  <h3 >Alter Student {{$type}} </h3>
+  @include("partials.warning")
+
+  <form action="{{ action($action) }}" method="POST">
     {{ csrf_field() }}
     <div class="form-group">
       <label for="student_name">Student Name or RCID</label>

@@ -41,11 +41,11 @@
       </p>
 
       <p>
-        If a session is listed as "0 remaining," please register for another session
-        AND email orientation@roanoke.edu to get on a waitlist if one of these
-        sessions is your only option.  Session spots will fill on a first
-        come-first-served basis.  If spots become available students will be
-        contacted through their RC email.
+        If a session is listed as "0 remaining," please register for another
+        session AND email <a href="mailto:orientation@roanoke.edu">orientation@roanoke.edu</a>
+        to get on a waitlist if one of these sessions is your only option.  Session
+        spots will fill on a first come-first-served basis.  If spots become
+        available students will be contacted through their RC email.
       </p>
     </div>
   </div>

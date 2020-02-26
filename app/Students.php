@@ -22,15 +22,7 @@ class Students extends Model
     public $incrementing  = false;
 
     public function getDisplayNameAttribute () {
-      $from_name = $this->FirstName;
-
-      if(isset($this->Nickname) && !is_null($this->Nickname)) {
-          $from_name = $this->Nickname;
-      }
-
-      $from_name .= " " . $this->LastName;
-
-      return $from_name;
+      return sprintf("%s %s", $this->first_name, $this->last_name);
     }
 
     public function admit_status () {

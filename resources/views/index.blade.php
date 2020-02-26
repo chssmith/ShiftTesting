@@ -122,33 +122,7 @@
 		</div>
 	</div>
 
-	@if(\Session::has("message"))
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="alert alert-warning light">
-					{{ \Session::get("message") }}
-				</div>
-			</div>
-		</div>
-	@endif
-
-	@if(\Carbon\Carbon::parse() <= \Carbon\Carbon::parse('2020-02-12 12:01:00 AM'))
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="alert alert-danger light">
-					<div class="row">
-						<div class="col-sm-2 col-xs-12">
-							<span class="fas fa-exclamation-triangle fa-4x" style="padding-top: 15px"></span>
-						</div>
-						<div class="col-xs-12 col-sm-8" style="font-size: 20pt; line-height: 1.2">
-							This form will go down for routine maintenance on February 11<sup>th</sup>, 2020 at 10:00 PM EST &mdash; February 12<sup>th</sup>, 2020 at 02:00 AM EST.
-							Any data input before the maintenance window will be saved and the forms can be completed after the end of the maintenance window.
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	@endif
+	@include("partials.warning")
 
 	<div id="accordion" class="panel panel-default">
  		<div class="panel-heading" role="tab" id="headingForms">
@@ -156,7 +130,11 @@
 		    <a role="button" target="Forms" class="accordian-button" style="color:black;" data-toggle="collapse" data-parent="#accordion" href="#collapseForms" aria-expanded="false" aria-controls="collapseForms">
 		    	<div>
 			        Student Information Forms
-							@if($submitted)
+							@if($completed)
+								<span style="background-color:#70A204" class="badge">
+									<span class="far fa-check" aria-hidden="true"></span> Completed
+								</span>
+							@elseif($submitted)
 		        		<span style="background-color:#FCBF06; color:black" class="badge">
 		        			Submitted
 								</span>
