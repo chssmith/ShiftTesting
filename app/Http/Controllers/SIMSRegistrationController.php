@@ -48,6 +48,10 @@ class SIMSRegistrationController extends Controller
         return  redirect()->action("SIMSRegistrationController@index");
       }
 
+      if (empty($registration->session_dates)) {
+        return redirect()->back()->with("message", "No orientation registration found.");
+      }
+
       if(isset($info) && !$admin){
         $id = $registration->id;
         return redirect()->action("SIMSRegistrationController@endingPage", ["id"=>$id, "err"=>1]);
@@ -100,9 +104,12 @@ class SIMSRegistrationController extends Controller
       //ASSERT: set v_pg in case they don't have any guests and don't fill out the page
 
       $registration = Registrations::where("rcid", RCAuth::user()->rcid)->with("session_dates")->first();
-      $session_dates = $registration->session_dates->date_string;
 
-      // dd($sess);
+      if (empty($registration->session_dates)) {
+        return redirect()->back()->with("message", "No orientation registration found.");
+      }
+
+      $session_dates = $registration->session_dates->date_string;
 
       return view()->make("sims.parents_guests", compact("sess", "session_dates"));
     }
@@ -127,6 +134,11 @@ class SIMSRegistrationController extends Controller
       $sess = $request->session()->get("mode_of_travel", []);
 
       $registration = Registrations::where("rcid", RCAuth::user()->rcid)->with("session_dates")->first();
+
+      if (empty($registration->session_dates)) {
+        return redirect()->back()->with("message", "No orientation reservation found.");
+      }
+
       $session_dates = $registration->session_dates->date_string;
 
       return view()->make("sims.mode_of_travel", compact("MOT", "sess", "session_dates"));
@@ -348,14 +360,12 @@ class SIMSRegistrationController extends Controller
       }
       $search_terms = explode(' ', $search_terms);
 
-      $students = \App\User::where(function ($query) use ($search_terms) {
+      $students = Students::where(function ($query) use ($search_terms) {
         foreach($search_terms as $term) {
           $query->Where(function ($search_query) use ($term) {
-            $search_query->where("FirstName", "LIKE", sprintf("%%%s%%", $term))
-                         ->orWhere("LastName", "LIKE", sprintf("%%%s%%", $term))
-                         ->orWhere("MiddleName", "LIKE", sprintf("%%%s%%", $term))
-                         ->orWhere("nick_name", "LIKE", sprintf("%%%s%%", $term))
-                         ->orWhere("NickName", "LIKE", sprintf("%%%s%%", $term))
+            $search_query->where("first_name", "LIKE", sprintf("%%%s%%", $term))
+                         ->orWhere("last_name", "LIKE", sprintf("%%%s%%", $term))
+                         ->orWhere("middle_name", "LIKE", sprintf("%%%s%%", $term))
                          ->orWhere("RCID", "LIKE", sprintf("%%%s%%", $term));
           });
         }

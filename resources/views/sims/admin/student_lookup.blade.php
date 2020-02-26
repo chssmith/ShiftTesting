@@ -25,6 +25,8 @@
 
 @section("content")
   <h3 >Alter Student {{$type}} </h3>
+  @include("partials.warning")
+
   <form action="{{ action($action) }}" method="POST">
     {{ csrf_field() }}
     <div class="form-group">
