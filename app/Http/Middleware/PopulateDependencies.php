@@ -29,6 +29,10 @@ class PopulateDependencies
         \DB::statement("EXEC copy_ods_student_and_race_to_student_forms ?", [$rcid]);
         $student = Students::find($rcid);
 
+        if (empty($student)) {
+          throw new \Exception("Student information not found for currently authenticated user.");
+        }
+
         // COPY: ODS emergency => Local Emergency
         \DB::statement("EXEC copy_ods_emergency_to_student_forms ?", [$rcid]);
         \DB::statement("EXEC copy_ods_health_concerns_to_student_forms ?", [$rcid]);
