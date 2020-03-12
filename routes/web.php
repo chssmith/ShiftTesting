@@ -64,20 +64,22 @@ Route::prefix("admin")->middleware("force_login")->group( function () {
 	// Route::get("academic_achievement/export", "AdminController@exportAcademicAchievementCSV"); - Deprecated
 });
 
-Route::prefix("orientation")->middleware(["force_login", 'populate_dependencies'])->group( function () {
-	Route::get ("registration/studentinfo", "SIMSRegistrationController@studentInfoPage");
-	Route::post("registration/studentinfo/store", "SIMSRegistrationController@studentInfo");
-	Route::get ("registration/parentsguests", "SIMSRegistrationController@parentsGuestsPage");
-	Route::post("registration/parentsguests/store", "SIMSRegistrationController@parentsGuests");
-	Route::get ("registration/modeoftravel", "SIMSRegistrationController@modeOfTravelPage");
-	Route::post("registration/modeoftravel/store", "SIMSRegistrationController@modeOfTravel");
-	Route::get ("registration/confirmation", "SIMSRegistrationController@confirmationPage");
-	Route::post("registration/confirmation/store", "SIMSRegistrationController@confirmation");
-	Route::get ("registration/success/{id}/{err?}", "SIMSRegistrationController@endingPage");
+Route::prefix("orientation")->middleware(["force_login"])->group( function () {
+	Route::middleware("populate_dependencies")->group ( function () {
+		Route::get ("registration/studentinfo", "SIMSRegistrationController@studentInfoPage");
+		Route::post("registration/studentinfo/store", "SIMSRegistrationController@studentInfo");
+		Route::get ("registration/parentsguests", "SIMSRegistrationController@parentsGuestsPage");
+		Route::post("registration/parentsguests/store", "SIMSRegistrationController@parentsGuests");
+		Route::get ("registration/modeoftravel", "SIMSRegistrationController@modeOfTravelPage");
+		Route::post("registration/modeoftravel/store", "SIMSRegistrationController@modeOfTravel");
+		Route::get ("registration/confirmation", "SIMSRegistrationController@confirmationPage");
+		Route::post("registration/confirmation/store", "SIMSRegistrationController@confirmation");
+		Route::get ("registration/success/{id}/{err?}", "SIMSRegistrationController@endingPage");
 
-	Route::get ("registration", "SIMSRegistrationController@index");
-	Route::post("registration", "SIMSRegistrationController@store");
-	Route::get ("confirm",      "SIMSRegistrationController@stage1Confirmation");
+		Route::get ("registration", "SIMSRegistrationController@index");
+		Route::post("registration", "SIMSRegistrationController@store");
+		Route::get ("confirm",      "SIMSRegistrationController@stage1Confirmation");
+	});
 
 	Route::prefix("admin")->middleware(["sims_admin"])->group( function () {
 		Route::get ("/",                     "SIMSRegistrationController@adminIndex");
