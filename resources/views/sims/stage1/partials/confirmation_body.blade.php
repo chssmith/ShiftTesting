@@ -5,8 +5,7 @@
   </p>
 
   <p>
-    Once you have determined your travel details, please complete the Summer
-    Orientation Registration in your <a href="{{ action("StudentInformationController@index") }}">Annual Enrollment Profile</a> no later than June 1.
+    More details will be sent to you about the new virtual format by June 1.
   </p>
 @else
   <p>
@@ -15,9 +14,8 @@
 @endif
 
 <p>
-  If you have additional questions, please refer to the <a
-  href="https://www.roanoke.edu/admissions/first_year_experience/summer_orientation">First Year Experience Summer Orientation
-  Frequently Asked Questions website</a>.
+  Please continue the enrollment process on your To Do List, starting with the <a href="https://aepweb.roanoke.edu">Annual Enrollment Profile</a> and through your <a href="https://inquire.roanoke.edu">Inquire</a> modules.
+  We understand test scores and final transcripts may be delayed, however many items are best completed by June 1.
 </p>
 
 <p>
