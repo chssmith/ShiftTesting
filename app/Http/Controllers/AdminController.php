@@ -74,7 +74,7 @@ class AdminController extends Controller
 			$merger->addPathToPDF(\Storage::path('/pdfs/page'.$index.".pdf"), 'all', 'P');
 		}
 		try {
-			$merger->setFileName('ReportFileName.pdf');
+			$merger->setFileName('StudentChanges.pdf');
 			$merger->merge();
 			$merger->inline();
 		} catch (\Exception $e) {
@@ -88,8 +88,10 @@ class AdminController extends Controller
 	}
 
 	public function changedParentInfo(){
+		set_time_limit(0);
 		$user = RCAuth::user();
-		$all_changed = Students::with(['parents.employment', 'parents.guardian_type', 'parents.country', 'parents.ods_guardian.employment.country', 'parents.ods_guardian.country'])->
+		$all_changed = Students::with(['parents.employment', 'parents.guardian_type', 'parents.country',
+																	 'parents.ods_guardian.employment.country', 'parents.ods_guardian.country'])->
 													   whereHas("local_percs", function ($query) {
 															 $query->where("perc", "LIKE", "%RSI%");
 														 })->get();
@@ -108,7 +110,7 @@ class AdminController extends Controller
 			$merger->addPathToPDF(\Storage::path('/pdfs/page'.$index.".pdf"), 'all', 'P');
 		}
 		try {
-			$merger->setFileName('ReportFileName.pdf');
+			$merger->setFileName('ParentChanges.pdf');
 			$merger->merge();
 			$merger->inline();
 		} catch (\Exception $e) {
