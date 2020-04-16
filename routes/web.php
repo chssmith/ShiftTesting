@@ -54,7 +54,7 @@ Route::middleware('force_login')->get('/', function(){
 	}
 });
 
-Route::prefix("admin")->middleware("force_login")->group( function () {
+Route::prefix("admin")->middleware("rsi_admin")->group( function () {
 	Route::get('/', 'AdminController@index');
 	Route::get('changes', 'AdminController@changedStudents');
 	Route::get('parents', 'AdminController@changedParentInfo');

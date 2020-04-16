@@ -81,10 +81,10 @@
 			<tbody>
 				<tr>
 					<td> First Name </td>
-					<td> {{ $student->datamart_user->FirstName }} </td>
+					<td> @if(!empty($student->ods_student)){{ $student->ods_student->FIRST_NAME }}@endif </td>
 					<td> {{ $student->first_name }} </td>
 					<td>
-						@if($student->datamart_user->FirstName != $student->first_name)
+						@if(empty($student->ods_student) || $student->ods_student->FIRST_NAME != $student->first_name)
 							Y
 						@endif
 					</td>
@@ -92,10 +92,10 @@
 
 				<tr>
 					<td> Middle Name </td>
-					<td> {{ $student->datamart_user->MiddleName }}</td>
+					<td> @if(!empty($student->ods_student)){{ $student->ods_student->MIDDLE_NAME }}@endif </td>
 					<td> {{ $student->middle_name }} </td>
 					<td>
-						@if($student->datamart_user->MiddleName != $student->middle_name)
+						@if(empty($student->ods_student) || $student->ods_student->MIDDLE_NAME != $student->middle_name)
 							Y
 						@endif
 					</td>
@@ -103,10 +103,10 @@
 
 				<tr>
 					<td> Last Name </td>
-					<td> {{ $student->datamart_user->LastName }} </td>
+					<td> @if(!empty($student->ods_student)){{ $student->ods_student->LAST_NAME }}@endif </td>
 					<td> {{ $student->last_name }} </td>
 					<td>
-						@if($student->datamart_user->LastName != $student->last_name)
+						@if(empty($student->ods_student) || $student->ods_student->LAST_NAME != $student->last_name)
 							Y
 						@endif
 					</td>
@@ -114,10 +114,10 @@
 
 				<tr>
 					<td> Maiden Name </td>
-					<td> {{ $student->datamart_user->MaidenName }} </td>
+					<td> @if(!empty($student->ods_student)){{ $student->ods_student->maiden_name }}@endif </td>
 					<td> {{ $student->maiden_name }} </td>
 					<td>
-						@if($student->datamart_user->MaidenName != $student->maiden_name)
+						@if(empty($student->ods_student) || $student->ods_student->maiden_name != $student->maiden_name)
 							Y
 						@endif
 					</td>
@@ -125,14 +125,22 @@
 
 				<tr>
 					<td> Green Card </td>
-					<td>  </td>
+					<td>
+						@if (!empty($student->ods_citizenship) && $student->ods_citizenship->green_card)
+							Y
+						@else
+							N
+						@endif
+					</td>
 					<td>
 						@if( $student->green_card )
-							True
+							Y
+						@else
+							N
 						@endif
 					 </td>
 					<td>
-						@if($student->ods_citizenship->green_card != $student->green_card)
+						@if(!empty($student->green_card) && (empty($student->ods_citizenship) || $student->ods_citizenship->green_card != $student->green_card))
 							Y
 						@endif
 					</td>
@@ -140,10 +148,10 @@
 
 				<tr>
 					<td> Visa </td>
-					<td>  </td>
-					<td> @if(!empty($student->visa)) Y @endif </td>
+					<td>  @if (!empty($student->ods_student)) {{$student->ods_student->visa}} @endif</td>
+					<td> @if(!empty($student->visa)) {{ $student->visa }} @endif </td>
 					<td>
-						@if(!empty($student->visa) && null != $student->visa)
+						@if(!empty($student->visa) && (empty($student->ods_student->visa) || $student->ods_student->visa != $student->visa))
 							Y
 						@endif
 					</td>

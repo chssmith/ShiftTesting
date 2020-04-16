@@ -12,7 +12,6 @@ class Students extends Model
      *
      * @var  string
      */
-    use SoftDeletes;
     protected $table      = 'student_forms.students';
     protected $connection = 'SAO';
     protected $primaryKey = "RCID";
@@ -82,7 +81,7 @@ class Students extends Model
       if(!empty($billing)) $billing = $billing->load("state");
       $local   = $this->datamart_local_address;
       if(!empty($local)) $local = $local->load("state");
-    	return collect(['Home'=>GenericAddress::fromMixedAddressForReport($this->datamart_home_address->load("state")),
+    	return collect(['Home'=>GenericAddress::fromMixedAddressForReport($this->datamart_home_address),
                       'Billing'=>GenericAddress::fromMixedAddressForReport($billing),
                       'Local'=>GenericAddress::fromMixedAddressForReport($local)]);
     }
@@ -113,6 +112,10 @@ class Students extends Model
 
     public function datamart_user () {
       return $this->hasOne("\App\DatamartStudent", "RCID", "RCID");
+    }
+
+    public function ods_student () {
+      return $this->hasOne("\App\ODS\Students", "RCID", "RCID");
     }
 
     public function ssn () {

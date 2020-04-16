@@ -163,7 +163,7 @@ table.gridtable td {
 						@if ($parent->relationship != 'O')
 							{{ $parent->guardian_type->type }}
 						@else
-							{{ $parent->relationship->other }}
+							{{ $parent->relationship_other_description }}
 						@endif
 					</td>
 					<td class="grayed">

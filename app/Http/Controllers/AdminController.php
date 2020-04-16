@@ -50,12 +50,11 @@ class AdminController extends Controller
 	public function changedStudents(){
 		ini_set('max_execution_time', 300);
 		$user = RCAuth::user();
-		$all_changed = Students::with(['visa', 'home_address', 'billing_address', 'local_address', 'datamart_user', 'ods_citizenship'])->
+		$all_changed = Students::with(['visa', 'home_address', 'billing_address', 'local_address', 'ods_student.visa', 'ods_citizenship'])->
 														 whereHas("local_percs", function ($query) {
-															 $query->where("perc", "%RSI%");
+															 $query->where("perc", "LIKE", "%RSI%")->withTrashed();
 														 })->get()->keyBy("RCID");
 
-		// dd($all_changed->first()->datamart_address);
 		$storage_path = storage_path();
 
 		$count = 1;
@@ -75,7 +74,7 @@ class AdminController extends Controller
 			$merger->addPathToPDF(\Storage::path('/pdfs/page'.$index.".pdf"), 'all', 'P');
 		}
 		try {
-			$merger->setFileName('ReportFileName.pdf');
+			$merger->setFileName('StudentChanges.pdf');
 			$merger->merge();
 			$merger->inline();
 		} catch (\Exception $e) {
@@ -89,8 +88,10 @@ class AdminController extends Controller
 	}
 
 	public function changedParentInfo(){
+		set_time_limit(0);
 		$user = RCAuth::user();
-		$all_changed = Students::with(['parents.employment', 'parents.guardian_type', 'parents.country', 'parents.ods_guardian.employment.country', 'parents.ods_guardian.country'])->
+		$all_changed = Students::with(['parents.employment', 'parents.guardian_type', 'parents.country',
+																	 'parents.ods_guardian.employment.country', 'parents.ods_guardian.country'])->
 													   whereHas("local_percs", function ($query) {
 															 $query->where("perc", "LIKE", "%RSI%");
 														 })->get();
@@ -109,7 +110,7 @@ class AdminController extends Controller
 			$merger->addPathToPDF(\Storage::path('/pdfs/page'.$index.".pdf"), 'all', 'P');
 		}
 		try {
-			$merger->setFileName('ReportFileName.pdf');
+			$merger->setFileName('ParentChanges.pdf');
 			$merger->merge();
 			$merger->inline();
 		} catch (\Exception $e) {
