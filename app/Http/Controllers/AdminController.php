@@ -50,12 +50,11 @@ class AdminController extends Controller
 	public function changedStudents(){
 		ini_set('max_execution_time', 300);
 		$user = RCAuth::user();
-		$all_changed = Students::with(['visa', 'home_address', 'billing_address', 'local_address', 'datamart_user', 'ods_citizenship'])->
+		$all_changed = Students::with(['visa', 'home_address', 'billing_address', 'local_address', 'ods_student.visa', 'ods_citizenship'])->
 														 whereHas("local_percs", function ($query) {
-															 $query->where("perc", "%RSI%");
+															 $query->where("perc", "LIKE", "%RSI%")->withTrashed();
 														 })->get()->keyBy("RCID");
 
-		// dd($all_changed->first()->datamart_address);
 		$storage_path = storage_path();
 
 		$count = 1;
