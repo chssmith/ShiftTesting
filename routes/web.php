@@ -58,8 +58,8 @@ Route::prefix("admin")->middleware("rsi_admin")->group( function () {
 	Route::get('/', 'AdminController@index');
 	Route::get('changes', 'AdminController@changedStudents');
 	Route::get('parents', 'AdminController@changedParentInfo');
-	Route::get('create_student_snap', 'AdminController@createStudentSnap');
-	Route::get('create_parent_snap', 'AdminController@createParentSnap');
+	Route::post('completed/students', "AdminController@markStudentsProcessed");
+	Route::post('completed/parents', "AdminController@markParentsProcessed");
 
 	// Route::get("academic_achievement/export", "AdminController@exportAcademicAchievementCSV"); - Deprecated
 });

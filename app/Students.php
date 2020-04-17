@@ -122,4 +122,11 @@ class Students extends Model
       return $this->hasOne("App\HaveSSN", "ID", "RCID");
     }
 
+    public function scopeFinished ($query) {
+      $query->whereHas("local_percs", function ($query) {
+            $year = \Carbon\Carbon::now()->format("y");
+            $query->where("perc", "LIKE", "%RSI" . $year . "%")->withTrashed();
+          });
+    }
+
 }
