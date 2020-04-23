@@ -30,7 +30,7 @@ table.gridtable td {
 
 	/** Define the margins of your page **/
 	@page {
-			margin: 100px 25px;
+			margin: 100px 25px 75px 25px;
 	}
 
 	header {
@@ -120,6 +120,27 @@ table.gridtable td {
 							Y
 						@endif
 					</td>
+				</tr>
+
+				<tr>
+					<td> Home Phone </td>
+					<td> @if (!empty($parent->ods_guardian)) {{ $parent->ods_guardian->home_phone }} @endif </td>
+					<td> {{ $parent->home_phone }} </td>
+					<td> {{ ((!empty($parent->home_phone) && $parent->home_phone != $parent->ods_guardian->home_phone) ? "Y" : "") }} </td>
+				</tr>
+
+				<tr>
+					<td> Cell Phone </td>
+					<td> @if (!empty($parent->ods_guardian)) {{ $parent->ods_guardian->cell_phone }} @endif </td>
+					<td> {{ $parent->cell_phone }} </td>
+					<td> {{ ((!empty($parent->cell_phone) && $parent->cell_phone != $parent->ods_guardian->cell_phone) ? "Y" : "") }} </td>
+				</tr>
+
+				<tr>
+					<td> Email Address </td>
+					<td> @if (!empty($parent->ods_guardian)) {{ $parent->ods_guardian->email }} @endif </td>
+					<td> {{ $parent->email }} </td>
+					<td> {{ ((!empty($parent->email) && $parent->email != $parent->ods_guardian->email) ? "Y" : "") }} </td>
 				</tr>
 
 				<tr>
@@ -493,7 +514,9 @@ table.gridtable td {
 						@endif
 					</td>
 					<td>
-						@if(!empty($parent->employment->fkey_StateCode) && (empty($parent->ods_guardian->employment) || $parent->employment->fkey_StateCode != $parent->ods_guardian->employment->fkey_StateCod))
+						@if(!empty($parent->employment->fkey_StateCode) &&
+								(empty($parent->ods_guardian->employment) ||
+								 $parent->employment->fkey_StateCode != $parent->ods_guardian->employment->fkey_StateCode))
 							Y
 						@endif
 					</td>
