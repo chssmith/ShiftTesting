@@ -48,18 +48,25 @@ class AdminController extends Controller
 	}
 
 	public function markStudentsProcessed() {
-		Students::where("student_processed", 0)->finished()->update(["student_processed" => 1, "updated_by" => RCAuth::user()->rcid]);
+		Students::where("student_processed", 0)->where("student_printed", 1)
+							->finished()->update(["student_processed" => 1,
+																		"updated_by" => RCAuth::user()->rcid]);
 		return redirect()->action("AdminController@index");
 	}
 
 	public function markParentsProcessed() {
-		Students::where("parents_processed", 0)->finished()->update(["parents_processed" => 1, "updated_by" => RCAuth::user()->rcid]);
+		Students::where("parents_processed", 0)->where("parents_printed", 1)
+							->finished()->update(["parents_processed" => 1,
+																		"updated_by" => RCAuth::user()->rcid]);
 		return redirect()->action("AdminController@index");
 	}
 
 	public function changedStudents(){
 		ini_set('max_execution_time', 300);
 		$user = RCAuth::user();
+
+		Students::finished()->where('student_processed', "0")->update(["student_printed" => 1, 'updated_by' => $user->rcid]);
+
 		$all_changed = Students::with(['visa', 'home_address', 'billing_address', 'local_address', 'ods_student.visa', 'ods_citizenship'])->
 														 finished()->where("student_processed", "0")->get()->keyBy("RCID");
 
@@ -98,13 +105,14 @@ class AdminController extends Controller
 	public function changedParentInfo(){
 		set_time_limit(0);
 		$user = RCAuth::user();
+		Students::finished()->where("parents_processed", "0")->update(['parents_printed' => 1, 'updated_by' => $user->rcid]);
 		$all_changed = Students::with(['parents.employment', 'parents.guardian_type', 'parents.country',
 																	 'parents.ods_guardian.employment.country', 'parents.ods_guardian.country'])
 													   ->finished()->where("parents_processed", "0")->get();
 		$count = 1;
 		foreach($all_changed as $student){
 			$report_string = view()->make("reports.parent_report", ['student'=>$student])->render();
-			$pdf = \PDF::loadHtml($report_string);
+			$pdf = \PDF::loadHtml($report_string)->setPaper('a4');
 			$new_page = $pdf->output();
 			\Storage::put('pdfs/page' . $count . '.pdf', $new_page);
 			$count++;
