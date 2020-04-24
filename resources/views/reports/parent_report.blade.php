@@ -126,21 +126,21 @@ table.gridtable td {
 					<td> Home Phone </td>
 					<td> @if (!empty($parent->ods_guardian)) {{ $parent->ods_guardian->home_phone }} @endif </td>
 					<td> {{ $parent->home_phone }} </td>
-					<td> {{ ((!empty($parent->home_phone) && $parent->home_phone != $parent->ods_guardian->home_phone) ? "Y" : "") }} </td>
+					<td> {{ ((!empty($parent->home_phone) && ((empty($parent->ods_guardian) || $parent->home_phone != $parent->ods_guardian->home_phone))) ? "Y" : "") }} </td>
 				</tr>
 
 				<tr>
 					<td> Cell Phone </td>
 					<td> @if (!empty($parent->ods_guardian)) {{ $parent->ods_guardian->cell_phone }} @endif </td>
 					<td> {{ $parent->cell_phone }} </td>
-					<td> {{ ((!empty($parent->cell_phone) && $parent->cell_phone != $parent->ods_guardian->cell_phone) ? "Y" : "") }} </td>
+					<td> {{ ((!empty($parent->cell_phone) && ((empty($parent->ods_guardian) || $parent->cell_phone != $parent->ods_guardian->cell_phone))) ? "Y" : "") }} </td>
 				</tr>
 
 				<tr>
 					<td> Email Address </td>
 					<td> @if (!empty($parent->ods_guardian)) {{ $parent->ods_guardian->email }} @endif </td>
 					<td> {{ $parent->email }} </td>
-					<td> {{ ((!empty($parent->email) && $parent->email != $parent->ods_guardian->email) ? "Y" : "") }} </td>
+					<td> {{ ((!empty($parent->email) && (empty($parent->ods_guardian) || $parent->email != $parent->ods_guardian->email)) ? "Y" : "") }} </td>
 				</tr>
 
 				<tr>
