@@ -163,8 +163,7 @@ class StudentInformationController extends Controller
 		$personal_completed = !empty($student->first_name) && !empty($student->last_name) &&
 													!empty($student->fkey_marital_status) && !is_null($student->fkey_military_id) &&
 													!is_null($student->ethnics) && !empty($races) &&
-													!(empty($cell_phone->PhoneNumber) && empty($home_phone->PhoneNumber)) &&
-													!empty($student->ssn);
+													!(empty($cell_phone->PhoneNumber) && empty($home_phone->PhoneNumber));
 
 		$completed_sections->personal_information = $personal_completed;
 		$completed_sections->updated_by = $user->rcid;
