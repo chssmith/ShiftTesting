@@ -438,7 +438,7 @@ class SIMSRegistrationController extends Controller
     }
 
     public function adminReservationReport (Request $request) {
-      $all_registrations = Registrations::with(["session_dates", "student"])->get();
+      $all_registrations = Registrations::whereHas("student")->with(["session_dates", "student"])->get();
 
       return view()->make("sims.admin.stage1.report", compact("all_registrations"));
     }
@@ -451,7 +451,7 @@ class SIMSRegistrationController extends Controller
     //BLADE: sims.admin.stage2.report
     //POST:  creates a report page for registrations
     public function adminRegistrationReport(){
-      $all_registrations = Registrations::with(["session_dates", "student", "student_info", "guests", "mode_of_travel"])->whereNotNull("fkey_mode_of_travel_id")->get();
+      $all_registrations = Registrations::whereHas("student")->with(["session_dates", "student", "student_info", "guests", "mode_of_travel"])->whereNotNull("fkey_mode_of_travel_id")->get();
       $max_guests = \DB::select(\DB::raw("SELECT MAX(guests) AS max_guests FROM (SELECT count(id) AS guests FROM orientation.guest_info WHERE deleted_at IS NULL GROUP BY fkey_registration_id) sub_query"));
       $max_guests = $max_guests[0]->max_guests;
 
