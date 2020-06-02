@@ -10,7 +10,7 @@ class ReservationExport implements FromView
 {
     public function view(): View
     {
-      $all_registrations = Registrations::with(["session_dates", "student"])->get();
+      $all_registrations = Registrations::whereHas("student")->with(["session_dates", "student"])->get();
 
       return view()->make("sims.admin.stage1.partials.report_table", compact("all_registrations"));
     }
