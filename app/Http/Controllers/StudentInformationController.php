@@ -1033,6 +1033,36 @@ class StudentInformationController extends Controller
 	// END Title IX Acceptance
 	//*************************************************************************************************************
 
+	//*************************************************************************************************************
+	// BEGIN COVID-19 Acceptance
+	//*************************************************************************************************************
+	public function showCovidForm (Students $student) {
+		return view()->make("covid_pledge", compact("student"));
+	}
+
+	public function completeCovidForm (Request $request, Students $student) {
+		$student->covid_acceptance = $request->has("acknowledge");
+		$student->updated_by       = \RCAuth::user()->rcid;
+		$student->save();
+
+		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('CCP%s', \Carbon\Carbon::now()->format("y"))],
+														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
+														 	'updated_by' => \RCAuth::user()->rcid]);
+
+		if ($student->covid_acceptance) {
+			$perc->save();
+		} else if (!empty($perc->id)) {
+			$perc->deleted_by = \RCAuth::user()->rcid;
+			$perc->save();
+			$perc->delete();
+		}
+
+		return redirect()->action("StudentInformationController@index");
+	}
+
+	//*************************************************************************************************************
+	// END Title IX Acceptance
+	//*************************************************************************************************************
 
 	//*************************************************************************************************************
 	// BEGIN Academic Achievement
