@@ -1045,7 +1045,7 @@ class StudentInformationController extends Controller
 		$student->updated_by       = \RCAuth::user()->rcid;
 		$student->save();
 
-		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('CCP%s', \Carbon\Carbon::now()->format("y"))],
+		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('RCCCP')],
 														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
 														 	'updated_by' => \RCAuth::user()->rcid]);
 
