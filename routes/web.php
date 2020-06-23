@@ -41,6 +41,8 @@ Route::middleware('force_login')->group( function (){
 	Route::get ("sexual_misconduct_policy", "StudentInformationController@showTitleIXAcceptance");
 	Route::post("sexual_misconduct_policy", "StudentInformationController@completeTitleIXAcceptance");
 
+	Route::get ("covid_pledge", "StudentInformationController@showCovidForm");
+	Route::post("covid_pladge", "StudentInformationController@completeCovidForm");
 });
 
 
