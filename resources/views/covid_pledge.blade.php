@@ -35,7 +35,7 @@ Roanoke College's Crush COVID-19 Pledge
 
       <p>
         Safety is everyone’s responsibility, and the COVID-19 pandemic has shown
-        us how crucial it is for all Maroons to make a commitment to safely to
+        us how crucial it is for all Maroons to make a commitment to safety to
         lessen the likelihood of an uncontrollable outbreak occurring on campus.
         The entire college community needs to do their part to make safety a
         personal priority.  Your electronic signature indicates a commitment to
