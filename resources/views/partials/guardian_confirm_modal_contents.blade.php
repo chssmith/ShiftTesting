@@ -213,8 +213,8 @@
           Business Phone Number
         </label>
         <p>
-          @if(!empty($employment->employer_name))
-            {{$employment->employer_name}}
+          @if(!empty($employment->business_number))
+            {{$employment->business_number}}
           @else
             &mdash;
           @endif
