@@ -177,7 +177,7 @@
 				    @endfor
 					@endif
 
-					<div class="col-md-12">
+					<div class="col-xs-12 col-md-12">
 		        <div>
 							<h4 style="display: inline-block"> I am in the U.S on <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></h4>
 						</div>
