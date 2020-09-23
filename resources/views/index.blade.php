@@ -40,13 +40,6 @@
 				border-bottom: 10px solid;
 			}
 
-			.complete {
-				background-color: #70A204;
-			}
-			.incomplete {
-				background-color: #CB0D0B;
-			}
-
 			.modal-body {
 				font-family: "Calibri";
 			}

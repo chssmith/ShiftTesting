@@ -122,7 +122,10 @@
 			@if(!empty($guardians[0]))
 				@foreach($guardians as $guardian)
 					<tr>
-						<td>{{ $guardian->display_name }}</td>
+						<td>
+							@if ($guardian->complete()) @include("partials.complete_badge") @else @include("partials.incomplete_badge") @endif
+							{{ $guardian->display_name }}
+						</td>
 						<td class="hidden-xs hidden-sm">
 							@if(!empty($guardian->guardian_type) && $guardian->guardian_type->id != "O")
 								{{$guardian->guardian_type->type}}

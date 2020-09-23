@@ -74,7 +74,7 @@
 </div>
 
 
-<h4> Contact Information </h4>
+<h4> Contact Information <span class="far fa-asterisk fa-xs" aria-hidden="true"></span></h4>
 <div class="row">
   <div class="col-xs-12">
     <div class="form-group">

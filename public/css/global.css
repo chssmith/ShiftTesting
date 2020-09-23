@@ -48,6 +48,14 @@ label {
   line-height: 18pt;
 }
 
+.complete {
+  background-color: #70A204;
+}
+
+.incomplete {
+  background-color: #CB0D0B;
+}
+
 .btn-toolbar.three {
   display: grid;
   grid-template-areas: "cancel new save";

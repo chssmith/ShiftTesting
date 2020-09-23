@@ -177,45 +177,47 @@
 				    @endfor
 					@endif
 
-					<div class="col-xs-12 col-md-12">
-		        <div>
-							<h4 style="display: inline-block"> I am in the U.S on <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></h4>
-						</div>
-		        <div>
-							<div class="pretty p-default p-round">
-				    		<input type="checkbox" name="GreenCard[]" class="foreignCard" value="GreenCard" id="GreenCard"
-											 @if((!empty($citizenship) && $citizenship->green_card) || (empty($citizenship) && !empty($ods_citizenship) && $ods_citizenship->green_card)) checked @endif />
-				    		<div class="state p-primary p-round">
-				    			<label>Permanent Residency</label>
-				    		</div>
-				    	</div>
-
-				    	<div class="pretty p-default p-round">
-				    		<input type="checkbox" class="foreignCard" name="GreenCard[]" value="Visa" id="Visa"
-									@if(!empty($visa) || (empty($citizenship) && !empty($ods_visa))) checked @endif />
-				    		<div class="state p-primary p-round">
-				    			<label>Visa</label>
-				    		</div>
-				    	</div>
-
-				    	<div class="row" id="Visa_span" @if(empty($visa)) hidden @endif>
-			        	<div style="padding-left:0; margin-bottom: 20px;" class="col-xs-12 col-md-6">
-									<label for="visa_type">
-					    			Visa Type
-									</label>
-							    <select name="VisaTypes" form="CitizenForm" class="form-control" id='visa_type'>
-										<option value="" hidden @if(empty($visa)) selected @endif> -- Select a Visa Type --</option>
-						    		@foreach($visa_types as $visa_type)
-			  							<option value="{{ $visa_type->code }}"
-												@if(GenericCitizenship::matches_expected($visa, "fkey_code", $visa_type->code) ||
-														GenericCitizenship::matches_expected($ods_visa, "fkey_code", $visa_type->code)) selected @endif>
-												{{ $visa_type->descr }}
-											</option>
-				  					@endforeach
-							    </select>
-								</div>
+					<div class="row">
+						<div class="col-xs-12 col-md-12 form-group">
+			        <div>
+								<h4 style="display: inline-block"> I am in the U.S on <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></h4>
 							</div>
-				    </div>
+			        <div>
+								<div class="pretty p-default p-round">
+					    		<input type="checkbox" name="GreenCard[]" class="foreignCard" value="GreenCard" id="GreenCard"
+												 @if((!empty($citizenship) && $citizenship->green_card) || (empty($citizenship) && !empty($ods_citizenship) && $ods_citizenship->green_card)) checked @endif />
+					    		<div class="state p-primary p-round">
+					    			<label>Permanent Residency</label>
+					    		</div>
+					    	</div>
+
+					    	<div class="pretty p-default p-round">
+					    		<input type="checkbox" class="foreignCard" name="GreenCard[]" value="Visa" id="Visa"
+										@if(!empty($visa) || (empty($citizenship) && !empty($ods_visa))) checked @endif />
+					    		<div class="state p-primary p-round">
+					    			<label>Visa</label>
+					    		</div>
+					    	</div>
+
+					    	<div class="row" id="Visa_span" @if(empty($visa)) hidden @endif>
+				        	<div style="padding-left:0; margin-bottom: 20px;" class="col-xs-12 col-md-6">
+										<label for="visa_type">
+						    			Visa Type
+										</label>
+								    <select name="VisaTypes" form="CitizenForm" class="form-control" id='visa_type'>
+											<option value="" hidden @if(empty($visa)) selected @endif> -- Select a Visa Type --</option>
+							    		@foreach($visa_types as $visa_type)
+				  							<option value="{{ $visa_type->code }}"
+													@if(GenericCitizenship::matches_expected($visa, "fkey_code", $visa_type->code) ||
+															GenericCitizenship::matches_expected($ods_visa, "fkey_code", $visa_type->code)) selected @endif>
+													{{ $visa_type->descr }}
+												</option>
+					  					@endforeach
+								    </select>
+									</div>
+								</div>
+					    </div>
+						</div>
 					</div>
 		    </div>
 				<div>
