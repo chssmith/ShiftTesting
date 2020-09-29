@@ -135,9 +135,9 @@
 						</td>
 						<td>
 							<div class="row-buttons">
-								<a href="{{action('StudentInformationController@individualGuardian', ['id'=>$guardian->id])}}" class="btn btn-primary"><span class="far fa-edit" aria-hidden="true"></span> Edit</a>
-								<button type="button" data-href="{{ action("StudentInformationController@getGuardianVerification", ["id" => $guardian->id]) }}" class="btn btn-info confirm" data-toggle="modal" data-target="#confirm_modal"> <span class="fas fa-check" aria-hidden="true"></span> Verify</button>
-								<button type="button" data-href="{{ action('StudentInformationController@deleteGuardian', ['id'=>$guardian->id]) }}" class="btn btn-danger delete" data-toggle="modal" data-target="#delete_confirm_modal"> <span class="far fa-trash-alt" aria-hidden="true"></span> Delete</button>
+								<a href="{{action('StudentForms\GuardianInformationController@guardianPersonalShow', ['id'=>$guardian->id])}}" class="btn btn-primary"><span class="far fa-edit" aria-hidden="true"></span> Edit</a>
+								<button type="button" data-href="{{ action("StudentForms\GuardianInformationController@getGuardianVerification", ["id" => $guardian->id]) }}" class="btn btn-info confirm" data-toggle="modal" data-target="#confirm_modal"> <span class="fas fa-check" aria-hidden="true"></span> Verify</button>
+								<button type="button" data-href="{{ action('StudentForms\GuardianInformationController@deleteGuardian', ['id'=>$guardian->id]) }}" class="btn btn-danger delete" data-toggle="modal" data-target="#delete_confirm_modal"> <span class="far fa-trash-alt" aria-hidden="true"></span> Delete</button>
 							</div>
 						</td>
 					</tr>
@@ -193,7 +193,7 @@
 		<div class="col-md-6 col-md-offset-6 col-xs-12">
 			<div class="btn-toolbar three">
 				<a class="btn btn-lg btn-success pull-right" href="{{action('StudentInformationController@index')}}"><span class="fas fa-save" aria-hidden="true"></span> <span>Save and Continue</span> </a>
-				<a class="btn btn-lg btn-info pull-right"    href="{{action('StudentInformationController@individualGuardian') }} "><span class="far fa-plus" aria-hidden="true"></span> <span>New Parent/Guardian</span></a>
+				<a class="btn btn-lg btn-info pull-right"    href="{{action('StudentForms\GuardianInformationController@guardianPersonalShow') }} "><span class="far fa-plus" aria-hidden="true"></span> <span>New Parent/Guardian</span></a>
     		<a class="btn btn-lg btn-danger pull-right"  href="{{action('StudentInformationController@index')}}"><span class="far fa-times" aria-hidden="true"></span> <span>Cancel</span></a>
 			</div>
 		</div>

@@ -40,7 +40,7 @@
 		use \App\GenericCitizenship;
 	@endphp
 	<form id="CitizenForm" method="POST"
-				action="{{ action("StudentInformationController@citizenInfoUpdate") }}">
+				action="{{ action("StudentForms\CitizenshipInformationController@store") }}">
 		{{ csrf_field() }}
 
 		<h3> Citizenship Information </h3>

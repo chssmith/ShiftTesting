@@ -17,7 +17,13 @@
 			}else{
 				target.removeClass('active');
 			}
-		})
+		});
+
+		$(".btn-missing").on("click", function () {
+			fetch("{{ action("StudentInformationController@getMissingMessages") }}")
+				.then(response => response.text())
+				.then(response => {document.querySelector("#missing_data .modal-body").innerHTML = response; console.log(response);});
+		});
 	</script>
 @endsection
 
@@ -81,6 +87,11 @@
 			.panel-body {
 				color: rgba(0,0,0,.6);
 			}
+
+			.modal-lg ul {
+				margin-left: 40px;
+				list-style-type: disc;
+			}
 		</style>
 @endsection
 
@@ -117,6 +128,22 @@
 
 	@include("partials.warning")
 
+	<div class="modal fade" id="missing_data" tabindex="-1" role="dialog" aria-labelledby="missing_data_title">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="confirm_submit_title">Missing Data</h4>
+				</div>
+				<div class="modal-body" style="font-size: 12pt;">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close"><span class="far fa-times"></span> Dismiss</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div id="accordion" class="panel panel-default">
  		<div class="panel-heading" role="tab" id="headingForms">
     	<h4 class="panel-title">
@@ -147,7 +174,7 @@
 	   		<div class="panel panel-default">
 			    <div class="list-group">
 			    	@foreach($sections as $section_name => $section_completion)
-		        	<a @if(!$submitted)href="{{$section_completion['link']}}"@endif class="list-group-item form-item">
+		        	<a @if(!$submitted && !$completed)href="{{$section_completion['link']}}"@endif class="list-group-item form-item">
 								<name>
 									{{$section_name}}
 								</name>
@@ -167,7 +194,8 @@
 			    </div>
 				</div>
 				<div style="text-align: right; margin: 20px 0px;">
-					<button class="btn btn-complete btn-lg" data-toggle="modal" data-target="#confirm_submit" @if($submitted) disabled @endif>Submit</a>
+					<button type="button" class="btn btn-primary btn-missing btn-lg " data-toggle="modal" data-target="#missing_data">Check Form</button>
+					<button class="btn btn-complete btn-lg" data-toggle="modal" data-target="#confirm_submit" @if($submitted || $completed) disabled @endif>Submit</button>
 				</div>
 			</div>
 		</div>

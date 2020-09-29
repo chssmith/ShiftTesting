@@ -35,7 +35,7 @@
 
 @section("content")
 	<form id="AddressForm" method="POST"
-     	  action="{{ action("StudentInformationController@addressInfoUpdate") }}">
+     	  action="{{ action("StudentForms\AddressInformationController@store") }}">
 		{{ csrf_field() }}
 
 		<h4> Home Address </h4>

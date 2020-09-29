@@ -40,7 +40,7 @@
 @endsection
 
 @section("content")
-	<form id="AllergyInfo" method="POST" action="{{ action("StudentInformationController@allergyInfoUpdate") }}">
+	<form id="AllergyInfo" method="POST" action="{{ action("StudentForms\AllergyInformationController@store") }}">
 		{{ csrf_field() }}
 
 		<div class="row">

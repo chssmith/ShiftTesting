@@ -20,7 +20,7 @@
 
 	</div>
 	<form id="AddressForm" method="POST"
-		action="{{ action('StudentInformationController@missingPersonContactUpdate') }}">
+		action="{{ action('StudentForms\MissingPersonController@store') }}">
 		{{ csrf_field() }}
 
 		<div class="row">

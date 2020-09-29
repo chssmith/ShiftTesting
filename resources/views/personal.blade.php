@@ -20,7 +20,7 @@
 
 @section("content")
 	<form id="PersonalInfoForm" method="POST"
-     	  	action="{{ action("StudentInformationController@personalInfoUpdate") }}">
+     	  	action="{{ action("StudentForms\PersonalInformationController@store") }}">
 		{{ @csrf_field() }}
 
 		<div class="row">

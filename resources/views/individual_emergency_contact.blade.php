@@ -20,7 +20,7 @@
 	</div>
 
 	<form id="emergencyForm" method="POST"
-			  action="{{ action('StudentInformationController@emergencyContactUpdate', ['id'=>$id]) }}">
+			  action="{{ action('StudentForms\EmergencyContactController@storeEmergencyContact', ['id'=>$id]) }}">
 		{{ csrf_field() }}
 		<h3> Emergency Contact </h3>
 

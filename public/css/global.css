@@ -112,7 +112,7 @@ label {
 .btn-complete.disabled,
 .btn-complete[disabled] {
   color: #FFFFFF;
-  background-color: #649103;
+  background-color: var(--green);
   *background-color: #003bb3;
 }
 .far.fa-asterisk {
