@@ -78,8 +78,7 @@ class PersonalInformationController extends SectionController
 			$new_race->save();
 		}
 
-		$personal_completed = !empty($student->first_name) && !empty($student->last_name) &&
-													!empty($student->fkey_marital_status) && !is_null($student->fkey_military_id) &&
+		$personal_completed = !empty($student->fkey_marital_status) && !is_null($student->fkey_military_id) &&
 													!is_null($student->ethnics) && !empty($races) &&
 													!(empty($cell_phone->PhoneNumber) && empty($home_phone->PhoneNumber));
 
