@@ -111,6 +111,9 @@
 
 
 		<h3> Contact Information <span class="far fa-asterisk fa-xs" aria-hidden="true"></span></h3>
+		<p style="font-size: 12pt">
+			You must complete at least one of the following contact information fields.
+		</p>
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="form-group">
