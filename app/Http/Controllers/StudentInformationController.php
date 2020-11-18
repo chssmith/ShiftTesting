@@ -112,6 +112,7 @@ class StudentInformationController extends Controller
 		$user          = RCAuth::user();
 
 		$student->non_emergency = !empty($request->non_emergency);
+		$student->photo_consent = $request->has("photo_consent");
 		$student->save();
 
 		$completed_sections->non_emergency_contact = 1;
