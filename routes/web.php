@@ -57,12 +57,12 @@ Route::middleware('force_login')->get('/', function(){
 });
 
 Route::prefix("admin")->middleware("rsi_admin")->group( function () {
-	Route::get('/', 'AdminController@index');
-	Route::get('changes', 'AdminController@changedStudents');
-	Route::get('parents', 'AdminController@changedParentInfo');
+	Route::get ('/', 'AdminController@index');
+	Route::get ('changes', 'AdminController@changedStudents');
+	Route::get ('parents', 'AdminController@changedParentInfo');
 	Route::post('completed/students', "AdminController@markStudentsProcessed");
 	Route::post('completed/parents', "AdminController@markParentsProcessed");
-
+	Route::post('lookup', "AdminController@lookupMissingInfo");
 	// Route::get("academic_achievement/export", "AdminController@exportAcademicAchievementCSV"); - Deprecated
 });
 
@@ -106,37 +106,69 @@ Route::prefix("academic_achievement")->group( function () {
 });
 
 Route::get('/', 'StudentInformationController@index');
-Route::get('personal_info', 'StudentInformationController@personalInfo');
-Route::get('address_info', 'StudentInformationController@addressInfo');
-Route::get('residence_info', 'StudentInformationController@residenceInfo');
-Route::get('medical_info', 'StudentInformationController@medicalInfo');
-Route::get('allergy_info', 'StudentInformationController@allergyInfo');
-Route::get('non_emergency', 'StudentInformationController@nonEmergency');
-Route::get('independent_student', 'StudentInformationController@independentStudent');
-Route::get('info_release/{id?}', 'StudentInformationController@infoRelease');
-Route::get('citizen_info', 'StudentInformationController@citizenInfo');
-Route::get('parent_info', 'StudentInformationController@parentAndGuardianInfo');
-Route::get('individual_guardian/{id?}', 'StudentInformationController@individualGuardian');
-Route::get('emergency_contact', 'StudentInformationController@emergencyContact');
-Route::get('emergency_contact/edit/{id?}', 'StudentInformationController@individualEmergencyContact');
-Route::get('emergency_contact/double_check', 'StudentInformationController@emergencyDoubleCheck');
-Route::get('missing_person', 'StudentInformationController@missingPersonContact');
-Route::get('employement_info/{id?}', 'StudentInformationController@employmentInfo');
-Route::delete('delete_contact/{id}', 'StudentInformationController@deleteContact');
-Route::delete('guardian/{id}', 'StudentInformationController@deleteGuardian');
-Route::get('confirmation', 'StudentInformationController@confirmation');
 
-Route::post('personal_info/update', 'StudentInformationController@personalInfoUpdate');
-Route::post('address_info/update', 'StudentInformationController@addressInfoUpdate');
-Route::post('residence_info/update', 'StudentInformationController@residenceInfoUpdate');
-Route::post('medical_info/update', 'StudentInformationController@medicalInfoUpdate');
-Route::post('allergy_info/update', 'StudentInformationController@allergyInfoUpdate');
+Route::prefix("personal_info")->group(function () {
+	Route::get ('/', 'StudentForms\PersonalInformationController@show');
+	Route::post('/', 'StudentForms\PersonalInformationController@store');
+});
+
+Route::prefix("address_info")->group(function () {
+	Route::get ('/', 'StudentForms\AddressInformationController@show');
+	Route::post('/', 'StudentForms\AddressInformationController@store');
+});
+
+Route::prefix("residence_info")->group(function () {
+	Route::get ('/', 'StudentForms\ResidenceInformationController@show');
+	Route::post('/', 'StudentForms\ResidenceInformationController@store');
+});
+
+Route::prefix("citizen_info")->group(function () {
+	Route::get ('/', 'StudentForms\CitizenshipInformationController@show');
+	Route::post('/', 'StudentForms\CitizenshipInformationController@store');
+});
+
+Route::prefix("allergy_info")->group(function () {
+	Route::get ('/', 'StudentForms\AllergyInformationController@show');
+	Route::post('/', 'StudentForms\AllergyInformationController@store');
+});
+
+Route::prefix("medical_info")->group(function () {
+	Route::get ('/', 'StudentForms\MedicalInformationController@show');
+	Route::post('/', 'StudentForms\MedicalInformationController@store');
+});
+
+Route::prefix("missing_person")->group(function () {
+	Route::get ('/', 'StudentForms\MissingPersonController@show');
+	Route::post('/', 'StudentForms\MissingPersonController@store');
+});
+
+Route::prefix("emergency_contact")->group(function () {
+	Route::get ('/', 'StudentForms\EmergencyContactController@show');
+	Route::post('/', 'StudentForms\EmergencyContactController@store');
+
+	Route::get ('/edit/{id?}', 'StudentForms\EmergencyContactController@showEmergencyContact');
+	Route::post('/edit/{id?}', 'StudentForms\EmergencyContactController@storeEmergencyContact');
+	Route::delete('/edit/{id}', 'StudentForms\EmergencyContactController@deleteContact');
+
+	Route::get ('/double_check', 'StudentForms\EmergencyContactController@emergencyDoubleCheck');
+});
+
+Route::get ('non_emergency',        'StudentInformationController@nonEmergency');
 Route::post('non_emergency/update', 'StudentInformationController@nonEmergencyUpdate');
+
+Route::get ('independent_student',        'StudentInformationController@independentStudent');
 Route::post('independent_student/update', 'StudentInformationController@independentStudentUpdate');
-Route::post('info_release/update/{id}', 'StudentInformationController@infoReleaseUpdate');
-Route::post('citizen_info/update', 'StudentInformationController@citizenInfoUpdate');
-Route::post('guardian/update/{id?}', 'StudentInformationController@parentAndGuardianInfoUpdate');
-Route::post('emergency_contact/update/{id?}', 'StudentInformationController@emergencyContactUpdate');
-Route::post('missing_person/update', 'StudentInformationController@missingPersonContactUpdate');
-Route::post('employment/update/{id?}', 'StudentInformationController@employmentInfoUpdate');
+
+route::prefix("guardians")->group(function () {
+	Route::get   ("/", "StudentForms\GuardianInformationController@show");
+	Route::get   ("/{id}/verify", "StudentForms\GuardianInformationController@getGuardianVerification");
+	Route::delete("/{id?}", "StudentForms\GuardianInformationController@deleteGuardian");
+
+	Route::get ("/personal/{id?}", "StudentForms\GuardianInformationController@guardianPersonalShow");
+	Route::post("/personal/{id?}", "StudentForms\GuardianInformationController@guardianPersonalStore");
+
+	Route::get ("/employment/{id?}", "StudentForms\GuardianInformationController@guardianEmploymentShow");
+	Route::post("/employment/{id?}", "StudentForms\GuardianInformationController@guardianEmploymentStore");
+});
+Route::get ('missing',             'StudentInformationController@getMissingMessages');
 Route::post('confirmation/update', 'StudentInformationController@confirmationUpdate');

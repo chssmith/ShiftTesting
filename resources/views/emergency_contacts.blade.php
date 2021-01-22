@@ -60,8 +60,8 @@
 								<td class="hidden-sm hidden-xs">{{$contact->evening_phone}}</td>
 								<td class="hidden-sm hidden-xs">{{$contact->cell_phone}}</td>
 								<td>
-									<a href="{{action('StudentInformationController@individualEmergencyContact', ['id'=>$contact->id])}}" class="btn btn-primary btn-lg"><span class="far fa-edit fa-fw" aria-hidden="true"></span> <span class="hidden-sm hidden-xs">Edit</span></a>
-									<button type="button" data-toggle="modal" data-target="#delete_confirmation" data-href="{{action('StudentInformationController@deleteContact', ['id'=>$contact->id])}}" class="btn btn-danger btn-lg delete_button"> <span class="far fa-trash-alt fa-fw" aria-hidden="true"></span> <span class="hidden-sm hidden-xs">Delete</span></a>
+									<a href="{{action('StudentForms\EmergencyContactController@showEmergencyContact', ['id'=>$contact->id])}}" class="btn btn-primary btn-lg"><span class="far fa-edit fa-fw" aria-hidden="true"></span> <span class="hidden-sm hidden-xs">Edit</span></a>
+									<button type="button" data-toggle="modal" data-target="#delete_confirmation" data-href="{{action('StudentForms\EmergencyContactController@deleteContact', ['id'=>$contact->id])}}" class="btn btn-danger btn-lg delete_button"> <span class="far fa-trash-alt fa-fw" aria-hidden="true"></span> <span class="hidden-sm hidden-xs">Delete</span></a>
 								</td>
 							</tr>
 						@endforeach
@@ -102,8 +102,8 @@
 		<div class="col-md-6 col-md-offset-6 col-sm-12">
 			<div class="btn-toolbar three">
 				<a href="{{action('StudentInformationController@index')}}" class="btn btn-lg btn-danger"> <span class="far fa-times" aria-hidden="true"></span> Cancel </a>
-				<a href="{{action('StudentInformationController@individualEmergencyContact')}}" class="btn btn-lg btn-info"> <span class="far fa-plus" aria-hidden="true"></span> New Contact </a>
-				<a href="{{action('StudentInformationController@emergencyDoubleCheck')}}" class="btn btn-lg btn-success"> <span class="fas fa-save" aria-hidden="true"></span> Save and Continue </a>
+				<a href="{{action('StudentForms\EmergencyContactController@showEmergencyContact')}}" class="btn btn-lg btn-info"> <span class="far fa-plus" aria-hidden="true"></span> New Contact </a>
+				<a href="{{action('StudentForms\EmergencyContactController@emergencyDoubleCheck')}}" class="btn btn-lg btn-success"> <span class="fas fa-save" aria-hidden="true"></span> Save and Continue </a>
 			</div>
 		</div>
 	</div>

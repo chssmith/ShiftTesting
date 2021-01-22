@@ -24,7 +24,8 @@
 			<label for="daytime_phone">
 				Daytime Phone
 			</label>
-			<input type="tel" class="form-control" name="daytime_phone" id="daytime_phone" pattern="^(\(?\+?[0-9]*\)?)?[0-9_\- \(\)]*$" @if(!empty($contact)) value="{{$contact->day_phone}}" @endif>
+			<input type="tel" class="form-control" name="daytime_phone" id="daytime_phone" placeholder="(XXX)XXX-XXXX or +XXXXX..."
+						 pattern="(\(?\d{3}\)?\s*\d{3}\s*-?\s*\d{4})|(\+\d+)" @if(!empty($contact)) value="{{$contact->day_phone}}" @endif />
 		</div>
 	</div>
 
@@ -33,7 +34,8 @@
 			<label for="evening_phone">
 				Evening Phone
 			</label>
-			<input type="tel" class="form-control" name="evening_phone" id="evening_phone" pattern="^(\(?\+?[0-9]*\)?)?[0-9_\- \(\)]*$" @if(!empty($contact)) value="{{$contact->evening_phone}}" @endif>
+			<input type="tel" class="form-control" name="evening_phone" id="evening_phone" placeholder="(XXX)XXX-XXXX or +XXXXX..."
+						 pattern="(\(?\d{3}\)?\s*\d{3}\s*-?\s*\d{4})|(\+\d+)" @if(!empty($contact)) value="{{$contact->evening_phone}}" @endif />
 		</div>
 	</div>
 
@@ -42,7 +44,8 @@
 			<label for="cell_phone">
 				Cell Phone
 			</label>
-			<input type="tel" class="form-control" name="cell_phone" id="cell_phone" pattern="^(\(?\+?[0-9]*\)?)?[0-9_\- \(\)]*$" @if(!empty($contact)) value="{{$contact->cell_phone}}" @endif>
+			<input type="tel" class="form-control" name="cell_phone" id="cell_phone" placeholder="(XXX)XXX-XXXX or +XXXXX..."
+						 pattern="(\(?\d{3}\)?\s*\d{3}\s*-?\s*\d{4})|(\+\d+)" @if(!empty($contact)) value="{{$contact->cell_phone}}" @endif />
 		</div>
 	</div>
 </div>

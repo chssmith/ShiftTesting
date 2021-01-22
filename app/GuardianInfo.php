@@ -62,7 +62,37 @@ class GuardianInfo extends Model
       return !empty($this->first_name) && !empty($this->last_name) &&
              !empty($this->fkey_marital_status) && !empty($this->relationship) &&
              (!empty($this->email) || !empty($this->home_phone) || !empty($this->cell_phone)) &&
-             !empty($this->fkey_CountryId) && !empty($this->fkey_education_id) && 
+             !empty($this->fkey_CountryId) && !empty($this->fkey_education_id) &&
              GenericAddress::fromGuardianInfo($this)->complete();
+    }
+
+    public function getMissingInformation () {
+      $messages = collect();
+      $name = "Guardian";
+
+      if (empty($this->first_name) || empty($this->last_name)) {
+        $messages[] = "Guardian name is missing";
+      } else {
+        $name = "$this->first_name $this->last_name";
+      }
+
+      if (empty($this->marital_status)) {
+        $messages[] = "$name is missing Marital Status";
+      }
+
+      if (empty($this->relationship)) {
+        $messages[] = "$name is missing relationship to student";
+      }
+
+      if (empty($this->email) && empty($this->home_phone) && empty($this->cell_phone)) {
+        $messages[] = "$name is missing at least one piece of contact information";
+      }
+
+      GenericAddress::fromGuardianInfo($this)->getMissingInformation()->reduce(function ($collector, $item) use ($name) {
+        $collector[] = sprintf("%s %s", $name, $item);
+        return $collector;
+      }, $messages);
+
+      return $messages;
     }
 }

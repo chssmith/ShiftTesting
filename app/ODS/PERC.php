@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PERC extends Model
 {
-    protected $table      = "Staging.dbo.cleared_percs";
+    protected $table      = "Staging.dbo.student_perc_notifications";
     protected $connection = "SAO";
 }

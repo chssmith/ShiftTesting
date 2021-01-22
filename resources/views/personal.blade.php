@@ -20,7 +20,7 @@
 
 @section("content")
 	<form id="PersonalInfoForm" method="POST"
-     	  	action="{{ action("StudentInformationController@personalInfoUpdate") }}">
+     	  	action="{{ action("StudentForms\PersonalInformationController@store") }}">
 		{{ @csrf_field() }}
 
 		<div class="row">
@@ -29,10 +29,13 @@
 					<label for="first_name">
 						First Name <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
-					<input type= "text" class="form-control" name="first_name" id="first_name"
-							@if (!empty($datamart_student)) value="{{$datamart_student->FirstName}}"
-	    				@elseif (!empty($student)) 	    value="{{$student->first_name}}"
-	    				@endif />
+					<div id="first_name">
+						@if (!empty($datamart_student))
+							{{$datamart_student->FirstName}}
+						@elseif (!empty($student))
+							{{$student->first_name}}
+						@endif
+					</div>
 				</div>
 			</div>
 
@@ -41,10 +44,13 @@
 					<label for="middle_name">
 			     	Middle Name
 					</label>
-					<input type= "text" class="form-control" name="middle_name" id="middle_name"
-							@if (!empty($datamart_student)) value="{{$datamart_student->MiddleName}}"
-							@elseif (!empty($student)) 	   value="{{$student->middle_name}}"
-							@endif />
+					<div id="middle_name">
+						@if (!empty($datamart_student))
+							{{$datamart_student->MiddleName}}
+						@elseif (!empty($student))
+							{{$student->middle_name}}
+						@endif
+					</div>
 				</div>
     	</div>
 		</div>
@@ -55,10 +61,13 @@
 					<label for="last_name">
 						Last Name <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
-					<input type= "text" class="form-control" name="last_name" id="last_name"
-			    		@if (!empty($datamart_student)) value="{{$datamart_student->LastName}}"
-			    		@elseif (!empty($student)) 	   value="{{$student->last_name}}"
-			    		@endif>
+					<div id="last_name">
+						@if (!empty($datamart_student))
+							{{$datamart_student->LastName}}
+						@elseif (!empty($student))
+							{{$student->last_name}}
+						@endif
+					</div>
 				</div>
       </div>
 
@@ -67,10 +76,13 @@
 					<label for="maiden_name">
 						Maiden Name
 					</label>
-					<input type= "text" class="form-control" name="maiden_name" id="maiden_name"
-			    		@if (!empty($datamart_student)) value="{{$datamart_student->MaidenName}}"
-			    		@elseif (!empty($student)) 	   value="{{$student->maiden_name}}"
-			    		@endif>
+					<div id="maiden_name">
+						@if (!empty($datamart_student))
+							{{$datamart_student->MaidenName}}
+						@elseif (!empty($student))
+							{{$student->maiden_name}}
+						@endif
+					</div>
 				</div>
       </div>
    	</div>

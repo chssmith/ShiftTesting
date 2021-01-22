@@ -13,7 +13,7 @@
 
 @section("content")
 	<form id="guardian_verification" method="POST"
-				action="{{ action("StudentInformationController@employmentInfoUpdate", ['id'=>$guardian->id]) }}">
+				action="{{ action("StudentForms\GuardianInformationController@guardianEmploymentStore", ['id'=>$guardian->id]) }}">
 		{{ csrf_field() }}
 
 		<h3> Employment info for {{$guardian->display_name}} </h3>

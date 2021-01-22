@@ -102,6 +102,18 @@ class AdminController extends Controller
 		 //return view('reports.student_report', compact('all_changed'));
 	}
 
+	public function lookupMissingInfo (Request $request) {
+		$request->validate([
+			'student' => "required|numeric"
+		]);
+
+		$student  = Students::find($request->student);
+		$sic      = new StudentInformationController;
+		$messages = $sic->getMissingMessages($student);
+
+		return view()->make("admin.missing_lookup", compact("messages", "student"));
+	}
+
 	public function changedParentInfo(){
 		set_time_limit(0);
 		$user = RCAuth::user();

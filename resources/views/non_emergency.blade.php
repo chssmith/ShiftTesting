@@ -18,7 +18,11 @@
 
 		.panel-body {
 			font-size: 24px;
-			line-height: 18pt;
+			line-height: 22pt;
+		}
+
+		hr {
+			margin-bottom: 20px;
 		}
 	</style>
 @endsection
@@ -48,6 +52,49 @@
 						<input type="checkbox" name="non_emergency" value="non_emergency" id="non_emergency" @if($student->non_emergency || is_null($student->non_emergency)) checked @endif />
 							<div class="state p-primary">
 								<label>I wish to recieve these automated messaged</label>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+		<div class = "row">
+			<div class="col-xs-12">
+				<div class="panel">
+					<div class="panel-body">
+						<p>
+							Roanoke College occasionally takes photographs and audio/video
+							recordings of the campus, classrooms, and the general student
+							population at events, gatherings and daily routines. As a student at
+							Roanoke College, I understand that I may appear, either on purpose
+							or by chance, in these images and videos.
+						</p>
+
+						<p>
+							I grant Roanoke College permission to record or photograph me and
+							thereafter to use the photographs, video and audio recordings in
+							whole or in part without restriction anywhere, in any medium, for
+							any purpose and altered in any way.
+						</p>
+
+						<p>
+							I also release Roanoke College from all claims of liability
+							relating to the use of the photographs, video or audio recordings.
+						</p>
+
+						<p>
+							This Permissions and Rights Release shall be irrevocable and binding
+							upon my successors, legal representatives, and assigns and shall
+							accrue to the benefit of Roanoke College, its legal representatives,
+							and its assigns.
+						</p>
+					</div>
+				</div>
+     		<div>
+					<div class="pretty p-default">
+						<input type="checkbox" name="photo_consent" value="photo_consent" id="photo_consent" @if($student->photo_consent) checked @endif />
+							<div class="state p-primary">
+								<label>I allow Roanoke College permission to photograph or record me in any way</label>
 							</div>
 					</div>
 				</div>

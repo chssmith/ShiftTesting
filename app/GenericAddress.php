@@ -130,7 +130,7 @@ class GenericAddress {
     return $new_address;
   }
 
-  public function get_missing () {
+  public function getMissingInformation () {
     $messages = collect();
 
     if(empty($this->country_id)) {
@@ -140,16 +140,16 @@ class GenericAddress {
         $messages[] = "must have the first address line populated.";
       }
 
-      if (!empty($this->city)) {
+      if (empty($this->city)) {
         $messages[] = "must have a valid City chosen.";
       }
 
-      if (!empty($this->state)) {
-        $messages[] = "must have a valid City chosen.";
+      if (empty($this->state)) {
+        $messages[] = "must have a valid State chosen.";
       }
 
-      if (!empty($this->zip_code)) {
-        $messages[] = "must have a valid Zip Code chosen.";
+      if (empty($this->zip_code)) {
+        $messages[] = "must have a valid Zip Code entered.";
       }
     } else if (empty($this->international_address)) {
       $messages[] = "must have full mailing address entered.";

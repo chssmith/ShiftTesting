@@ -29,7 +29,7 @@
 
 @section("content")
 	<form id="guardian_verification" method="POST"
-				action="{{ action('StudentInformationController@parentAndGuardianInfoUpdate', ['id'=>$id]) }}">
+				action="{{ action('StudentForms\GuardianInformationController@guardianPersonalStore', ['id'=>$id]) }}">
 		{{ csrf_field() }}
 
 		<h3>Parent / Guardian Information</h3>
@@ -96,7 +96,7 @@
 						Relationship <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span>
 					</label>
 					<select name="relationship" id="relationship" class="form-control">
-						<option hidden>-- Please Select a Relationship Type --</option>
+						<option hidden></option>
 						@foreach($relationship_types as $relationship_type)
 							<option value="{{$relationship_type->id}}" @if(!empty($guardian) && $guardian->relationship == $relationship_type->id)selected @endif>{{$relationship_type->type}}</option>
 						@endforeach
@@ -110,7 +110,10 @@
 		</div>
 
 
-		<h3> Contact Information <span class="far fa-asterisk fa-xs fa-pull-right" aria-hidden="true"></span></h3>
+		<h3> Contact Information <span class="far fa-asterisk fa-xs" aria-hidden="true"></span></h3>
+		<p style="font-size: 12pt">
+			You must complete at least one of the following contact information fields.
+		</p>
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="form-group">

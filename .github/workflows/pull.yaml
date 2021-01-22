@@ -1,0 +1,15 @@
+name: Pull self on AWS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  pull:
+    runs-on: [self-hosted, aws-laravel-5]
+    steps:
+      - uses: actions/checkout@v1
+      - uses: roanokecollege/RoanokeCollegeActions/diorite@master
+        with:
+          directory: /var/www/html/aepweb

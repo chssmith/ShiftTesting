@@ -45,7 +45,7 @@
 
 @section("content")
 	<form id="MedicalInfo" method="POST"
-		action="{{ action("StudentInformationController@medicalInfoUpdate") }}">
+		action="{{ action("StudentForms\MedicalInformationController@store") }}">
 		{{ csrf_field() }}
 
 		<div class="row">

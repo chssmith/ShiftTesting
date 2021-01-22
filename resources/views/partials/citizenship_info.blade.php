@@ -1,5 +1,5 @@
 <div class="col-xs-12 col-sm-6">
-  <h4>Country {{$foreign_count}}</h4>
+  <h4>Country {{$foreign_count}} @if($foreign_count == 1)<span class="far fa-asterisk fa-xs"></span>@endif</h4>
 
   <div class="form-group">
     <label for="CitizenshipCountry{{ $foreign_count }}">
