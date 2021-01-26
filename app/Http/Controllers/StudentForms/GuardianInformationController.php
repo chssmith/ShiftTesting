@@ -160,7 +160,7 @@ class GuardianInformationController extends SectionController
 
 		self::completedParentInfo ($student, $completed_sections);
 
-		return redirect()->action('StudentForms\GuardianInformationControllerr@show');
+		return redirect()->action('StudentForms\GuardianInformationController@show');
 	}
 
   public static function completedParentInfo (Students $student, CompletedSections $completed_sections){
