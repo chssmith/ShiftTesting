@@ -40,15 +40,13 @@ class StudentInformationController extends Controller
 		$returning_student = !empty($student->admit_status) && $student->admit_status->X_APP_NEW != "NEW";
 		$student_type      = ((!$returning_student && !empty($student->admit_status)) ? $student->admit_status->X_APP_ADMIT_STATUS : "other");
 
-		$form_perc         = sprintf("RSI%s", \Carbon\Carbon::now()->format("y"));
-
 		$percs             = PERC::where("rcid", $student->RCID)->get();
 		$ods_percs         = \App\ODS\PERC::where("fkey_rcid", $student->RCID)->get();
 		$cleared_percs     = $ods_percs->filter(function ($item) { return !empty($item->end_date); });
 		$open_percs        = $ods_percs->filter(function ($item) { return empty($item->end_date); })->pluck("perc")->unique();
 
-		$submitted         = !$percs->where("perc", $form_perc)->isEmpty() && $ods_percs->where("perc", $form_perc)->isEmpty();
-		$completed         = !$cleared_percs->where("perc", $form_perc)->isEmpty();
+		$completed         = !$open_percs->reduce(function ($found, $item) { return $found || preg_match("/RSI[0-9]+/", $item); }, false);
+		$submitted         = $percs->reduce(function ($found, $item) { return $found || preg_match("/RSI[0-9]+/", $item); }, false) && !$completed;
 
 		$percs             = $percs->pluck("perc")->union($cleared_percs->pluck("perc"))->unique();
 
@@ -64,10 +62,8 @@ class StudentInformationController extends Controller
 		$sections['Independent Student']     	   = ['status' => $completed_sections->independent_student,			        'link' => action("StudentInformationController@independentStudent")];
 		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => action("StudentForms\GuardianInformationController@show")];
 
-		$codes = $ods_percs->pluck("perc");
-
-		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("title")->get()->filter(function ($item) use ($student_type, $codes) {
-			return $item->$student_type && ($codes->contains($item->getPerc()));
+		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("title")->get()->filter(function ($item) use ($open_percs, $student_type) {
+			return $item->$student_type && $open_percs->reduce(function ($found, $value) use ($item) { return $found || preg_match($item->getPercRegex(), $value); }, false);
 		});
 
 		return view('index', compact('sections', "student", "completed_sections", "additional_forms", "percs", "submitted", "completed"));
@@ -151,6 +147,32 @@ class StudentInformationController extends Controller
 	// END Independent Student FORMS
 	//*************************************************************************************************************
 
+
+	private function completeYearlyAdditionalForm (Request $request, Students $student, $student_field, $perc_expression) {
+		$student->$student_field = $request->has("acknowledge");
+		$student->updated_by     = \RCAuth::user()->rcid;
+		$student->save();
+
+		$ods_percs = \App\ODS\PERC::where("fkey_rcid", $student->RCID)->where("perc", "LIKE", sprintf("%s%%", $perc_expression))->get()->pluck("perc");
+
+		foreach ($ods_percs as $pending_perc) {
+			$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => $pending_perc],
+															 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
+															 	'updated_by' => \RCAuth::user()->rcid]);
+			if ($student->$student_field) {
+				$perc->save();
+			} else if (!empty($perc->id)) {
+				$perc->deleted_by = \RCAuth::user()->rcid;
+				$perc->save();
+				$perc->delete();
+			}
+
+		}
+	}
+
+	//*************************************************************************************************************
+	//	BEGIN Financial Acceptance
+	//*************************************************************************************************************
 	// Pre :
 	// Post: checks that the emergency forms are completed
 	public function showFinancialAcceptance (Students $student) {
@@ -158,22 +180,7 @@ class StudentInformationController extends Controller
 	}
 
 	public function completeFinancialAcceptance (Request $request, Students $student) {
-		$student->financial_acceptance = $request->has("acknowledge");
-		$student->updated_by = \RCAuth::user()->rcid;
-		$student->save();
-
-		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('BFA%s', \Carbon\Carbon::now()->format("y"))],
-														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
-														 	'updated_by' => \RCAuth::user()->rcid]);
-
-		if ($student->financial_acceptance) {
-			$perc->save();
-		} else if (!empty($perc->id)) {
-			$perc->deleted_by = \RCAuth::user()->rcid;
-			$perc->save();
-			$perc->delete();
-		}
-
+		$this->completeYearlyAdditionalForm($request, $student, "financial_acceptance", "BFA");
 		return redirect()->action("StudentInformationController@index");
 	}
 
@@ -189,28 +196,10 @@ class StudentInformationController extends Controller
 	}
 
 	public function completeAcademicIntegrityStatement (Request $request, Students $student) {
-		$student->ai_and_student_conduct = $request->has("acknowledge");
-		$student->updated_by             = \RCAuth::user()->rcid;
-		$student->save();
-
-		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('AIC%s', \Carbon\Carbon::now()->format("y"))],
-														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
-															'updated_by' => \RCAuth::user()->rcid]);
-
-		if ($student->ai_and_student_conduct) {
-			$perc->save();
-		} else if (!empty($perc->id)) {
-			$perc->deleted_by = \RCAuth::user()->rcid;
-			$perc->save();
-			$perc->delete();
-		}
-
+		$this->completeYearlyAdditionalForm($request, $student, "ai_and_student_conduct", "AIC");
 		return redirect()->action("StudentInformationController@index");
 	}
 
-	private function checkCompletion (Request $request, Students $student, CompletedSections $completed_sections) {
-		return true;
-	}
 	//*************************************************************************************************************
 	// END Academic Integrity & Student Conduct
 	//*************************************************************************************************************
@@ -223,22 +212,7 @@ class StudentInformationController extends Controller
 	}
 
 	public function completeTitleIXAcceptance (Request $request, Students $student) {
-		$student->title_ix_acceptance = $request->has("acknowledge");
-		$student->updated_by = \RCAuth::user()->rcid;
-		$student->save();
-
-		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('SMP%s', \Carbon\Carbon::now()->format("y"))],
-														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
-														 	'updated_by' => \RCAuth::user()->rcid]);
-
-		if ($student->title_ix_acceptance) {
-			$perc->save();
-		} else if (!empty($perc->id)) {
-			$perc->deleted_by = \RCAuth::user()->rcid;
-			$perc->save();
-			$perc->delete();
-		}
-
+		$this->completeYearlyAdditionalForm($request, $student, "title_ix_acceptance", "SMP");
 		return redirect()->action("StudentInformationController@index");
 	}
 
@@ -367,7 +341,6 @@ class StudentInformationController extends Controller
 				$message = "Missing information";
 			}
 
-			//TODO: Send Email
 			try {
 				$vpb_student = \App\User::find($student->RCID);
 				\App\EmailQueue::sendEmail($vpb_student->CampusEmail, "Student Information Form has been submitted", view()->make("email.success")->render());
