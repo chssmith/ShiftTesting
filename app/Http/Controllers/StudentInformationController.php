@@ -40,15 +40,13 @@ class StudentInformationController extends Controller
 		$returning_student = !empty($student->admit_status) && $student->admit_status->X_APP_NEW != "NEW";
 		$student_type      = ((!$returning_student && !empty($student->admit_status)) ? $student->admit_status->X_APP_ADMIT_STATUS : "other");
 
-		$form_perc         = sprintf("RSI%s", \Carbon\Carbon::now()->format("y"));
-
 		$percs             = PERC::where("rcid", $student->RCID)->get();
 		$ods_percs         = \App\ODS\PERC::where("fkey_rcid", $student->RCID)->get();
 		$cleared_percs     = $ods_percs->filter(function ($item) { return !empty($item->end_date); });
 		$open_percs        = $ods_percs->filter(function ($item) { return empty($item->end_date); })->pluck("perc")->unique();
 
-		$submitted         = !$percs->where("perc", $form_perc)->isEmpty() && $ods_percs->where("perc", $form_perc)->isEmpty();
-		$completed         = !$cleared_percs->where("perc", $form_perc)->isEmpty();
+		$completed         = !$open_percs->reduce(function ($found, $item) { return $found || preg_match("/RSI[0-9]+/", $item); }, false);
+		$submitted         = $percs->reduce(function ($found, $item) { return $found || preg_match("/RSI[0-9]+/", $item); }, false) && !$completed;
 
 		$percs             = $percs->pluck("perc")->union($cleared_percs->pluck("perc"))->unique();
 
@@ -64,10 +62,8 @@ class StudentInformationController extends Controller
 		$sections['Independent Student']     	   = ['status' => $completed_sections->independent_student,			        'link' => action("StudentInformationController@independentStudent")];
 		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => action("StudentForms\GuardianInformationController@show")];
 
-		$codes = $ods_percs->pluck("perc");
-
-		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("title")->get()->filter(function ($item) use ($student_type, $codes) {
-			return $item->$student_type && ($codes->contains($item->getPerc()));
+		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("title")->get()->filter(function ($item) use ($open_percs, $student_type) {
+			return $item->$student_type && $open_percs->reduce(function ($found, $value) use ($item) { return $found || preg_match($item->getPercRegex(), $value); }, false);
 		});
 
 		return view('index', compact('sections', "student", "completed_sections", "additional_forms", "percs", "submitted", "completed"));

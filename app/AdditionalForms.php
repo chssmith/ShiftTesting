@@ -22,4 +22,9 @@ class AdditionalForms extends Model
       }
       return $code;
     }
+
+    public function getPercRegex () {
+      return sprintf("/%s%s/", $this->perc_prefix, ($this->include_year ? "[0-9]+" : ""));
+
+    }
 }
