@@ -49,11 +49,16 @@ label {
 }
 
 .complete {
-  background-color: #70A204;
+  background-color: var(--green);;
 }
 
 .incomplete {
   background-color: #CB0D0B;
+}
+
+.submitted {
+  background-color: var(--yellow);
+  color: var(--dark-grey);
 }
 
 .btn-toolbar.three {

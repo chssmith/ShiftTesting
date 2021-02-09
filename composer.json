@@ -12,8 +12,7 @@
         "grofgraf/laravel-pdf-merger": "^1.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "~1.0",
-        "rcwebdevelopers/FormBuilder": "*",
-        "rcwebdevelopers/authentication": "*",
+        "roanokecollege/authentication": "*",
         "rcwebdevelopers/mustangbuilder": "*",
         "rollbar/rollbar-laravel": "2.*"
     },
@@ -65,13 +64,11 @@
     "repositories":[
         {
             "type": "vcs",
-            "url": "git@bitbucket.org:rcwebdevelopers/authentication.git"
-        },{
+            "url": "git@github.com:roanokecollege/authentication.git"
+        },
+        {
             "type": "vcs",
-            "url": "git@bitbucket.org:rcwebdevelopers/form-builder.git"
-        },{
-            "type": "vcs",
-            "url": "git@bitbucket.org:rcwebdevelopers/mustangbuilder.git"
+            "url": "git@github.com:roanokecollege/mustang_builder.git"
         }
     ]
 }
