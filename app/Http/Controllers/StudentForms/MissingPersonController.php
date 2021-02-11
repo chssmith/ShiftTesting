@@ -46,7 +46,7 @@ class MissingPersonController extends SectionController
 	}
 
   public function getMissingInformation (Students $student) {
-    $missing_contact = EmergencyContact::where("student_rcid", $student->RCID)->where("missing_person", 1)->first();
+    $missing_contact = EmergencyContact::where("student_rcid", $student->RCID)->where("missing_person", 1)->firstOrNew([]);
 
     $scope = [
       '$missing_contact' => $missing_contact
