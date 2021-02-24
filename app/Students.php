@@ -78,9 +78,9 @@ class Students extends Model
 
     public function getDatamartAddressAttribute ($value) {
       $billing = $this->datamart_billing_address;
-      if(!empty($billing)) $billing = $billing->load("state");
+      if(!empty($billing) && !empty($billing->fkey_StateId) && empty($billing->state)) $billing = $billing->load("state");
       $local   = $this->datamart_local_address;
-      if(!empty($local)) $local = $local->load("state");
+      if(!empty($local) && !empty($local->fkey_StateId) && empty($local->state)) $local = $local->load("state");
     	return collect(['Home'=>GenericAddress::fromMixedAddressForReport($this->datamart_home_address),
                       'Billing'=>GenericAddress::fromMixedAddressForReport($billing),
                       'Local'=>GenericAddress::fromMixedAddressForReport($local)]);
@@ -124,8 +124,7 @@ class Students extends Model
 
     public function scopeFinished ($query) {
       $query->whereHas("local_percs", function ($query) {
-            $year = \Carbon\Carbon::now()->format("y");
-            $query->where("perc", "LIKE", "%RSI" . $year . "%")->withTrashed();
+            $query->where("perc", "LIKE", "%RSI%")->withTrashed();
           });
     }
 

@@ -310,13 +310,13 @@
 							@endif
 						</td>
 						<td>
-							@if(!empty($address->country_details))
-								{{ $address->country_details->CountryCode }}
+							@if(!empty($address->country))
+								{{ $address->country->CountryCode }}
 							@endif
 						</td>
 						<td>
 
-							@if(!empty($address) && (empty($ods_address) || $ods_address->country_id != $address->country_details->CountryCode))
+							@if(!empty($address->country) && (empty($ods_address) || $ods_address->country_id != $address->country->CountryCode))
 								Y
 							@endif
 						</td>
