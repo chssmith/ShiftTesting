@@ -88,11 +88,13 @@ class AdminController extends Controller
 		for($index = 1; $index < $count; $index++){
 			$merger->addPathToPDF(\Storage::path('/pdfs/page'.$index.".pdf"), 'all', 'P');
 		}
-
+		try {
 			$merger->setFileName('StudentChanges.pdf');
 			$merger->merge();
 			$merger->inline();
-
+		} catch (\Exception $e) {
+			return "No records to export";
+		}
 
 		//Switch to PDF MERGER
 
