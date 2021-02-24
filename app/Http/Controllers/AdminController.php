@@ -67,9 +67,9 @@ class AdminController extends Controller
 
 		Students::finished()->where('student_processed', "0")->update(["student_printed" => 1, 'updated_by' => $user->rcid]);
 
-		$all_changed = Students::with(['visa', 'home_address', 'billing_address', 'local_address', 'ods_student.visa', 'ods_citizenship'])->
+		$all_changed = Students::with(['visa', 'home_address.country_details', 'billing_address.country_details', 'local_address.country_details', 'ods_student.visa', 'ods_citizenship',
+																	 'datamart_home_address' => function ($query) {	$query->with(["state", "country"]);	}, 'datamart_local_address' => function ($query) {	$query->with(["state", "country"]);	}, 'datamart_billing_address.state' => function ($query) {	$query->with(["state", "country"]);	}])->
 														 finished()->where("student_processed", "0")->get()->keyBy("RCID");
-
 		$storage_path = storage_path();
 
 		$count = 1;
@@ -95,7 +95,6 @@ class AdminController extends Controller
 		} catch (\Exception $e) {
 			return "No records to export";
 		}
-
 
 		//Switch to PDF MERGER
 

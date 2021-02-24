@@ -63,7 +63,7 @@ class StudentInformationController extends Controller
 		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => action("StudentForms\GuardianInformationController@show")];
 
 		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("title")->get()->filter(function ($item) use ($open_percs, $student_type) {
-			return $item->$student_type && $open_percs->reduce(function ($found, $value) use ($item) { return $found || preg_match($item->getPercRegex(), $value); }, false);
+			return true || ($item->$student_type && $open_percs->reduce(function ($found, $value) use ($item) { return $found || preg_match($item->getPercRegex(), $value); }, false));
 		});
 
 		return view('index', compact('sections', "student", "completed_sections", "additional_forms", "percs", "submitted", "completed"));
