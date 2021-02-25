@@ -38,6 +38,7 @@ class StudentInformationController extends Controller
 		$student           = $student->load("admit_status");
 
 		$returning_student = !empty($student->admit_status) && $student->admit_status->X_APP_NEW != "NEW";
+		$year_postfix      = ($returning_student ? config("app.returning_student_year") : config("app.new_student_year"));
 		$student_type      = ((!$returning_student && !empty($student->admit_status)) ? $student->admit_status->X_APP_ADMIT_STATUS : "other");
 
 		$percs             = PERC::where("rcid", $student->RCID)->get();
@@ -45,8 +46,8 @@ class StudentInformationController extends Controller
 		$cleared_percs     = $ods_percs->filter(function ($item) { return !empty($item->end_date); });
 		$open_percs        = $ods_percs->filter(function ($item) { return empty($item->end_date); })->pluck("perc")->unique();
 
-		$completed         = !$open_percs->reduce(function ($found, $item) { return $found || preg_match("/RSI[0-9]+/", $item); }, false);
-		$submitted         = $percs->reduce(function ($found, $item) { return $found || preg_match("/RSI[0-9]+/", $item); }, false) && !$completed;
+		$completed         = !$open_percs->reduce(function ($found, $item) use ($year_postfix) { return $found || preg_match("/RSI$year_postfix/", $item); }, false);
+		$submitted         = $percs->reduce(function ($found, $item) use ($year_postfix) { return $found || preg_match("/RSI$year_postfix/", $item); }, false) && !$completed;
 
 		$percs             = $percs->pluck("perc")->union($cleared_percs->pluck("perc"))->unique();
 
@@ -62,8 +63,8 @@ class StudentInformationController extends Controller
 		$sections['Independent Student']     	   = ['status' => $completed_sections->independent_student,			        'link' => action("StudentInformationController@independentStudent")];
 		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => action("StudentForms\GuardianInformationController@show")];
 
-		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("title")->get()->filter(function ($item) use ($open_percs, $student_type) {
-			return true || ($item->$student_type && $open_percs->reduce(function ($found, $value) use ($item) { return $found || preg_match($item->getPercRegex(), $value); }, false));
+		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("title")->get()->filter(function ($item) use ($open_percs, $student_type, $year_postfix) {
+			return ($item->$student_type && $open_percs->reduce(function ($found, $value) use ($item, $year_postfix) { return $found || preg_match($item->getPercRegex($year_postfix), $value); }, false));
 		});
 
 		return view('index', compact('sections', "student", "completed_sections", "additional_forms", "percs", "submitted", "completed"));
@@ -152,8 +153,12 @@ class StudentInformationController extends Controller
 		$student->$student_field = $request->has("acknowledge");
 		$student->updated_by     = \RCAuth::user()->rcid;
 		$student->save();
+		$student->load("admit_status");
+		$returning_student = !empty($student->admit_status) && $student->admit_status->X_APP_NEW != "NEW";
 
-		$ods_percs = \App\ODS\PERC::where("fkey_rcid", $student->RCID)->where("perc", "LIKE", sprintf("%s%%", $perc_expression))->get()->pluck("perc");
+		$year_postfix = ($returning_student ? config("app.returning_student_year") : config("app.new_student_year"));
+
+		$ods_percs = \App\ODS\PERC::where("fkey_rcid", $student->RCID)->where("perc", "LIKE", sprintf("%s%s%%", $perc_expression, $year_postfix))->get()->pluck("perc");
 
 		foreach ($ods_percs as $pending_perc) {
 			$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => $pending_perc],
@@ -228,22 +233,7 @@ class StudentInformationController extends Controller
 	}
 
 	public function completeCovidForm (Request $request, Students $student) {
-		$student->covid_acceptance = $request->has("acknowledge");
-		$student->updated_by       = \RCAuth::user()->rcid;
-		$student->save();
-
-		$perc = PERC::firstOrNew(['rcid' => $student->RCID, 'perc' => sprintf('RCCCP')],
-														 ['created_by' => \RCAuth::user()->rcid, 'created_at' => \Carbon\Carbon::now(),
-														 	'updated_by' => \RCAuth::user()->rcid]);
-
-		if ($student->covid_acceptance) {
-			$perc->save();
-		} else if (!empty($perc->id)) {
-			$perc->deleted_by = \RCAuth::user()->rcid;
-			$perc->save();
-			$perc->delete();
-		}
-
+		$this->completeYearlyAdditionalForm($request, $student, "covid_acceptance", "RCP");
 		return redirect()->action("StudentInformationController@index");
 	}
 
@@ -323,7 +313,12 @@ class StudentInformationController extends Controller
 				$completed_sections->parent_and_guardian_information
 			);
 
-			$ods_percs = \App\ODS\PERC::where("fkey_rcid", $student->RCID)->whereNull("end_date")->where("perc", "LIKE", "%RSI%")->get()->pluck("perc");
+			$student->load("admit_status");
+			$returning_student = !empty($student->admit_status) && $student->admit_status->X_APP_NEW != "NEW";
+			//Force a single year check
+			$year_postfix = ($returning_student ? config("app.returning_student_year") : config("app.new_student_year"));
+
+			$ods_percs = \App\ODS\PERC::where("fkey_rcid", $student->RCID)->whereNull("end_date")->where("perc", "LIKE", "%RSI$year_postfix%")->get()->pluck("perc");
 
 			foreach($ods_percs as $code) {
 				$perc      = PERC::firstOrCreate(['rcid' => $student->RCID,
