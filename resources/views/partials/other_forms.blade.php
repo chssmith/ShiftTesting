@@ -14,7 +14,7 @@
         </badge>
       </a>
     @else
-      @include("partials.collapsing_panel", ["postfix" => $additional_form->getPerc(),
+      @include("partials.collapsing_panel", ["postfix" => $additional_form->id,
                                              "title" => $additional_form->title,
                                              "content" => $additional_form->accordion_text
                                             ])

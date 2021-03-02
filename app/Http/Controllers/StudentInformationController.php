@@ -63,8 +63,8 @@ class StudentInformationController extends Controller
 		$sections['Independent Student']     	   = ['status' => $completed_sections->independent_student,			        'link' => action("StudentInformationController@independentStudent")];
 		$sections['Parent/Guardian Information'] = ['status' => $completed_sections->parent_and_guardian_information, 'link' => action("StudentForms\GuardianInformationController@show")];
 
-		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("title")->get()->filter(function ($item) use ($open_percs, $student_type, $year_postfix) {
-			return ($item->$student_type && $open_percs->reduce(function ($found, $value) use ($item, $year_postfix) { return $found || preg_match($item->getPercRegex($year_postfix), $value); }, false));
+		$additional_forms = AdditionalForms::orderBy("due_date")->orderBy("position")->get()->filter(function ($item) use ($open_percs, $student_type, $year_postfix) {
+			return true || ($item->$student_type && $open_percs->reduce(function ($found, $value) use ($item, $year_postfix) { return $found || preg_match($item->getPercRegex($year_postfix), $value); }, false));
 		});
 
 		return view('index', compact('sections', "student", "completed_sections", "additional_forms", "percs", "submitted", "completed"));
