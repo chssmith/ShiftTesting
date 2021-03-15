@@ -32,19 +32,19 @@
       <p>
         Once you have registered for a session, it is difficult to make scheduling
         changes. Therefore, please be as certain as possible that the session you
-        select is the one you want to attend. Sessions begin filling up in February,
+        select is the one you want to attend. Sessions begin filling up in March,
         so register as early as possible and as accurately as possible.
       </p>
 
       <p>
-        If you have additional questions, please refer to the orientation website.
+        If you have additional questions, please refer to the <a href="https://www.roanoke.edu/orientation">https://www.roanoke.edu/orientation</a>.
       </p>
 
       <p>
         If a session is listed as "0 remaining," please register for another
         session AND email <a href="mailto:orientation@roanoke.edu">orientation@roanoke.edu</a>
-        to get on a waitlist if one of these sessions is your only option.  Session
-        spots will fill on a first come-first-served basis.  If spots become
+        to get on a waitlist.  Session
+        spots will fill on a first-come-first-served basis.  If spots become
         available students will be contacted through their RC email.
       </p>
     </div>

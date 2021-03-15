@@ -236,5 +236,6 @@ return [
         'PDFMerger' => GrofGraf\LaravelPDFMerger\Facades\PDFMergerFacade::class
 
     ],
-
+    'new_student_year' => env("NEW_STUDENT_YEAR", "00"),
+    'returning_student_year' => env("RETURNING_STUDENT_YEAR", "00"),
 ];

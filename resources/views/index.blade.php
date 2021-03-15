@@ -54,7 +54,7 @@
 				font-weight: bold;
 			}
 
-			#additional_forms a.list-group-item {
+			#additional_forms a.list-group-item, .accordian-panel-heading {
 				display: grid;
 				grid-template-areas: "title due-date badge";
 				grid-template-columns: 4fr 200px 95px;
