@@ -4,9 +4,12 @@ namespace App\Orientation;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sessions extends Model
 {
+    use SoftDeletes;
+
     protected $table = "orientation.sessions";
 
     protected $dates = ["start_date", "end_date"];
