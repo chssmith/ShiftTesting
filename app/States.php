@@ -11,7 +11,7 @@ class States extends Model
      *
      * @var  string
      */
-    protected $table      = 'dbo.States';
+    protected $table = 'dbo.States';
     protected $primaryKey = 'key_StateId';
     protected $connection = 'DataMart';
 }

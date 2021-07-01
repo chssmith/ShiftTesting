@@ -13,9 +13,8 @@ class CompletedSections extends Model
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.completed_sections';
+    protected $table = 'student_forms.completed_sections';
     protected $primaryKey = 'fkey_rcid';
     protected $connection = 'SAO';
-    protected $fillable   = ["fkey_rcid"];
-
+    protected $fillable = ['fkey_rcid'];
 }

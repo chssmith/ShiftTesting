@@ -11,9 +11,7 @@ class Education extends Model
      *
      * @var  string
      */
-    protected $table      = 'student_forms.education_levels';
+    protected $table = 'student_forms.education_levels';
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
-
-
 }

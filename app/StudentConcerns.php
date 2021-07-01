@@ -14,8 +14,7 @@ class StudentConcerns extends model
      */
     use SoftDeletes;
 
-    protected $table      = 'student_forms.concern_map';
+    protected $table = 'student_forms.concern_map';
     protected $primaryKey = 'rcid';
     protected $connection = 'SAO';
-
 }

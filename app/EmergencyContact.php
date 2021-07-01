@@ -13,29 +13,31 @@ class EmergencyContact extends Model
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.emergency_contact';
+    protected $table = 'student_forms.emergency_contact';
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
-    protected $fillable   = ["student_rcid", "created_by", "missing_person"];
+    protected $fillable = ['student_rcid', 'created_by', 'missing_person'];
 
-    public function completed () {
-      return !empty($this->name) && !empty($this->relationship) && (!empty($this->day_phone) || !empty($this->evening_phone) || !empty($this->cell_phone));
+    public function completed()
+    {
+        return ! empty($this->name) && ! empty($this->relationship) && (! empty($this->day_phone) || ! empty($this->evening_phone) || ! empty($this->cell_phone));
     }
 
-    public function getMissingInformation () {
-      $messages =  collect();
-      if (empty($this->name)) {
-        $messages[] = "Emergency contact missing a name";
-      }
+    public function getMissingInformation()
+    {
+        $messages = collect();
+        if (empty($this->name)) {
+            $messages[] = 'Emergency contact missing a name';
+        }
 
-      if (empty($this->relationship)) {
-        $messages[] = "Emergency contact missing relationship";
-      }
+        if (empty($this->relationship)) {
+            $messages[] = 'Emergency contact missing relationship';
+        }
 
-      if (empty($this->day_phone) && empty($this->evening_phone) && empty($this->cell_phone)) {
-        $messages[] = "Emergency contact missing at least one contact number";
-      }
+        if (empty($this->day_phone) && empty($this->evening_phone) && empty($this->cell_phone)) {
+            $messages[] = 'Emergency contact missing at least one contact number';
+        }
 
-      return $messages;
+        return $messages;
     }
 }

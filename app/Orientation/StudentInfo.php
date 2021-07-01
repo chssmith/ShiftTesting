@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StudentInfo extends Model
 {
-  use SoftDeletes;
+    use SoftDeletes;
 
-  protected $table      = "orientation.student_info";
-  protected $primaryKey = 'id';
-  public $fillable      = ['rcid', 'created_by'];
+    protected $table = 'orientation.student_info';
+    protected $primaryKey = 'id';
+    public $fillable = ['rcid', 'created_by'];
 }

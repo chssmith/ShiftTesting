@@ -11,10 +11,9 @@ class VisaTypes extends Model
      *
      * @var  string
      */
-    protected $table      = 'dbo.VisaTypes';
+    protected $table = 'dbo.VisaTypes';
     protected $primaryKey = 'code';
     protected $connection = 'DataMart';
 
     public $incrementing = false;
-
 }

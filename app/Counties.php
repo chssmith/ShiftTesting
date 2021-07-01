@@ -11,10 +11,9 @@ class Counties extends Model
      *
      * @var  string
      */
-    protected $table      = 'dbo.counties';
+    protected $table = 'dbo.counties';
     protected $primaryKey = 'county_id';
     protected $connection = 'DataMart';
 
     public $incrementing = false;
-
 }

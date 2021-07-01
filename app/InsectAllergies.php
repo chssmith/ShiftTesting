@@ -11,9 +11,8 @@ class InsectAllergies extends Model
      *
      * @var  string
      */
-    protected $table      = 'student_forms.insect_allergies';
+    protected $table = 'student_forms.insect_allergies';
     protected $primaryKey = 'rcid';
     protected $connection = 'SAO';
-    protected $fillable   = ['rcid', 'created_by'];
-
+    protected $fillable = ['rcid', 'created_by'];
 }

@@ -233,9 +233,9 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
-        'PDFMerger' => GrofGraf\LaravelPDFMerger\Facades\PDFMergerFacade::class
+        'PDFMerger' => GrofGraf\LaravelPDFMerger\Facades\PDFMergerFacade::class,
 
     ],
-    'new_student_year' => env("NEW_STUDENT_YEAR", "00"),
-    'returning_student_year' => env("RETURNING_STUDENT_YEAR", "00"),
+    'new_student_year' => env('NEW_STUDENT_YEAR', '00'),
+    'returning_student_year' => env('RETURNING_STUDENT_YEAR', '00'),
 ];

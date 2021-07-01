@@ -13,10 +13,9 @@ class PhoneMap extends Model
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.phone_map';
+    protected $table = 'student_forms.phone_map';
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
 
-    protected $fillable   = ['RCID', 'fkey_PhoneTypeId'];
-
+    protected $fillable = ['RCID', 'fkey_PhoneTypeId'];
 }

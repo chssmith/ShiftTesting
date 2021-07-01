@@ -13,13 +13,13 @@ class Address extends Model
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.address';
+    protected $table = 'student_forms.address';
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
-    protected $fillable   = ["RCID", "fkey_AddressTypeId", "created_by"];
+    protected $fillable = ['RCID', 'fkey_AddressTypeId', 'created_by'];
 
-    public function country_details () {
-      return $this->hasOne("\App\Countries", "key_CountryId", "fkey_CountryId");
+    public function country_details()
+    {
+        return $this->hasOne("\App\Countries", 'key_CountryId', 'fkey_CountryId');
     }
-
 }

@@ -59,7 +59,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'force_login' => \App\Http\Middleware\ForceLogin::class,
         'sims_admin' => \App\Http\Middleware\SIMSAdmin::class,
-        "populate_dependencies" => \App\Http\Middleware\PopulateDependencies::class,
-        'rsi_admin' => \App\Http\Middleware\ForceAdmin::class
+        'populate_dependencies' => \App\Http\Middleware\PopulateDependencies::class,
+        'rsi_admin' => \App\Http\Middleware\ForceAdmin::class,
     ];
 }

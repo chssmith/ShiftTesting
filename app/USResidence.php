@@ -13,8 +13,7 @@ class USResidence extends \App\ODS\USResidence
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.us_residence';
-    protected $fillable   = ['RCID', 'created_by', 'updated_by'];
-    public $timestamps    = true;
-
+    protected $table = 'student_forms.us_residence';
+    protected $fillable = ['RCID', 'created_by', 'updated_by'];
+    public $timestamps = true;
 }

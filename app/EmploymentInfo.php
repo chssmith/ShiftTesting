@@ -13,18 +13,18 @@ class EmploymentInfo extends Model
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.employment_info';
+    protected $table = 'student_forms.employment_info';
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
-    protected $fillable   = ['fkey_guardian_id', 'created_by'];
+    protected $fillable = ['fkey_guardian_id', 'created_by'];
 
-    public function country () {
-      return $this->hasOne("App\Countries", "key_CountryId", "fkey_CountryId");
+    public function country()
+    {
+        return $this->hasOne("App\Countries", 'key_CountryId', 'fkey_CountryId');
     }
 
-    public function state () {
-      return $this->hasOne("App\States", "StateCode", "fkey_StateCode");
+    public function state()
+    {
+        return $this->hasOne("App\States", 'StateCode', 'fkey_StateCode');
     }
-
-
 }

@@ -13,10 +13,7 @@ class CitizenshipCountryMap extends Model
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.citizenship_country_map';
+    protected $table = 'student_forms.citizenship_country_map';
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
-
-
-
 }

@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class IBMap extends Model
 {
-  use SoftDeletes;
-  protected $table = 'student_forms.ib_map';
+    use SoftDeletes;
+    protected $table = 'student_forms.ib_map';
 }

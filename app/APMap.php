@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class APMap extends Model
 {
-  use SoftDeletes;
-  protected $table = 'student_forms.ap_map';
+    use SoftDeletes;
+    protected $table = 'student_forms.ap_map';
 }

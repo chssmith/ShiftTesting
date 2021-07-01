@@ -12,8 +12,7 @@ class MilitaryOptions extends Model
      *
      * @var  string
      */
-    protected $table      = 'student_forms.military_options';
+    protected $table = 'student_forms.military_options';
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
-
 }

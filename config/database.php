@@ -41,7 +41,7 @@ return [
           'password' => env('SAO_PASSWORD', false),
           'charset'  => env('DB_CHARSET', 'utf8'),
           'prefix'   => env('DB_PREFIX', ''),
-          'pooling'  => false
+          'pooling'  => false,
         ],
 
         'SAO' => [
@@ -52,7 +52,7 @@ return [
             'password' => env('SAO_PASSWORD', false),
             'charset'  => env('DB_CHARSET', 'utf8'),
             'prefix'   => env('DB_PREFIX', ''),
-            'pooling'  => false
+            'pooling'  => false,
         ],
 
     ],
