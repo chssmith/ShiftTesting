@@ -56,7 +56,6 @@ return [
             'pooling'  => false,
         ],
 
-
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DATABASE_URL'),
