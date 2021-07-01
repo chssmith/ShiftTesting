@@ -17,7 +17,8 @@
         "laravel/tinker": "^2.5",
         "roanokecollege/authentication": "*",
         "rcwebdevelopers/mustangbuilder": "*",
-        "rollbar/rollbar-laravel": "^7.0"
+        "rollbar/rollbar-laravel": "^7.0",
+        "laravel/ui": "^2.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",
