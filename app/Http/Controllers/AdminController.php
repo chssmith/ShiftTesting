@@ -52,7 +52,7 @@ class AdminController extends Controller
     {
         Students::where('student_processed', 0)->where('student_printed', 1)
                             ->finished()->update(['student_processed' => 1,
-                                                                        'updated_by' => RCAuth::user()->rcid, ]);
+                                                  'updated_by' => RCAuth::user()->rcid, ]);
 
         return redirect()->action('AdminController@index');
     }
@@ -61,7 +61,7 @@ class AdminController extends Controller
     {
         Students::where('parents_processed', 0)->where('parents_printed', 1)
                             ->finished()->update(['parents_processed' => 1,
-                                                                        'updated_by' => RCAuth::user()->rcid, ]);
+                                                  'updated_by' => RCAuth::user()->rcid, ]);
 
         return redirect()->action('AdminController@index');
     }
