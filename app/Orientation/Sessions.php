@@ -11,8 +11,10 @@ class Sessions extends Model
     use SoftDeletes;
 
     protected $table = 'orientation.sessions';
-
-    protected $dates = ['start_date', 'end_date'];
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
     protected $appends = ['date_string'];
 
     public function getDateStringAttribute()
