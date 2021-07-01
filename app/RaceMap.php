@@ -19,6 +19,6 @@ class RaceMap extends Model
 
     public function races()
     {
-        return $this->hasOne('App\Races', 'code', 'fkey_code');
+        return $this->hasOne(\App\Races::class, 'code', 'fkey_code');
     }
 }

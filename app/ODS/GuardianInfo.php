@@ -11,11 +11,11 @@ class GuardianInfo extends Model
 
     public function employment()
     {
-        return $this->hasOne('App\ODS\EmploymentInfo', 'fkey_guardian_id', 'fkey_parent_rcid');
+        return $this->hasOne(\App\ODS\EmploymentInfo::class, 'fkey_guardian_id', 'fkey_parent_rcid');
     }
 
     public function country()
     {
-        return $this->hasOne("App\Countries", 'key_CountryId', 'fkey_CountryId');
+        return $this->hasOne(\App\Countries::class, 'key_CountryId', 'fkey_CountryId');
     }
 }

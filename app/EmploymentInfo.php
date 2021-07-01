@@ -20,11 +20,11 @@ class EmploymentInfo extends Model
 
     public function country()
     {
-        return $this->hasOne("App\Countries", 'key_CountryId', 'fkey_CountryId');
+        return $this->hasOne(\App\Countries::class, 'key_CountryId', 'fkey_CountryId');
     }
 
     public function state()
     {
-        return $this->hasOne("App\States", 'StateCode', 'fkey_StateCode');
+        return $this->hasOne(\App\States::class, 'StateCode', 'fkey_StateCode');
     }
 }

@@ -20,6 +20,6 @@ class Address extends Model
 
     public function country_details()
     {
-        return $this->hasOne("\App\Countries", 'key_CountryId', 'fkey_CountryId');
+        return $this->hasOne(\App\Countries::class, 'key_CountryId', 'fkey_CountryId');
     }
 }

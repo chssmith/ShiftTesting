@@ -27,67 +27,67 @@ class Students extends Model
 
     public function admit_status()
     {
-        return $this->hasOne("\App\ODS\AdmitStatus", 'rcid');
+        return $this->hasOne(\App\ODS\AdmitStatus::class, 'rcid');
     }
 
     public function local_percs()
     {
-        return $this->hasMany("App\PERC", 'rcid', 'RCID');
+        return $this->hasMany(\App\PERC::class, 'rcid', 'RCID');
     }
 
     public function ods_residence()
     {
-        return $this->hasOne("\App\ODS\USResidence", 'RCID', 'RCID');
+        return $this->hasOne(\App\ODS\USResidence::class, 'RCID', 'RCID');
     }
 
     public function ods_citizenship()
     {
-        return $this->hasOne("\App\ODS\CitizenshipInformation", 'fkey_rcid', 'RCID');
+        return $this->hasOne(\App\ODS\CitizenshipInformation::class, 'fkey_rcid', 'RCID');
     }
 
     public function parents()
     {
-        return $this->hasMany('App\GuardianInfo', 'student_rcid', 'RCID');
+        return $this->hasMany(\App\GuardianInfo::class, 'student_rcid', 'RCID');
     }
 
     public function datamart_home_address()
     {
-        return $this->hasOne("App\DatamartAddress", 'RCID', 'RCID')->where('fkey_AddressTypeId', 1);
+        return $this->hasOne(\App\DatamartAddress::class, 'RCID', 'RCID')->where('fkey_AddressTypeId', 1);
     }
 
     public function datamart_billing_address()
     {
-        return $this->hasOne("App\DatamartAddress", 'RCID', 'RCID')->where('fkey_AddressTypeId', 3);
+        return $this->hasOne(\App\DatamartAddress::class, 'RCID', 'RCID')->where('fkey_AddressTypeId', 3);
     }
 
     public function datamart_local_address()
     {
-        return $this->hasOne("App\DatamartAddress", 'RCID', 'RCID')->where('fkey_AddressTypeId', 4);
+        return $this->hasOne(\App\DatamartAddress::class, 'RCID', 'RCID')->where('fkey_AddressTypeId', 4);
     }
 
     public function home_address()
     {
-        return $this->hasOne('App\Address', 'RCID', 'RCID')->where('fkey_AddressTypeId', 1);
+        return $this->hasOne(\App\Address::class, 'RCID', 'RCID')->where('fkey_AddressTypeId', 1);
     }
 
     public function billing_address()
     {
-        return $this->hasOne('App\Address', 'RCID', 'RCID')->where('fkey_AddressTypeId', 3);
+        return $this->hasOne(\App\Address::class, 'RCID', 'RCID')->where('fkey_AddressTypeId', 3);
     }
 
     public function local_address()
     {
-        return $this->hasOne('App\Address', 'RCID', 'RCID')->where('fkey_AddressTypeId', 4);
+        return $this->hasOne(\App\Address::class, 'RCID', 'RCID')->where('fkey_AddressTypeId', 4);
     }
 
     public function visa()
     {
-        return $this->hasOne('App\VisaTypeMap', 'RCID', 'RCID');
+        return $this->hasOne(\App\VisaTypeMap::class, 'RCID', 'RCID');
     }
 
     public function citizenship()
     {
-        return $this->hasOne("App\CitizenshipInformation", 'fkey_rcid');
+        return $this->hasOne(\App\CitizenshipInformation::class, 'fkey_rcid');
     }
 
     public function getDatamartAddressAttribute($value)
@@ -122,37 +122,37 @@ class Students extends Model
 
     public function ap_exams()
     {
-        return $this->hasManyThrough("\App\APExams", "\App\APMap", 'rcid', 'id', 'RCID', 'fkey_ap_exam');
+        return $this->hasManyThrough(\App\APExams::class, \App\APMap::class, 'rcid', 'id', 'RCID', 'fkey_ap_exam');
     }
 
     public function ib_exams()
     {
-        return $this->hasManyThrough("\App\IBExams", "\App\IBMap", 'rcid', 'id', 'RCID', 'fkey_ib_exam');
+        return $this->hasManyThrough(\App\IBExams::class, \App\IBMap::class, 'rcid', 'id', 'RCID', 'fkey_ib_exam');
     }
 
     public function de_courses()
     {
-        return $this->hasManyThrough("\App\DualEnrollmentCourses", "\App\DEMap", 'rcid', 'id', 'RCID', 'fkey_dual_enrollment_course');
+        return $this->hasManyThrough(\App\DualEnrollmentCourses::class, \App\DEMap::class, 'rcid', 'id', 'RCID', 'fkey_dual_enrollment_course');
     }
 
     public function prospect_status()
     {
-        return $this->hasOne("\App\StudentProspect", 'key_ProspectId', 'RCID');
+        return $this->hasOne(\App\StudentProspect::class, 'key_ProspectId', 'RCID');
     }
 
     public function datamart_user()
     {
-        return $this->hasOne("\App\DatamartStudent", 'RCID', 'RCID');
+        return $this->hasOne(\App\DatamartStudent::class, 'RCID', 'RCID');
     }
 
     public function ods_student()
     {
-        return $this->hasOne("\App\ODS\Students", 'RCID', 'RCID');
+        return $this->hasOne(\App\ODS\Students::class, 'RCID', 'RCID');
     }
 
     public function ssn()
     {
-        return $this->hasOne("App\HaveSSN", 'ID', 'RCID');
+        return $this->hasOne(\App\HaveSSN::class, 'ID', 'RCID');
     }
 
     public function scopeFinished($query)

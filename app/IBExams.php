@@ -10,6 +10,6 @@ class IBExams extends Model
 
     public function map()
     {
-        return $this->hasMany("\App\IBMap", 'fkey_ib_exam', 'id');
+        return $this->hasMany(\App\IBMap::class, 'fkey_ib_exam', 'id');
     }
 }

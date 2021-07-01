@@ -20,37 +20,37 @@ class GuardianInfo extends Model
 
     public function employment()
     {
-        return $this->hasOne('App\EmploymentInfo', 'fkey_guardian_id', 'id');
+        return $this->hasOne(\App\EmploymentInfo::class, 'fkey_guardian_id', 'id');
     }
 
     public function marital_status()
     {
-        return $this->hasOne("App\MaritalStatuses", 'code', 'fkey_marital_status');
+        return $this->hasOne(\App\MaritalStatuses::class, 'code', 'fkey_marital_status');
     }
 
     public function country()
     {
-        return $this->hasOne("App\Countries", 'key_CountryId', 'fkey_CountryId');
+        return $this->hasOne(\App\Countries::class, 'key_CountryId', 'fkey_CountryId');
     }
 
     public function state()
     {
-        return $this->hasOne("App\States", 'StateCode', 'fkey_StateCode');
+        return $this->hasOne(\App\States::class, 'StateCode', 'fkey_StateCode');
     }
 
     public function education()
     {
-        return $this->hasOne("App\Education", 'id', 'fkey_education_id');
+        return $this->hasOne(\App\Education::class, 'id', 'fkey_education_id');
     }
 
     public function guardian_type()
     {
-        return $this->hasOne("App\GuardianRelationshipTypes", 'id', 'relationship');
+        return $this->hasOne(\App\GuardianRelationshipTypes::class, 'id', 'relationship');
     }
 
     public function ods_guardian()
     {
-        return $this->hasOne("\App\ODS\GuardianInfo", 'fkey_parent_rcid', 'fkey_parent_rcid');
+        return $this->hasOne(\App\ODS\GuardianInfo::class, 'fkey_parent_rcid', 'fkey_parent_rcid');
     }
 
     public function getDisplayNameAttribute()
@@ -65,7 +65,7 @@ class GuardianInfo extends Model
 
     public function home_address()
     {
-        return $this->hasOne('App\Address', 'RCID', 'RCID')->where('fkey_AddressTypeId', 1);
+        return $this->hasOne(\App\Address::class, 'RCID', 'RCID')->where('fkey_AddressTypeId', 1);
     }
 
     public function complete()

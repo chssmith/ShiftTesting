@@ -16,7 +16,7 @@ class DatamartStudent extends Model
 
     public function ssn()
     {
-        return $this->hasOne("App\HaveSSN", 'ID', 'RCID');
+        return $this->hasOne(\App\HaveSSN::class, 'ID', 'RCID');
     }
 
     public function getRcidAttribute($value)

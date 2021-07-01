@@ -10,6 +10,6 @@ class DualEnrollmentCourses extends Model
 
     public function map()
     {
-        return $this->hasMany("\App\DEMap", 'fkey_dual_enrollment_course', 'id');
+        return $this->hasMany(\App\DEMap::class, 'fkey_dual_enrollment_course', 'id');
     }
 }

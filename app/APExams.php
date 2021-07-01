@@ -10,6 +10,6 @@ class APExams extends Model
 
     public function map()
     {
-        return $this->hasMany("\App\APMap", 'fkey_ap_exam', 'id');
+        return $this->hasMany(\App\APMap::class, 'fkey_ap_exam', 'id');
     }
 }

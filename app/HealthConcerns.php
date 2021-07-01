@@ -17,6 +17,6 @@ class HealthConcerns extends Model
 
     public function student_concerns()
     {
-        return $this->hasOne('App\StudentConcerns', 'fkey_concern_id', 'id');
+        return $this->hasOne(\App\StudentConcerns::class, 'fkey_concern_id', 'id');
     }
 }

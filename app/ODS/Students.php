@@ -11,6 +11,6 @@ class Students extends \App\Students
 
     public function visa()
     {
-        return $this->hasOne("\App\ODS\VisaTypeMap", 'RCID', 'RCID');
+        return $this->hasOne(\App\ODS\VisaTypeMap::class, 'RCID', 'RCID');
     }
 }

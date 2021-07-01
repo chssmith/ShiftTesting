@@ -14,6 +14,6 @@ class CitizenshipInformation extends Model
 
     public function countries()
     {
-        return $this->hasManyThrough("App\Countries", "App\CitizenshipCountryMap", 'RCID', 'key_CountryId', 'fkey_rcid', 'CitizenshipCountry');
+        return $this->hasManyThrough(\App\Countries::class, \App\CitizenshipCountryMap::class, 'RCID', 'key_CountryId', 'fkey_rcid', 'CitizenshipCountry');
     }
 }
