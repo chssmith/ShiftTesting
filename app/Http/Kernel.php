@@ -63,14 +63,14 @@ class Kernel extends HttpKernel
         'rsi_admin' => \App\Http\Middleware\ForceAdmin::class,
     ];
 
-  /**
-   * The priority-sorted list of middleware.
-   *
-   * This forces non-global middleware to always be in the given order.
-   *
-   * @var array
-   */
-  protected $middlewarePriority = [
+    /**
+     * The priority-sorted list of middleware.
+     *
+     * This forces non-global middleware to always be in the given order.
+     *
+     * @var array
+     */
+    protected $middlewarePriority = [
       \Illuminate\Session\Middleware\StartSession::class,
       \Illuminate\View\Middleware\ShareErrorsFromSession::class,
       \App\Http\Middleware\Authenticate::class,
