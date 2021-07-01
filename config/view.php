@@ -15,7 +15,7 @@ return [
 
     'paths' => [
         resource_path('views'),
-        env('TEMPLATE_PATH')
+        env('TEMPLATE_PATH'),
     ],
 
     /*

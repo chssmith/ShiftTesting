@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DEMap extends Model
 {
-  use SoftDeletes;
+    use SoftDeletes;
 
-  protected $table = "student_forms.de_map";
+    protected $table = 'student_forms.de_map';
 }

@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ModeOfTravel extends Model
 {
-  use SoftDeletes;
+    use SoftDeletes;
 
-  protected $table = "orientation.mode_of_travel";
-  protected $primaryKey = 'id';
+    protected $table = 'orientation.mode_of_travel';
+    protected $primaryKey = 'id';
 }

@@ -13,9 +13,8 @@ class Medications extends model
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.medications';
+    protected $table = 'student_forms.medications';
     protected $primaryKey = 'rcid';
     protected $connection = 'SAO';
-    protected $fillable   = ['rcid', 'created_by'];
-
+    protected $fillable = ['rcid', 'created_by'];
 }

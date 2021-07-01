@@ -13,12 +13,12 @@ class RaceMap extends Model
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.race_map';
+    protected $table = 'student_forms.race_map';
     protected $primaryKey = 'id';
     protected $connection = 'SAO';
 
-
-    public function races(){
-    	return $this->hasOne('App\Races', 'code', 'fkey_code');
+    public function races()
+    {
+        return $this->hasOne(\App\Races::class, 'code', 'fkey_code');
     }
 }

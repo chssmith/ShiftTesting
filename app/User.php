@@ -11,22 +11,23 @@ class User extends Model
      *
      * @var  string
      */
-    protected $table      = 'DataMart.dbo.view_personbasic_username';
+    protected $table = 'DataMart.dbo.view_personbasic_username';
     protected $primaryKey = 'RCID';
     protected $connection = 'SAO';
-    protected $appends    = ['display_name'];
+    protected $appends = ['display_name'];
 
     public $incrementing = false;
 
-    public function getDisplayNameAttribute() {
+    public function getDisplayNameAttribute()
+    {
         $from_name = $this->FirstName;
 
-        if(isset($this->Nickname) && !is_null($this->Nickname)) {
+        if (isset($this->Nickname) && ! is_null($this->Nickname)) {
             $from_name = $this->Nickname;
         }
 
-        $from_name .= " " . $this->LastName;
+        $from_name .= ' '.$this->LastName;
 
         return $from_name;
-     }
+    }
 }

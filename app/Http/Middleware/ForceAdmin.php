@@ -2,14 +2,14 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use App\User;
-use Redirect;
+use Closure;
 use RCAuth;
+use Redirect;
 
 class ForceAdmin
 {
-    CONST token = "RSIAdmin";
+    const token = 'RSIAdmin';
 
     /**
      * Handle an incoming request.
@@ -21,18 +21,17 @@ class ForceAdmin
     public function handle($request, Closure $next)
     {
         $returnRoute = Redirect::to('login')->with('returnURL', $request->fullUrl());
-        if((RCAuth::check(self::token) || RCAuth::attempt(self::token))){
+        if ((RCAuth::check(self::token) || RCAuth::attempt(self::token))) {
+            $rcid = RCAuth::user()->rcid;
+            $user = User::where('RCID', $rcid)->first();
 
-      		$rcid = RCAuth::user()->rcid;
-      		$user = User::where('RCID', $rcid)->first();
+            app()->instance(User::class, $user);
 
-          app()->instance(User::class, $user);
+            if (! empty($user)) {
+                $returnRoute = $next($request);
+            }
+        }
 
-      		if(!empty($user)){
-      			$returnRoute = $next($request);
-      		}
-      	}
-
-      	return ($returnRoute);
+        return $returnRoute;
     }
 }

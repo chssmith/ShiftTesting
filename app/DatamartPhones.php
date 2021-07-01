@@ -11,8 +11,7 @@ class DatamartPhones extends Model
      *
      * @var  string
      */
-    protected $table      = 'dbo.Phone';
+    protected $table = 'dbo.Phone';
     protected $primaryKey = 'key_PhoneId';
     protected $connection = 'DataMart';
-
 }

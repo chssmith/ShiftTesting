@@ -13,9 +13,8 @@ class MedicationAllergies extends model
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.medication_allergies';
+    protected $table = 'student_forms.medication_allergies';
     protected $primaryKey = 'rcid';
     protected $connection = 'SAO';
-    protected $fillable   = ['rcid', 'created_by'];
-
+    protected $fillable = ['rcid', 'created_by'];
 }

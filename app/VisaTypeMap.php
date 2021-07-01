@@ -13,9 +13,8 @@ class VisaTypeMap extends \App\ODS\VisaTypeMap
      *
      * @var  string
      */
-     protected $table      = 'student_forms.visa_type_map';
-     protected $fillable   = ["RCID", "created_by"];
+    protected $table = 'student_forms.visa_type_map';
+    protected $fillable = ['RCID', 'created_by'];
 
-     public $timestamps    = true;
-
+    public $timestamps = true;
 }

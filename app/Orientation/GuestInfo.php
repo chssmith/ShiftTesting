@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GuestInfo extends Model
 {
-  use SoftDeletes;
+    use SoftDeletes;
 
-  protected $table = "orientation.guest_info";
-  protected $primaryKey = 'id';
+    protected $table = 'orientation.guest_info';
+    protected $primaryKey = 'id';
 }

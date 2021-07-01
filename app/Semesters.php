@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Semesters extends Model
 {
-    protected $table = "DataMart.dbo.Semester";
+    protected $table = 'DataMart.dbo.Semester';
 }

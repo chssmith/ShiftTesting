@@ -11,8 +11,7 @@ class MaritalStatuses extends Model
      *
      * @var  string
      */
-    protected $table      = 'dbo.MaritalStatus';
+    protected $table = 'dbo.MaritalStatus';
     protected $primaryKey = 'key_maritalStatus';
     protected $connection = 'DataMart';
-
 }

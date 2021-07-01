@@ -2,14 +2,15 @@
 
 namespace App\Http\Middleware;
 
+use App\User;
 use Closure;
 use RCAuth;
-use \App\User;
 use Redirect;
 
 class SIMSAdmin
 {
-    CONST token = "SIMSAdmin";
+    const token = 'SIMSAdmin';
+
     /**
      * Handle an incoming request.
      *
@@ -19,19 +20,18 @@ class SIMSAdmin
      */
     public function handle($request, Closure $next)
     {
-    	$returnRoute = Redirect::to('login')->with('returnURL', $request->fullUrl());
-      if((RCAuth::check(SIMSAdmin::token) || RCAuth::attempt(SIMSAdmin::token))){
+        $returnRoute = Redirect::to('login')->with('returnURL', $request->fullUrl());
+        if ((RCAuth::check(self::token) || RCAuth::attempt(self::token))) {
+            $rcid = RCAuth::user()->rcid;
+            $user = User::where('RCID', $rcid)->first();
 
-    		$rcid = RCAuth::user()->rcid;
-    		$user = User::where('RCID', $rcid)->first();
+            app()->instance(User::class, $user);
 
-        app()->instance(User::class, $user);
+            if (! empty($user)) {
+                $returnRoute = $next($request);
+            }
+        }
 
-    		if(!empty($user)){
-    			$returnRoute = $next($request);
-    		}
-    	}
-
-    	return ($returnRoute);
+        return $returnRoute;
     }
 }

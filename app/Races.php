@@ -11,10 +11,9 @@ class Races extends Model
      *
      * @var  string
      */
-    protected $table      = 'dbo.race';
+    protected $table = 'dbo.race';
     protected $primaryKey = 'code';
     protected $connection = 'DataMart';
 
     public $incrementing = false;
-
 }

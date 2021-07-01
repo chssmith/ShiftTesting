@@ -13,8 +13,7 @@ class OtherConcerns extends model
      * @var  string
      */
     use SoftDeletes;
-    protected $table      = 'student_forms.other_concerns';
+    protected $table = 'student_forms.other_concerns';
     protected $primaryKey = 'rcid';
     protected $connection = 'SAO';
-
 }
